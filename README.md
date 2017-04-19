@@ -6,7 +6,19 @@ mapzone.io is an open and extendible platform for processing and publishing of g
 
 ## Using plugins
 
+...
 
+## Providing plugins
+
+Everybody can develop and plugins for mapzone.io. If you want to provide your plugins to other users, you must agree to the [Developer Agreement](DeveloperAgreement.md).
+
+  * You own your product
+  * You support your product
+  * You choose price, ..., termination
+  * mapzone.io displays your product to users on your behalf
+  * mapzone.io provides payment facilityand charges a transaction fee
 
 ## Plans, fee, payment
+
+...
 
