@@ -8,17 +8,35 @@ mapzone.io is an open and extendible platform for processing and publishing of g
 
 ...
 
+## Pricing model
+
+For using a plugin we charge a fee
+
+  * per use, per project, per month
+  * every user of a project can use the plugin
+  
+
 ## Providing plugins
 
 Everybody can develop and plugins for mapzone.io. If you want to provide your plugins to other users, you must agree to the [Developer Agreement](DeveloperAgreement.md).
 
-  * You own your product
-  * You support your product
-  * You choose price, ..., termination
+  * you own your product, 
+  * you support your product
+  * you choose price, ..., termination
   * mapzone.io displays your product to users on your behalf
-  * mapzone.io provides payment facilityand charges a transaction fee
+  * mapzone.io provides payment system and charges a transaction fee
 
-## Plans, fee, payment
+### Plans and fee
 
-...
+  * 
+
+## Order processing
+
+### Buyer cancellations
+
+Buyers will have two hours to cancel after purchasing aproduct. After this cancellation period expires, mapzone.io automatically charges the card and initiates payments to your account as per the applicable payout schedule.
+
+### Monthly payouts and reporting
+
+Any orders processed, refunded, or charged-back from the first of a given month to the end of the month will get paid out around the 15th of the following month. Note that it may take several days for your bank to credit your account. To learn more about turnaround time for electronically deposited funds, please contact your financial institution.
 
