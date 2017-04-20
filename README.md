@@ -6,9 +6,24 @@ mapzone.io is an open and extendible platform for processing and publishing of g
 
 ## Using plugins
 
-...
+  - personal projects or organization
+  - each account is an organization with just one member/user
+  - each account can create organizations
+  - fees are billed per organization (one billing manager/user)
 
-## Pricing model
+### What is free on mapzone.io?
+
+  - creating an account
+  - creating open/public personal projects (unlimited)
+  - creating organizations
+  - creating open/public projects for an organization (unlimited)
+  - becoming a member of an organization
+
+### What things you must pay a fee for?
+
+  - creating a private project (personal or organization)
+
+## Pricing model and billing
 
 For using a plugin we charge a fee
 
