@@ -4,7 +4,7 @@
 
 mapzone.io is an open and extendible platform for processing and publishing of geospatial data. It is based on the open source [Polymap4](https://github.com/Polymap4) project, which in turn is based on Eclipse and the [Equinox](http://www.eclipse.org/equinox/) plugin framework. On top of this foundation mapzone.io provides an API that allows to develop plugins and run them on the platform. Plugins can extend mapzone.io in every conceivable way, like an importer for a new data format, a new map tool, a new style editor or sharelet. Plugins can be privat to a user or organization or public. Public plugins can be used by all users of mapzone.io.
 
-## Using plugins
+## Using mapzone.io and plugins
 
   - personal projects or organization
   - each account is an organization with just one member/user
@@ -14,18 +14,30 @@ mapzone.io is an open and extendible platform for processing and publishing of g
 ### What is free on mapzone.io?
 
   - creating an account
-  - creating open/public personal projects (unlimited)
+  - creating **public** personal projects (unlimited)
   - creating organizations
-  - creating open/public projects for an organization (unlimited)
+  - creating **public** projects for an organization (unlimited)
   - becoming a member of an organization
 
 ### What things you must pay a fee for?
 
-  - creating a private project (personal or organization)
+  - creating a **private** project (personal or organization)
+  - adding members to an organization with private projects
+  - using plugins
 
 ## Pricing model and billing
 
-For using a plugin we charge a fee
+Billing is done per organization. We charge a fee for every member/user of an organization that has private projects. Additionally there is a fee for most plugins.
+
+  - private projects: 9€ per user per month
+  - plugins: fee per user per month
+
+### Billing of personal projects
+
+Each account is an organization with just one member/user. Projects
+
+  - unmimited public projects
+  - unlimited private projects
 
   * per use, per project, per month
   * every user of a project can use the plugin
