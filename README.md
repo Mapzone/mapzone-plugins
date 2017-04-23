@@ -10,7 +10,7 @@ mapzone.io is an open and extendible platform for processing and publishing of g
 
 ## Providing plugins
 
-Everybody can develop and plugins for mapzone.io and run them in all projects on mapzone.io he/she has admin permissions for. If you want to provide your plugins to other users, you must agree to the [Developer Agreement](DeveloperAgreement.md).
+Everybody can develop and plugins for mapzone.io and run them in all projects on mapzone.io he/she has admin permissions for. If you want to provide your plugins to other users of mapzone.io, you must agree to the [Developer Agreement](DeveloperAgreement.md). Basically the agreement says the following:
 
   * you own your product, 
   * you support your product
@@ -20,10 +20,14 @@ Everybody can develop and plugins for mapzone.io and run them in all projects on
 
 ## Pricing model and billing
 
-Plugin fees are charged per member/user of an organization per month.
+Just like the basicPlugin fees are charged per member of an organization (user) per month.
 
-  - private projects: 9€ per user per month
-  - plugins: fee per user per month  
+### Example plugin fees
+
+Example: basic plugin fee: **9€**
+
+  - **personal projects**: 9€ per month - user can use the plugin in all personal projects
+  - **organization (3 members)**: 3 x 9€ = 27€ per month - plugin can be used in all projects of this organization
 
 ## Order processing
 
