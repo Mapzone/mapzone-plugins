@@ -26,12 +26,21 @@ Just like the basic mapzone.io fee the plugin fees are billed **per members (use
 
 A user can **terminate** using a plugin at any time. The plugin is available until the end of the billing period (month). If a user needs the functions for just one month, then he/she can select and activate the plugin and deactivate right afterwards. The plugin is then billed for just one month. The plugin can be re-activated at any time.
 
+mapzone.io charges a transaction fee of 15% of the plugin fee.
+
 ### Example plugin fees
 
-Example: basic plugin fee: **9€**
+In the follwoing **examples** the basic plugin fee is: **15€**
 
-  - **personal projects**: 9€ per month - user can use the plugin in all personal projects
-  - **organization (3 members)**: 3 x 9€ = 27€ per month - plugin can be used in all projects of this organization
+A user with just personal projects:
+```
+  + mapzone.io: 9.00€ (1 x 9€ per user)
+  + plugin:    15.00€ (1 x 15€ per user)
+  =            24.00€
+  
+    15%         3.60€ transaction fee
+    85%        21.40€ payed out to developer
+```
 
 ## Order processing
 
