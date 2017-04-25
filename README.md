@@ -6,13 +6,13 @@ mapzone.io is an open and extensible platform for processing and publishing of g
 
 ## Using plugins
 
-A user with admin privileges can choose a plugin to be used by an organization. If there is a fee for the plugin, then the admin is prompted to confirm that the monthly bill will be increased. Once activated a plugins can be used for all projects of an organization (or all personal projects of a user).
+A user with admin privileges can choose a plugin to be used by an organization. If there is a fee for the plugin, then the admin is prompted to confirm that the monthly bill will be increased. Once activated a plugins can be used for **all projects** of an organization (or all personal projects of a user).
 
 A plugin can be installed in one or more projects of the organization. The dashboard of the organization lists all plugins currently in use. A user can terminate using a plugin at any time.
 
 ## Providing plugins
 
-Everybody can develop and plugins for mapzone.io and run them in all projects on mapzone.io he/she has admin permissions for. If you want to provide your plugins to other users of mapzone.io, you must agree to the [Developer Agreement](DeveloperAgreement.md). Basically the agreement says the following:
+Everybody can develop plugins for mapzone.io and run them in all projects on mapzone.io he/she has admin permissions for. If you want to provide your plugins to other users of mapzone.io, you must agree to the [Developer Agreement](DeveloperAgreement.md). Basically the agreement says the following:
 
   * you own your product, 
   * you support your product
@@ -22,9 +22,9 @@ Everybody can develop and plugins for mapzone.io and run them in all projects on
 
 ## Pricing model, billing, termination
 
-Just like the basic mapzone.io fee the plugin fees are billed per members of an organization (users) per month. The minimum time to use (and be billed for) a plugin is one month.
+Just like the basic mapzone.io fee the plugin fees are billed **per members (users)** of an organization **per month**. The minimum time to use (and be billed for) a plugin is **one month**.
 
-A user can terminate using a plugin at any time. The plugin is available until the end of the billing period (month). If a user needs the functions for just one month, then he/she can select and activate the plugin and deactivate right afterwards. The plugin is then billed for just one month. The plugin can be re-activated at any time.
+A user can **terminate** using a plugin at any time. The plugin is available until the end of the billing period (month). If a user needs the functions for just one month, then he/she can select and activate the plugin and deactivate right afterwards. The plugin is then billed for just one month. The plugin can be re-activated at any time.
 
 ### Example plugin fees
 
