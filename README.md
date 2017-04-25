@@ -2,11 +2,13 @@
 
 ## Introduction
 
-mapzone.io is an open and extendible platform for processing and publishing of geospatial data. It is based on the open source [Polymap4](https://github.com/Polymap4) project, which in turn is based on Eclipse and the [Equinox](http://www.eclipse.org/equinox/) plugin framework. On top of this foundation mapzone.io provides an API that allows to develop plugins and run them on the platform. Plugins can extend mapzone.io in every conceivable way, like an importer for a new data format, a new map tool, a new style editor or sharelet. Plugins can be privat to a user or organization or public. Public plugins can be used by all users of mapzone.io.
+mapzone.io is an open and extensible platform for processing and publishing of geospatial data. It is based on the open source [Polymap4](https://github.com/Polymap4) project, which in turn is based on Eclipse and the [Equinox](http://www.eclipse.org/equinox/) plugin framework. On top of this foundation mapzone.io provides an API that allows to develop plugins and run them on the platform. Plugins can extend mapzone.io in every conceivable way, like importing new data formats, extending the style editor or adding a new sharelet. Plugins can be privat to a user or organization or they can be publicly available. Public plugins can be used by all users of mapzone.io.
 
 ## Using plugins
 
-...
+A user with admin privileges can choose a plugin to be used by an organization.  If there is fee for the plugin, then the admin is prompted to confirm that the monthly billing will be increased. Once activated a plugins can be used for all projects of an organization (or all personal projects of a user).
+
+After that the plugin can be installed in one or more projects of the organization. The dashboard of the organization lists all plugins currently in use.
 
 ## Providing plugins
 
@@ -20,7 +22,9 @@ Everybody can develop and plugins for mapzone.io and run them in all projects on
 
 ## Pricing model and billing
 
-Just like the basicPlugin fees are charged per member of an organization (user) per month.
+Just like the basic mapzone.io fee the plugin fees are billed per members of an organization (users) per month. The minimum time to use (and be billed for) a plugin is one month.
+
+A user can terminate using a plugin at any time. The plugin is available until the end of the billing period (month). If a user needs the functions for just one month, then he/she can select and activate the plugin and deactivate right afterwards. The plugin is then billed for just one month. The plugin can be re-activated at any time.
 
 ### Example plugin fees
 
