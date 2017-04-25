@@ -6,9 +6,9 @@ mapzone.io is an open and extensible platform for processing and publishing of g
 
 ## Using plugins
 
-A user with admin privileges can choose a plugin to be used by an organization.  If there is fee for the plugin, then the admin is prompted to confirm that the monthly billing will be increased. Once activated a plugins can be used for all projects of an organization (or all personal projects of a user).
+A user with admin privileges can choose a plugin to be used by an organization. If there is a fee for the plugin, then the admin is prompted to confirm that the monthly bill will be increased. Once activated a plugins can be used for all projects of an organization (or all personal projects of a user).
 
-After that the plugin can be installed in one or more projects of the organization. The dashboard of the organization lists all plugins currently in use.
+A plugin can be installed in one or more projects of the organization. The dashboard of the organization lists all plugins currently in use. A user can terminate using a plugin at any time.
 
 ## Providing plugins
 
@@ -20,7 +20,7 @@ Everybody can develop and plugins for mapzone.io and run them in all projects on
   * mapzone.io displays your product to users on your behalf
   * mapzone.io provides payment system and charges a transaction fee
 
-## Pricing model and billing
+## Pricing model, billing, termination
 
 Just like the basic mapzone.io fee the plugin fees are billed per members of an organization (users) per month. The minimum time to use (and be billed for) a plugin is one month.
 
