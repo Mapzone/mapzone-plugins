@@ -20,6 +20,8 @@ Everybody can develop plugins for mapzone.io and run them in all projects on map
   * mapzone.io displays your product to users on your behalf
   * mapzone.io provides payment system and charges a transaction fee
 
+A developer can provide **new versions** of the plugin at any time. The [Eclipse plugin versioning](https://wiki.eclipse.org/Version_Numbering) is used by the runtime system to ensure that the plugins are compatible to the main client version and other plugins. Project admins are informed about the update but the new version ist not installed automatically to any project.
+
 ## Pricing model, billing, termination
 
 Just like the basic mapzone.io fee the plugin fees are billed **per members (users)** of an organization **per month**. The minimum time to use (and be billed for) a plugin is **one month**.
