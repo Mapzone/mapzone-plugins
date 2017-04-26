@@ -32,7 +32,7 @@ mapzone.io charges a **transaction fee of 15%** of the plugin fee.
 
 ### Example monthly costs
 
-In the follwoing **examples** the basic plugin fee is: **15€**
+In the following **examples** the basic plugin fee is: **15€**
 
 One user with just personal private projects:
 ```
