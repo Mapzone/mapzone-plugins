@@ -30,11 +30,11 @@ A user can **terminate** using a plugin at any time. The plugin is available unt
 
 mapzone.io charges a **transaction fee of 15%** of the plugin fee.
 
-### Example plugin fees
+### Example monthly costs
 
 In the follwoing **examples** the basic plugin fee is: **15€**
 
-One user with just personal projects:
+One user with just personal private projects:
 ```
   + mapzone.io: 9.00€ (1 x 9€ per user)
   + plugin:    15.00€ (1 x 15€ per user)
@@ -43,6 +43,8 @@ One user with just personal projects:
     15%         3.60€ transaction fee
     85%        21.40€ payed out to developer
 ```
+
+The basic mapzone.io fee (9€) is not billed if there are no private projects. However, the plugin fee is billed regardless if there are private projects or not.
 
 ## Order processing
 
