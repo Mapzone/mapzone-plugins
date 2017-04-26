@@ -16,7 +16,7 @@ Everybody can develop plugins for mapzone.io and run them in all projects on map
 
   * you own your product, 
   * you support your product
-  * you choose price, ..., termination
+  * you choose fee, termination, ...
   * mapzone.io displays your product to users on your behalf
   * mapzone.io provides payment system and charges a transaction fee
 
