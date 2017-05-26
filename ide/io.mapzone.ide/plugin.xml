@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="io.mapzone.ide"
+            name="mapzone.io">
+      </category>
+      <wizard
+            category="io.mapzone.ide"
+            class="io.mapzone.ide.newproject.ProjectNewWizard"
+            icon="icons/sample.gif"
+            id="io.mapzone.ide.newproject.ProjectNewWizard"
+            name="Plugin">
+      </wizard>
+   </extension>
+
+</plugin>
