@@ -12,10 +12,14 @@ Require-Bundle: org.eclipse.e4.ui.workbench;bundle-version="1.4.0",
  org.eclipse.core.runtime,
  org.eclipse.jdt;bundle-version="3.12.2",
  org.eclipse.jdt.core;bundle-version="3.12.2",
+ org.eclipse.jdt.launching;bundle-version="3.8.101",
  org.eclipse.pde.core;bundle-version="3.11.1",
- org.apache.commons.httpclient;bundle-version="3.1.0"
+ org.apache.commons.httpclient;bundle-version="3.1.0",
+ org.eclipse.equinox.frameworkadmin;bundle-version="2.0.300",
+ org.eclipse.jdt.ui;bundle-version="3.12.2",
+ org.eclipse.pde.ui;bundle-version="3.9.100",
+ org.eclipse.pde.ui.templates;bundle-version="3.6.0"
 Bundle-Activator: io.mapzone.ide.IdePlugin
-Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/bndlib-2.3.0.jar,
  lib/cardme-1.0.0.jar,
@@ -40,4 +44,6 @@ Bundle-ClassPath: .,
  lib/org.osgi.core-4.3.1.jar,
  lib/slf4j-api-1.7.5.jar,
  lib/slf4j-simple-1.7.5.jar,
- lib/xml-apis-1.0.b2.jar
+ lib/xml-apis-1.0.b2.jar,
+ lib/guava-22.0.jar
+Bundle-ActivationPolicy: lazy

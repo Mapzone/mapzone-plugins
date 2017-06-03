@@ -18,6 +18,8 @@ import org.osgi.framework.BundleContext;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import org.eclipse.pde.core.target.ITargetDefinition;
+
 import io.mapzone.ide.newproject.TargetPlatformHelper;
 
 /**
@@ -27,7 +29,9 @@ import io.mapzone.ide.newproject.TargetPlatformHelper;
  */
 public class IdePlugin
         extends AbstractUIPlugin {
-
+    
+    public static final String      ID = "io.mapzone.ide";
+    
     private static IdePlugin        instance;
     
     public static IdePlugin instance() {
@@ -39,7 +43,10 @@ public class IdePlugin
         super.start( context );
         instance = this;
         
-        TargetPlatformHelper.instance().list();
+        // just testing
+        for (ITargetDefinition target : TargetPlatformHelper.instance().list( null )) {
+            System.out.println( "Target platform: " + target.getName() );
+        }
     }
 
     @Override

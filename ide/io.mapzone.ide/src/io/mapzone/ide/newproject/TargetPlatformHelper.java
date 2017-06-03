@@ -14,12 +14,20 @@
  */
 package io.mapzone.ide.newproject;
 
+import java.io.File;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import com.google.common.collect.FluentIterable;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 
 import io.mapzone.ide.IdePlugin;
 
@@ -48,15 +56,33 @@ public class TargetPlatformHelper {
     }
     
     
-    public void list() {
-        ITargetHandle[] handles = service.getTargets( new NullProgressMonitor() );
-        for (ITargetHandle handle : handles) {
-            System.out.println( "" + handle );
-        }
+    public Iterable<ITargetDefinition> list( IProgressMonitor monitor ) {
+        monitor = monitor != null ? monitor : new NullProgressMonitor();
+        return FluentIterable.from( service.getTargets( monitor ) )
+                .transform( handle -> {
+                    try {
+                        return handle.getTargetDefinition();
+                    }
+                    catch (CoreException e) {
+                        throw new RuntimeException( e );
+                    }
+                });
     }
     
     
-//    public void create() {
+    public ITargetDefinition create( String name, File bundleDir, boolean load, IProgressMonitor monitor ) throws CoreException {
+        ITargetDefinition target = service.newTarget();
+        target.setName( name );
+        
+        ITargetLocation[] locations = {service.newDirectoryLocation( bundleDir.getAbsolutePath() )};
+        target.setTargetLocations( locations );
+        service.saveTargetDefinition( target );
+
+        if (load) {
+            LoadTargetDefinitionJob.load( target );
+        }
+        return target;
+        
 //        ITargetDefinition target = service.getWorkspaceTargetHandle().getTargetDefinition();
 //        IBundleContainer[] bundles = target.getBundleContainers();
 //        String myDirectory = "C:\\directory";
@@ -76,5 +102,5 @@ public class TargetPlatformHelper {
 //            service.saveTargetDefinition(target);
 //            LoadTargetDefinitionJob.load(target);
 //        }
-//    }
+    }
 }

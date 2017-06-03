@@ -12,7 +12,13 @@
             class="io.mapzone.ide.newproject.ProjectNewWizard"
             icon="icons/sample.gif"
             id="io.mapzone.ide.newproject.ProjectNewWizard"
-            name="Plugin">
+            name="Plug-in Project">
+      </wizard>
+      <wizard
+            category="io.mapzone.ide"
+            class="io.mapzone.ide.newproject.NewPluginProjectWizard2"
+            id="io.mapzone.ide.NewPluginProjectWizard2"
+            name="NewPluginProjectWizard2">
       </wizard>
    </extension>
 

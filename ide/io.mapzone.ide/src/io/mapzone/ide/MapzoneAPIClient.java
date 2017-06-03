@@ -19,7 +19,8 @@ import static java.util.stream.Collectors.toList;
 import java.util.Collections;
 import java.util.List;
 
-import java.io.ByteArrayOutputStream;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import io.milton.common.Path;
 import io.milton.httpclient.File;
@@ -32,7 +33,7 @@ import io.milton.httpclient.Resource;
  *
  * @author Falko Bräutigam
  */
-public class MapzoneService {
+public class MapzoneAPIClient {
 
     public static final String  WEBDAV_PATH = "/webdav";
     
@@ -46,8 +47,8 @@ public class MapzoneService {
      * @param baseUrl
      * @throws Exception
      */
-    public MapzoneService( String server, int port, String user, String password ) {
-        host = new Host( server, WEBDAV_PATH, port, user, password, null, 10000, null, null );
+    public MapzoneAPIClient( String server, int port, String user, String password ) {
+        host = new Host( server, WEBDAV_PATH, port, user, password, null, 30000, null, null );
     }
 
     
@@ -58,7 +59,7 @@ public class MapzoneService {
 //    }
     
     
-    public List<MapzoneProject> findProjects( String organization ) {
+    public List<MapzoneProject> findProjects( String organization ) throws MapzoneAPIException {
         try {
             String path = PROJECTS.child( organization ).toPath();
             Resource folder = host.find( path );
@@ -81,7 +82,7 @@ public class MapzoneService {
 
     
     protected RuntimeException propagate( Throwable e ) {
-        return e instanceof RuntimeException ? (RuntimeException)e : new RuntimeException( e );
+        return e instanceof RuntimeException ? (RuntimeException)e : new MapzoneAPIException( e );
     }
     
     
@@ -108,7 +109,7 @@ public class MapzoneService {
             return folder.displayName;
         }
 
-        public boolean exists() {
+        public boolean exists() throws MapzoneAPIException {
             try {
                 String path = PROJECTS.child( organization ).child( name() ).toPath();
                 Resource res = host.find( path );
@@ -119,20 +120,23 @@ public class MapzoneService {
             }
         }
 
-        public void downloadTargetPlatform() {
+        public void downloadBundles( java.io.File destDir, IProgressMonitor monitor ) throws MapzoneAPIException {
             try {
                 Folder pluginsFolder = (Folder)folder.child( "plugins" );
-                for (Resource child : pluginsFolder.children()) {
-                    File f = (File)child;
-                    System.out.println( "   Plugin: " + f.displayName );
-                    
-                    if (f.displayName.startsWith( "org.polymap.core_" )) {
-                        System.out.print( "       " + f.contentLength );
-                        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-                        f.download( buf, null );
-                        System.out.println( " " + buf.size() );
+                List<? extends Resource> children = pluginsFolder.children();
+                monitor.beginTask( "Download bundles", children.size() );
+
+                for (Resource child : children) {
+                    try {
+                        monitor.subTask( child.displayName );
+                        ((File)child).downloadTo( destDir, null );
                     }
+                    catch (Exception e) {
+                        System.out.println( e );
+                    }
+                    monitor.worked( 1 );
                 }
+                monitor.done();
             }
             catch (Exception e) {
                 throw propagate( e );
@@ -144,13 +148,25 @@ public class MapzoneService {
     // Test ***********************************************
     
     public static void main( String[] args ) throws Exception {
-        MapzoneService service = new MapzoneService( "localhost", 8090, "falko", "" );
+        MapzoneAPIClient service = new MapzoneAPIClient( "localhost", 8090, "falko", "???" );
         
         List<MapzoneProject> projects = service.findProjects( "falko" );
         for (MapzoneProject project : projects) {
             System.out.println( "Project: " + project.organization + " / " + project.name() );
             
-            project.downloadTargetPlatform();
+            java.io.File dir = new java.io.File( "/tmp", "test.target" );
+            dir.mkdir();
+            dir.deleteOnExit();
+            project.downloadBundles( dir, new NullProgressMonitor() {
+                @Override
+                public void beginTask( String name, int totalWork ) {
+                    System.out.println( name );
+                }
+                @Override
+                public void subTask( String name ) {
+                    System.out.println( "    " + name );
+                }
+            });
         }
     }
     

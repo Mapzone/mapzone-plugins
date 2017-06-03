@@ -67,13 +67,9 @@
 			<remoteRepository refid="ettrema.repository" />
 			<remoteRepository refid="central.repository" />
 
+            <dependency groupId="com.google.guava" artifactId="guava" version="22.0" />
 		    <dependency groupId="io.milton" artifactId="milton-client" version="2.7.2.6"/>
 		    
-            <!--dependency groupId="com.ettrema" artifactId="milton-json" version="${milton.version}"/-->
-            <!--dependency groupId="com.ettrema" artifactId="milton-filesystem" version="${milton.version}"/-->
-
-			<!--dependency groupId="org.apache.maven" artifactId="super-pom" version="2.0" scope="provided" /-->
-			
 		    <dependency groupId="org.slf4j" artifactId="slf4j-simple" version="1.7.5" />
             <!--dependency groupId="org.slf4j" artifactId="slf4j-jcl" version="1.5.8" /-->
             <dependency groupId="org.slf4j" artifactId="slf4j-log4j12" version="1.5.6" scope="provided" />
