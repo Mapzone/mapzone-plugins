@@ -14,13 +14,11 @@
  */
 package io.mapzone.ide;
 
+import java.io.File;
+
 import org.osgi.framework.BundleContext;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-
-import org.eclipse.pde.core.target.ITargetDefinition;
-
-import io.mapzone.ide.newproject.TargetPlatformHelper;
 
 /**
  * 
@@ -42,17 +40,20 @@ public class IdePlugin
     public void start( BundleContext context ) throws Exception {
         super.start( context );
         instance = this;
-        
-        // just testing
-        for (ITargetDefinition target : TargetPlatformHelper.instance().list( null )) {
-            System.out.println( "Target platform: " + target.getName() );
-        }
     }
 
+    
     @Override
     public void stop( BundleContext context ) throws Exception {
         instance = null;
         super.stop( context );
+    }
+
+    
+    public File targetDir() {
+        File result = new File( getStateLocation().toFile(), "targets" );
+        result.mkdir();
+        return result;
     }
 
 }

@@ -56,7 +56,7 @@ public class LoginWizardPage
         super( "projectPage" );
         this.wizardData = wizardData;
         setTitle( "New plug-in project" );
-        setDescription( "Creating a new development project connected to mapzone.io." );
+        setDescription( "Login to your mapzone.io account" );
         setPageComplete( false );
     }
 
@@ -81,10 +81,10 @@ public class LoginWizardPage
         
         // label
         Label label = new Label( container, SWT.NULL );
-        label.setText( "Choose a mapzone.io project to connect the new IDE project to." );
+        label.setText( "Choose a mapzone.io project to connect the new IDE project with" );
 
         // projectsList
-        projectsList = new ListViewer( container, SWT.BORDER|SWT.SINGLE );
+        projectsList = new ListViewer( container, SWT.BORDER|SWT.SINGLE|SWT.V_SCROLL );
         projectsList.setContentProvider( ArrayContentProvider.getInstance() );
         projectsList.setLabelProvider( new LabelProvider() {
             @Override

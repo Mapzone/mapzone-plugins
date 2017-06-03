@@ -38,7 +38,7 @@ import io.mapzone.ide.IdePlugin;
  *
  * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
-@SuppressWarnings( "restriction" )
+@SuppressWarnings( { "restriction", "deprecation" } )
 public class NewPluginProjectWizard2
         extends NewPluginProjectWizard {
 
@@ -81,7 +81,7 @@ public class NewPluginProjectWizard2
                 try {
                     monitor.beginTask( "Target platform", 10 );
                     String targetName = getPluginId() + ".target";
-                    File bundlesDir = new File( "/tmp", targetName );
+                    File bundlesDir = new File( IdePlugin.instance().targetDir(), targetName );
                     bundlesDir.mkdir();
                     
                     wizardData.mapzoneProject.downloadBundles( bundlesDir, submon( monitor, 8 ) );
@@ -125,7 +125,6 @@ public class NewPluginProjectWizard2
     }
 
 
-    @SuppressWarnings( "deprecation" )
     protected IProgressMonitor submon( IProgressMonitor monitor, int ticks ) {
         return new SubProgressMonitor( monitor, ticks );
     }

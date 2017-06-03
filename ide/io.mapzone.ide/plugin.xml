@@ -9,16 +9,14 @@
       </category>
       <wizard
             category="io.mapzone.ide"
-            class="io.mapzone.ide.newproject.ProjectNewWizard"
-            icon="icons/sample.gif"
-            id="io.mapzone.ide.newproject.ProjectNewWizard"
-            name="Plug-in Project">
-      </wizard>
-      <wizard
-            category="io.mapzone.ide"
             class="io.mapzone.ide.newproject.NewPluginProjectWizard2"
+            icon="icons/newpprj_wiz.png"
             id="io.mapzone.ide.NewPluginProjectWizard2"
-            name="NewPluginProjectWizard2">
+            name="Plug-in Project"
+            project="true">
+         <description>
+            Creates a new plug-in project for mapzone.io
+         </description>
       </wizard>
    </extension>
 
