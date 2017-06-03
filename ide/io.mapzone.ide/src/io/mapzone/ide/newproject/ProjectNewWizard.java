@@ -1,3 +1,17 @@
+/* 
+ * polymap.org
+ * Copyright (C) 2017, the @authors. All rights reserved.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 3.0 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ */
 package io.mapzone.ide.newproject;
 
 import java.util.ArrayList;
@@ -26,67 +40,76 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.LibraryLocation;
+
+import io.mapzone.ide.IdePlugin;
 
 /**
- * This is a sample new wizard. Its role is to create a new file 
- * resource in the provided container. If the container resource
- * (a folder or a project) is selected in the workspace 
- * when the wizard is opened, it will accept it as the target
- * container. The wizard creates one file with the extension
- * "mpe". If a sample multi-page editor (also available
- * as a template) is registered for the same extension, it will
- * be able to open it.
+ * 
+ * 
+ *
+ * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
-public class ProjectNewWizard extends Wizard implements INewWizard {
+public class ProjectNewWizard 
+        extends Wizard 
+        implements INewWizard {
     
-    private ProjectNewWizardPage   page;
+    private LoginWizardPage         loginPage;
     
-    private ISelection             selection;
+    private TargetPlatformWizardPage platformPage;
+    
+    private ISelection              selection;
+    
+    private State                   state;
 
+    /**
+     * The state of the wizard, filled by the pages and input of #doFinish().  
+     */
+    protected class State {
+        
+        public String               projectName;
+    }
+    
     
     public ProjectNewWizard() {
         setNeedsProgressMonitor( true );
     }
 
     
-    /**
-     * We will accept the selection in the workbench to see if
-     * we can initialize from it.
-     * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
-     */
-    public void init(IWorkbench workbench, IStructuredSelection selection) {
+    @Override
+    public void init( IWorkbench workbench, @SuppressWarnings( "hiding" ) IStructuredSelection selection ) {
         this.selection = selection;
     }
 
 
+    @Override
     public void addPages() {
-        page = new ProjectNewWizardPage(selection);
-        addPage(page);
+        addPage( loginPage = new LoginWizardPage() );
+        addPage( platformPage = new TargetPlatformWizardPage() );
     }
 
     
-    /**
-     * This method is called when 'Finish' button is pressed in
-     * the wizard. We will create an operation and run it
-     * using wizard as execution context.
-     */
+    @Override
     public boolean performFinish() {
-        final String containerName = page.getContainerName();
-        final String fileName = page.getFileName();
-        
         IRunnableWithProgress op = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor) throws InvocationTargetException {
+            public void run( IProgressMonitor monitor ) throws InvocationTargetException {
                 try {
-                    doFinish(containerName, fileName, monitor);
-                } catch (CoreException e) {
+                    doFinish( monitor );
+                } 
+                catch (CoreException e) {
                     throw new InvocationTargetException(e);
-                } finally {
+                } 
+                finally {
                     monitor.done();
                 }
             }
@@ -99,7 +122,7 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
         } 
         catch (InvocationTargetException e) {
             Throwable realException = e.getTargetException();
-            MessageDialog.openError(getShell(), "Error", realException.getMessage());
+            MessageDialog.openError( getShell(), "Error", realException.getMessage() );
             return false;
         }
         return true;
@@ -107,38 +130,44 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
     
 
     protected void doFinish( IProgressMonitor monitor ) throws CoreException {
-        monitor.beginTask("Creating " + fileName, 2);
+        monitor.beginTask( "Creating " + state.projectName, 10 );
         
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        IProject project = root.getProject(projectName);
-        project.create(null);
-        project.open(null);
+        // create project
+        IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+        IProject project = workspaceRoot.getProject( state.projectName );
+        project.create( submon( monitor, 1 ) );
+        project.open( submon( monitor, 1 ) );
         
+        // add Java nature
         IProjectDescription description = project.getDescription();
         description.setNatureIds( new String[] { JavaCore.NATURE_ID });
-        project.setDescription( description, null );
-        IJavaProject javaProject = JavaCore.create(project);
+        project.setDescription( description, submon( monitor, 1 ) );
+        IJavaProject javaProject = JavaCore.create( project );
         
-        IFolder binFolder = project.getFolder("bin");
-        binFolder.create(false, true, null);
-        javaProject.setOutputLocation(binFolder.getFullPath(), null);
+        // bin
+        IFolder binFolder = project.getFolder( "bin" );
+        binFolder.create( false, true, submon( monitor, 1 ) );
+        javaProject.setOutputLocation( binFolder.getFullPath(), submon( monitor, 1 ) );
 
+        // classpath: Java runtime libs
         List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
         IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
-        LibraryLocation[] locations = JavaRuntime.getLibraryLocations(vmInstall);
+        LibraryLocation[] locations = JavaRuntime.getLibraryLocations( vmInstall );
         for (LibraryLocation element : locations) {
-         entries.add(JavaCore.newLibraryEntry(element.getSystemLibraryPath(), null, null));
+            entries.add( JavaCore.newLibraryEntry( element.getSystemLibraryPath(), null, null ) );
         }
         
-        IFolder sourceFolder = project.getFolder("src");
-        sourceFolder.create(false, true, null);
+        // src
+        IFolder sourceFolder = project.getFolder( "src" );
+        sourceFolder.create( false, true, submon( monitor, 1 ) );
         
-        IPackageFragmentRoot root = javaProject.getPackageFragmentRoot(sourceFolder);
+        // classpath
+        IPackageFragmentRoot root = javaProject.getPackageFragmentRoot( sourceFolder );
         IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
         IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + 1];
-        System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
-        newEntries[oldEntries.length] = JavaCore.newSourceEntry(root.getPath());
-        javaProject.setRawClasspath(newEntries, null);
+        System.arraycopy( oldEntries, 0, newEntries, 0, oldEntries.length );
+        newEntries[oldEntries.length] = JavaCore.newSourceEntry( root.getPath() );
+        javaProject.setRawClasspath( newEntries, null );
         
         //
         IPackageFragment pack = javaProject.getPackageFragmentRoot(sourceFolder).createPackageFragment(packageName, false, null);
@@ -155,20 +184,19 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
         monitor.setTaskName("Opening file for editing...");
         monitor.worked(1);
     }
+
     
-    /**
-     * We will initialize file contents with a sample text.
-     */
-
-    private InputStream openContentStream() {
-        String contents =
-            "This is the initial file contents for *.mpe file that should be word-sorted in the Preview page of the multi-page editor";
-        return new ByteArrayInputStream(contents.getBytes());
+    protected void fillProject( IJavaProject javaProject ) {
+        
+    }
+    
+    protected IProgressMonitor submon( IProgressMonitor monitor, int ticks ) {
+        return new SubProgressMonitor( monitor, ticks );
     }
 
-    private void throwCoreException(String message) throws CoreException {
-        IStatus status =
-            new Status(IStatus.ERROR, "io.mapzone.ide", IStatus.OK, message, null);
-        throw new CoreException(status);
+    
+    protected void throwCoreException( String msg ) throws CoreException {
+        throw new CoreException( new Status( IStatus.ERROR, IdePlugin.ID, IStatus.OK, msg, null) );
     }
+    
 }
