@@ -34,7 +34,8 @@ import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import io.mapzone.ide.IdePlugin;
 
 /**
- * 
+ * Extends the PDE {@link NewPluginProjectWizard} by the {@link LoginWizardPage}
+ * and creates a target platform on {@link #performFinish()}.
  *
  * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */

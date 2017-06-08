@@ -26,6 +26,7 @@ import io.milton.common.Path;
 import io.milton.httpclient.File;
 import io.milton.httpclient.Folder;
 import io.milton.httpclient.Host;
+import io.milton.httpclient.ProgressListener;
 import io.milton.httpclient.Resource;
 
 /**
@@ -142,32 +143,67 @@ public class MapzoneAPIClient {
                 throw propagate( e );
             }
         }
+        
+        public void installBundle( java.io.File bundle, IProgressMonitor monitor ) throws MapzoneAPIException {
+            try {
+                monitor.beginTask( "Upload bundle " + bundle.getName(), (int)bundle.length() );
+                Folder pluginsFolder = (Folder)folder.child( "plugins" );
+                pluginsFolder.upload( bundle, new ProgressListenerAdapter( monitor ) );
+                monitor.done();
+            }
+            catch (Exception e) {
+                propagate( e );
+            }
+        }
     }
 
+    
+    static class ProgressListenerAdapter
+            implements ProgressListener {
+
+        private IProgressMonitor    delegate;
+        
+        public ProgressListenerAdapter( IProgressMonitor delegate ) {
+            this.delegate = delegate;
+        }
+        @Override 
+        public void onRead( int bytes ) { }
+        @Override 
+        public void onProgress( long bytesRead, Long totalBytes, String fileName ) {
+            delegate.worked( (int)bytesRead );
+        }
+        @Override 
+        public void onComplete( String fileName ) { }
+        @Override 
+        public boolean isCancelled() {
+            return delegate.isCanceled();
+        }
+    }
+    
     
     // Test ***********************************************
     
     public static void main( String[] args ) throws Exception {
         MapzoneAPIClient service = new MapzoneAPIClient( "localhost", 8090, "falko", "???" );
         
-        List<MapzoneProject> projects = service.findProjects( "falko" );
-        for (MapzoneProject project : projects) {
-            System.out.println( "Project: " + project.organization + " / " + project.name() );
-            
-            java.io.File dir = new java.io.File( "/tmp", "test.target" );
-            dir.mkdir();
-            dir.deleteOnExit();
-            project.downloadBundles( dir, new NullProgressMonitor() {
-                @Override
-                public void beginTask( String name, int totalWork ) {
-                    System.out.println( name );
-                }
-                @Override
-                public void subTask( String name ) {
-                    System.out.println( "    " + name );
-                }
-            });
-        }
+        MapzoneProject project = service.findProjects( "falko" ).stream()
+                .filter( p -> p.name().equalsIgnoreCase( "develop" ) )
+                .findAny().get();
+        
+        System.out.println( "Project: " + project.organization + " / " + project.name() );
+        java.io.File dir = new java.io.File( "/tmp", "test.target" );
+        dir.mkdir();
+        dir.deleteOnExit();
+        project.downloadBundles( dir, new NullProgressMonitor() {
+            @Override
+            public void beginTask( String name, int totalWork ) {
+                System.out.println( name );
+            }
+            @Override
+            public void subTask( String name ) {
+                System.out.println( "    " + name );
+            }
+        });
     }
     
 }

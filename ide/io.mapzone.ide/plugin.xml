@@ -19,5 +19,24 @@
          </description>
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <category
+            id="io.mapzone.ide.category1"
+            name="mapzone.io">
+      </category>
+      <wizard
+            category="io.mapzone.ide.category1"
+            class="io.mapzone.ide.exportproject.ExportPluginProjectWizard"
+            id="io.mapzone.ide.wizard1"
+            name="Export Plugin-in to project">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="io.mapzone.ide.PeriodicGCJobStartup">
+      </startup>
+   </extension>
 
 </plugin>
