@@ -19,6 +19,8 @@ import static java.util.stream.Collectors.toList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -153,7 +155,7 @@ public class MapzoneAPIClient {
             try {
                 Folder pluginsFolder = (Folder)folder.child( "plugins" );
                 List<? extends Resource> children = pluginsFolder.children();
-                monitor.beginTask( "Download bundles", children.size() );
+                monitor.beginTask( "Downloading bundles", children.size() );
 
                 for (Resource child : children) {
                     try {
@@ -174,8 +176,20 @@ public class MapzoneAPIClient {
         
         public void installBundle( java.io.File bundle, IProgressMonitor monitor ) throws MapzoneAPIException {
             try {
-                monitor.beginTask( "Upload bundle " + bundle.getName(), (int)bundle.length() );
+                monitor.beginTask( "Installing bundle " + bundle.getName(), (int)bundle.length() );
                 Folder pluginsFolder = (Folder)folder.child( "plugins" );
+                
+                // delete previous versions
+                String basename = StringUtils.substringBefore( bundle.getName(), "_" );
+                for (Resource child : pluginsFolder.children()) {
+                    if (child.name.startsWith( basename )) {
+                        monitor.subTask( "Delete previous version " + child.name );
+                        child.delete();
+                    }
+                }
+                
+                // upload
+                monitor.subTask( "Uploading" );
                 pluginsFolder.upload( bundle, new ProgressListenerAdapter( monitor ) );
                 monitor.done();
             }
