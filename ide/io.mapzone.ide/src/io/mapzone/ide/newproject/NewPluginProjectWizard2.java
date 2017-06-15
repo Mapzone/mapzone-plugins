@@ -20,6 +20,7 @@ import java.util.Map;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
@@ -32,6 +33,7 @@ import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 
 import io.mapzone.ide.IdePlugin;
+import io.mapzone.ide.MapzonePluginProject;
 
 /**
  * Extends the PDE {@link NewPluginProjectWizard} by the {@link LoginWizardPage}
@@ -96,6 +98,25 @@ public class NewPluginProjectWizard2
             
             // create project
             boolean success = super.performFinish();
+            
+            // configure
+            IProject project = fMainPage.getProjectHandle();
+            getContainer().run( true, true, monitor -> {
+                try {
+                    // add nature
+                    monitor.beginTask( "Configure mapzone.io settings", 2 );
+                    MapzonePluginProject mproject = MapzonePluginProject.of( project );
+                    mproject.addNature( submon( monitor, 1 ) );
+           
+                    // store connection
+                    mproject.connectTo( wizardData.mapzoneProject );
+                    monitor.done();
+                }
+                catch (Exception e) {
+                    throw new InvocationTargetException( e );
+                }
+            });
+            
             
 //            // adapt project
 //            if (success) {

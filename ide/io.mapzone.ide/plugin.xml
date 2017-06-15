@@ -38,5 +38,34 @@
             class="io.mapzone.ide.PeriodicGCJobStartup">
       </startup>
    </extension>
+   <extension
+         id="io.mapzone.ide.MapzoneNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="io.mapzone.ide.MapzoneProjectNature">
+         </run>
+      </runtime>
+      <requires-nature
+            id="org.eclipse.pde.PluginNature">
+      </requires-nature>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="io.mapzone.ide.MapzoneProjectPropertyPage"
+            id="io.mapzone.ide.MapzoneProjectPropertyPage"
+            name="mapzone.io">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="io.mapzone.ide.MapzoneNature">
+               </test>
+            </adapt>
+         </enabledWhen>
+      </page>
+   </extension>
 
 </plugin>

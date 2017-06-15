@@ -15,15 +15,16 @@
 package io.mapzone.ide.exportproject;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
+import org.apache.commons.io.FileUtils;
+
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardPage;
 
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -31,8 +32,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressConstants;
 
 import org.eclipse.core.internal.resources.Project;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PluginModelManager;
@@ -40,7 +46,9 @@ import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import io.mapzone.ide.IdePlugin;
+import io.mapzone.ide.MapzonePluginProject;
 
 /**
  * Uses the PDE {@link PluginExportOperation} to create a plugin jar and than send it
@@ -57,51 +65,46 @@ public class ExportPluginProjectWizard
     
     private File                    exportDir;
 
+    private WizardData              data = new WizardData();
+    
 
     @Override
     public void init( IWorkbench workbench, @SuppressWarnings( "hiding" ) IStructuredSelection selection ) {
-        this.selection = selection;
-        setNeedsProgressMonitor( true );
-        exportDir = new File( "/tmp", IdePlugin.ID + ".export" );
-        exportDir.deleteOnExit();
-        
-        if (selection.isEmpty()) {
-            throw new IllegalStateException( "Choose the plugin-in project to export." );
+        try {
+            this.selection = selection;
+            setNeedsProgressMonitor( true );
+            exportDir = Files.createTempDirectory( IdePlugin.ID + ".export" ).toFile();
+            exportDir.deleteOnExit();
+            
+            if (selection.isEmpty()) {
+                throw new IllegalStateException( "Choose the plugin-in project to export." );
+            }
+            else if (selection.size() > 1) {
+                throw new IllegalStateException( "Choose just one plugin-in project to export." );
+            }
+            else if (!(selection.getFirstElement() instanceof IProject)) {
+                throw new IllegalStateException( "Choose an IProject to export." );
+            }
+            data.mproject = MapzonePluginProject.of( (IProject)selection.getFirstElement() );
         }
-        else if (selection.size() > 1) {
-            throw new IllegalStateException( "Choose just one plugin-in project to export." );
+        catch (IOException e) {
+            throw new RuntimeException( e );
         }
     }
 
+    
     @Override
     public void addPages() {
-        addPage( new ExportWizardPage() );
+        addPage( new ExportPluginLoginPage( data ) );
     }
 
-    /**
-     * 
-     */
-    public class ExportWizardPage
-            extends WizardPage {
-
-        protected ExportWizardPage() {
-            super( "export1Page" );
-            setTitle( "Export" );
-            setDescription( "Install plugin-in in project on mapzone.io" );
-        }
-
-        @Override
-        public void createControl( Composite parent ) {
-            Composite container = new Composite( parent, SWT.NULL );
-            setControl( container );
-        }
-    }
-
+    
     @Override
     public boolean performFinish() {
         scheduleExportJob();
         return true;
     }
+    
     
     protected void scheduleExportJob() {
         Project project = (Project)selection.getFirstElement();
@@ -127,6 +130,13 @@ public class ExportPluginProjectWizard
 //            RuntimeInstallJob.modifyInfoForInstall(info);
 //        }
 
+        try {
+            FileUtils.cleanDirectory( exportDir );
+        }
+        catch (IOException e) {
+            throw new RuntimeException( e );
+        }
+        
         PluginExportOperation job = new PluginExportOperation( info, PDEUIMessages.PluginExportJob_name );
         job.setUser( true );
         job.setRule( ResourcesPlugin.getWorkspace().getRoot() );
@@ -135,6 +145,7 @@ public class ExportPluginProjectWizard
             @Override
             public void done( IJobChangeEvent ev ) {
                 if (ev.getResult().isOK()) {
+                    // install if OK
                     scheduleInstallJob();
                 }
                 if (job.hasAntErrors()) {
@@ -162,15 +173,19 @@ public class ExportPluginProjectWizard
 
     
     protected void scheduleInstallJob() {
-        throw new RuntimeException( "not yet..." );
-//        Job job = new Job( "Install plugin" ) {
-//            @Override
-//            protected IStatus run( IProgressMonitor monitor ) {
-//                MapzoneAPIClient client = new MapzoneAPIClient();
-//            }
-//        };
-//        job.setUser( true );
-//        job.schedule();
+        Job job = new Job( "Install plugin" ) {
+            @Override
+            protected IStatus run( IProgressMonitor monitor ) {
+                File dir = new File( exportDir, "plugins" );
+                File[] files = dir.listFiles();
+                assert files.length == 1;
+                data.mproject.connect( null ).installBundle( files[0], monitor );
+                return Status.OK_STATUS;
+            }
+        };
+        job.setUser( true );
+        job.setPriority( Job.BUILD );
+        job.schedule();
     }
     
 }

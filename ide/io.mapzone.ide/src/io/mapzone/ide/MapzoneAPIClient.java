@@ -35,6 +35,7 @@ import io.milton.httpclient.Resource;
  * @author Falko Bräutigam
  */
 public class MapzoneAPIClient {
+        //implements AutoCloseable {
 
     public static final String  WEBDAV_PATH = "/webdav";
     
@@ -52,14 +53,37 @@ public class MapzoneAPIClient {
         host = new Host( server, WEBDAV_PATH, port, user, password, null, 30000, null, null );
     }
 
-    
-//    public Optional<MapzoneProject> findProject( String organization, String name ) 
-//            throws NotAuthorizedException, BadRequestException, IOException, HttpException {
-//        MapzoneProject project = new MapzoneProject( organization, name );
-//        return Optional.ofNullable( project.exists() ? project : null );
-//    }
-    
-    
+    //@Override
+    public void close() throws Exception {
+        host.getClient().getConnectionManager().shutdown();
+        host = null;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        close();
+    }
+
+    public String hostname() {
+        return host.server;
+    }
+
+    public Integer port() {
+        return host.port;
+    }
+
+    public String username() {
+        return host.user;
+    }
+
+
+//  public Optional<MapzoneProject> findProject( String organization, String name ) 
+//  throws NotAuthorizedException, BadRequestException, IOException, HttpException {
+//MapzoneProject project = new MapzoneProject( organization, name );
+//return Optional.ofNullable( project.exists() ? project : null );
+//}
+
+
     public List<MapzoneProject> findProjects( String organization ) throws MapzoneAPIException {
         try {
             String path = PROJECTS.child( organization ).toPath();
@@ -110,6 +134,10 @@ public class MapzoneAPIClient {
             return folder.displayName;
         }
 
+        public MapzoneAPIClient client() {
+            return MapzoneAPIClient.this;
+        }
+        
         public boolean exists() throws MapzoneAPIException {
             try {
                 String path = PROJECTS.child( organization ).child( name() ).toPath();
@@ -184,16 +212,27 @@ public class MapzoneAPIClient {
     // Test ***********************************************
     
     public static void main( String[] args ) throws Exception {
-        MapzoneAPIClient service = new MapzoneAPIClient( "localhost", 8090, "falko", "???" );
+        String pwd = System.getProperty( "io.mapzone.ide.MapzoneAPIClient.pwd" );
+        //MapzoneAPIClient client = new MapzoneAPIClient( "mapzone.io", 80, "falko", pwd )
+        MapzoneAPIClient client = new MapzoneAPIClient( "localhost", 8090, "falko", pwd );
         
-        MapzoneProject project = service.findProjects( "falko" ).stream()
-                .filter( p -> p.name().equalsIgnoreCase( "develop" ) )
+        client.findProjects( "falko" ).forEach( p ->
+                System.out.println( "Project: " + p.organization + " / " + p.name() ) );
+            
+        //downloadTarget( service, "falko", "develop" );
+    }
+
+    
+    protected static void downloadTarget( MapzoneAPIClient client, String org, String projectname ) {
+        MapzoneProject project = client.findProjects( org ).stream()
+                .filter( p -> p.name().equalsIgnoreCase( projectname ) )
                 .findAny().get();
-        
+
         System.out.println( "Project: " + project.organization + " / " + project.name() );
         java.io.File dir = new java.io.File( "/tmp", "test.target" );
         dir.mkdir();
         dir.deleteOnExit();
+        
         project.downloadBundles( dir, new NullProgressMonitor() {
             @Override
             public void beginTask( String name, int totalWork ) {
