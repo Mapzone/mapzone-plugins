@@ -27,13 +27,14 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
 
 import io.mapzone.ide.MapzoneAPIClient;
 import io.mapzone.ide.MapzoneAPIClient.MapzoneProject;
 import io.mapzone.ide.MapzoneAPIException;
 import io.mapzone.ide.util.FormDataFactory;
-import io.mapzone.ide.util.FormLayoutFactory;
+import io.mapzone.ide.util.InputForm;
 
 /**
  * 
@@ -43,6 +44,8 @@ import io.mapzone.ide.util.FormLayoutFactory;
 public class LoginWizardPage 
         extends WizardPage {
     
+    private InputForm           form;
+
     private ListViewer          projectsList;
 
     private Text                userText;
@@ -55,7 +58,7 @@ public class LoginWizardPage
     public LoginWizardPage( WizardData wizardData ) {
         super( "projectPage" );
         this.wizardData = wizardData;
-        setTitle( "New plug-in project" );
+        setTitle( "Connect to mapzone.io" );
         setDescription( "Login to your mapzone.io account" );
         setPageComplete( false );
     }
@@ -63,13 +66,13 @@ public class LoginWizardPage
 
     public void createControl( Composite parent ) {
         Composite container = new Composite( parent, SWT.NULL );
+        form = new InputForm( container );
 
         // username / password
-        userText = new Text( container, SWT.BORDER );
+        userText = form.createText( "Account name", null );
         userText.setToolTipText( "mapzone.io account name" );
         
-        pwdText = new Text( container, SWT.BORDER|SWT.PASSWORD );
-        pwdText.setToolTipText( "Password" );
+        pwdText = form.createText( "Password", null, SWT.PASSWORD );
         
         Button loginBtn = new Button( container, SWT.PUSH );
         loginBtn.setText( "Login" );
@@ -81,7 +84,7 @@ public class LoginWizardPage
         
         // label
         Label label = new Label( container, SWT.NULL );
-        label.setText( "Choose a mapzone.io project to connect the new IDE project with" );
+        label.setText( "Your mapzone.io projects" );
 
         // projectsList
         projectsList = new ListViewer( container, SWT.BORDER|SWT.SINGLE|SWT.V_SCROLL );
@@ -92,18 +95,19 @@ public class LoginWizardPage
                 return ((MapzoneProject)elm).name();
             }
         });
+        projectsList.setComparator( new ViewerComparator() );
         projectsList.addSelectionChangedListener( ev -> {
             wizardData.mapzoneProject = (MapzoneProject)projectsList.getStructuredSelection().getFirstElement();
             updateStatus();
         });
 
         // layout
-        container.setLayout( FormLayoutFactory.defaults().spacing( 8 ).create() );
-        FormDataFactory.on( userText ).fill().noBottom();
-        FormDataFactory.on( pwdText ).fill().top( userText ).noBottom();
-        FormDataFactory.on( loginBtn ).fill().top( pwdText ).noBottom();
-        FormDataFactory.on( label ).fill().top( loginBtn ).noBottom();
-        FormDataFactory.on( projectsList.getControl() ).fill().top( label, -5 );
+//        container.setLayout( FormLayoutFactory.defaults().spacing( 8 ).create() );
+//        FormDataFactory.on( userText ).fill().noBottom();
+//        FormDataFactory.on( pwdText ).fill().top( userText ).noBottom();
+        FormDataFactory.on( loginBtn ).fill().top( pwdText, 5 ).noBottom();
+        FormDataFactory.on( label ).fill().left( 0, 3 ).top( loginBtn, 5 ).noBottom();
+        FormDataFactory.on( projectsList.getControl() ).fill().top( label );
 
         setControl( container );
     }
@@ -112,7 +116,8 @@ public class LoginWizardPage
     protected void doLogin() {
         try {
             String username = userText.getText();
-            MapzoneAPIClient service = new MapzoneAPIClient( "localhost", 8090, username, pwdText.getText() );
+            MapzoneAPIClient service = new MapzoneAPIClient( "mapzone.io", 80, username, pwdText.getText() );
+//            MapzoneAPIClient service = new MapzoneAPIClient( "localhost", 8090, username, pwdText.getText() );
             List<MapzoneProject> projects = service.findProjects( username );
             
             projectsList.setInput( projects );
@@ -133,9 +138,10 @@ public class LoginWizardPage
         boolean complete = true;
         
         if (wizardData.mapzoneClient == null) {
+            description = "Sign in to your mapzone.io account";
             complete = false;
         }
-        else if (wizardData.mapzoneProject == null) {
+        if (wizardData.mapzoneProject == null) {
             description = "Choose a project to connect to.";
             complete = false;
         }
