@@ -1,6 +1,6 @@
 # Install and use Eclipse IDE
 
-The [Eclipse IDE](http://eclipse.org) is used to develop plugins for mapzone.io. On top of this we provide an extension that supports:
+The [Eclipse IDE](http://eclipse.org) is used to develop plugins for mapzone.io. We provide an Eclipse extension that supports:
 
   * creating new plugin projects connected to a mapzone.io project
   * show special properties of the plugin project
