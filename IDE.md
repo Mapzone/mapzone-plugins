@@ -17,10 +17,12 @@ The [Eclipse IDE](http://eclipse.org) is used to develop plugins for mapzone.io.
 
 A plugin development project for mapzone.io is just like any other Eclipse plugin project, except that is **connected** to a project on your mapzone.io account. When you create a new plugin development project then a **new target platform** is generated from the plugins of the mapzone.io project!
 
-Steps to create a new plugin development project:
+### Steps to create a new plugin development project:
 
   1. (optional) create a new workspace (for the new target platform)
   2. File -> New -> Other... -> mapzone.io/Plug-In Project
   3. specify your mapzone.io account name and password
   4. specify general project settings
   5. Finish
+
+You may handle the code of the new plugin development project just like any other Eclipse plugin project, especially you can use your favourite version control system.
