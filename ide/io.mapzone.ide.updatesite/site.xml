@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/io.mapzone.ide.feature_1.0.0.201707021502.jar" id="io.mapzone.ide.feature">
+      <category name="io.mapzone.ide.category"/>
+   </feature>
+   <category-def name="io.mapzone.ide.category" label="mapzone.io"/>
+</site>
