@@ -40,13 +40,28 @@ public class InputForm {
     }
     
     
+    public Control createLabel( String label, String value, int... styles ) {
+        Text control = new Text( container, styleBits( styles ) );
+        control.setText( value );
+        control.setEditable( false );
+        return layouter.addField( label, control );
+    }
+    
+    
+    /**
+     * Creates a {@link Text} with style bit {@link SWT#BORDER}. 
+     *
+     * @param label
+     * @param value The default value, or null.
+     * @param styles The style of the control to create.
+     * @return The newly created control.
+     */
     public Text createText( String label, String value, int... styles ) {
         Text control = new Text( container, SWT.BORDER | styleBits( styles ) );
-        layouter.addField( label, control );
         if (value != null) {
             control.setText( value );
         }
-        return control;
+        return layouter.addField( label, control );
     }
 
     
@@ -66,7 +81,7 @@ public class InputForm {
             this.container = container;
         }
 
-        public abstract void addField( String label, Control control );
+        public abstract <C extends Control> C addField( String label, C control );
     }
     
 
@@ -84,7 +99,7 @@ public class InputForm {
         }
 
         @Override
-        public void addField( String label, Control control ) {
+        public <C extends Control> C addField( String label, C control ) {
             Label l = new Label( container, SWT.NONE );
             l.setText( label );
             
@@ -94,6 +109,7 @@ public class InputForm {
                 lfd.top( last, 5 );
             }
             last = control;
+            return control;
         }
     }
     

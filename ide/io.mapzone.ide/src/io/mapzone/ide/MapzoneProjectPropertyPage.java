@@ -25,8 +25,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 
-import io.mapzone.ide.util.FormDataFactory;
-import io.mapzone.ide.util.FormLayoutFactory;
+import io.mapzone.ide.util.InputForm;
 
 /**
  * 
@@ -45,24 +44,21 @@ public class MapzoneProjectPropertyPage
     @Override
     protected Control createContents( Composite parent ) {
         Composite container = new Composite( parent, SWT.NULL );
+        InputForm form = new InputForm( container );
         
         MapzonePluginProject mproject = MapzonePluginProject.of( project() );
 
+        // hostname
+        form.createLabel( "Host", mproject.hostname() );
+
         // username
-        userText = new Text( container, SWT.BORDER );
+        userText = form.createText( "Account name", mproject.username() );
         userText.setEditable( false );
         userText.setToolTipText( "mapzone.io account name" );
-        userText.setText( mproject.username() );
 
-        projectText = new Text( container, SWT.BORDER );
+        projectText = form.createText( "Project", mproject.projectname() );
         projectText.setEditable( false );
         projectText.setToolTipText( "mapzone.io project name" );
-        projectText.setText( mproject.projectname() );
-
-        // layout
-        container.setLayout( FormLayoutFactory.defaults().spacing( 5 ).create() );
-        FormDataFactory.on( userText ).fill().noBottom();
-        FormDataFactory.on( projectText ).fill().top( userText ).noBottom();
 
         return container;
     }
