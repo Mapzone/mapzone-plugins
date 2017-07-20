@@ -77,22 +77,42 @@
                label="mapzone.io">
             <command
                   commandId="io.mapzone.ide.command.updateTarget"
-                  label="Update target platform (from instance)"
-                  style="push">
-               <parameter
-                     name="io.mapzone.ide.parameter.targetSource"
-                     value="instance">
-               </parameter>
-            </command>
-            <command
-                  commandId="io.mapzone.ide.command.updateTarget"
-                  label="Update target platform (from jenkins)"
-                  style="push">
+                  label="Update target platform (latest build)"
+                  style="push"
+                  tooltip="Update the currently active target from latest build">
                <parameter
                      name="io.mapzone.ide.parameter.targetSource"
                      value="jenkins">
                </parameter>
             </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?before=additions">
+         <menu
+               label="mapzone.io">
+            <command
+                  commandId="io.mapzone.ide.command.updateTarget"
+                  label="Update target platform (from instance)"
+                  style="push"
+                  tooltip="Update the currently active target from the mapzone.io project">
+               <parameter
+                     name="io.mapzone.ide.parameter.targetSource"
+                     value="instance">
+               </parameter>
+            </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <test
+                        property="org.eclipse.core.resources.projectNature"
+                        value="io.mapzone.ide.MapzoneNature">
+                  </test>
+               </iterate>
+            </visibleWhen>
          </menu>
       </menuContribution>
    </extension>
