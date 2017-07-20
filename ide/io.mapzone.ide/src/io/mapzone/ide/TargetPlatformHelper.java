@@ -12,12 +12,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  */
-package io.mapzone.ide.newproject;
+package io.mapzone.ide;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+
+import org.apache.commons.io.FileUtils;
 
 import com.google.common.collect.FluentIterable;
 
@@ -28,8 +31,6 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
-
-import io.mapzone.ide.IdePlugin;
 
 /**
  * 
@@ -52,10 +53,10 @@ public class TargetPlatformHelper {
     public TargetPlatformHelper() {
         BundleContext bundleContext = IdePlugin.instance().getBundle().getBundleContext();
         ServiceReference<ITargetPlatformService> ref = bundleContext.getServiceReference( ITargetPlatformService.class );
-        service = bundleContext.getService(ref);
+        service = bundleContext.getService( ref );
     }
     
-    
+
     public Iterable<ITargetDefinition> list( IProgressMonitor monitor ) {
         monitor = monitor != null ? monitor : new NullProgressMonitor();
         return FluentIterable.from( service.getTargets( monitor ) )
@@ -67,6 +68,36 @@ public class TargetPlatformHelper {
                         throw new RuntimeException( e );
                     }
                 });
+    }
+    
+    
+    public ITargetDefinition active( IProgressMonitor monitor ) throws CoreException {
+        return service.getWorkspaceTargetDefinition();    
+    }
+    
+    
+    /**
+     * Gets the bundle contents (location) of the given target.
+     *
+     * @param target
+     * @param clear True signals that the entire contents should be deleted before returning. 
+     * @throws CoreException 
+     */
+    public File contents( ITargetDefinition target ) throws CoreException {
+        ITargetLocation[] locations = target.getTargetLocations();
+        assert locations != null && locations.length == 1 : "Should be exactly 1 target location.";
+        return new File( locations[0].getLocation( true ) );
+    }
+    
+    
+    public void updateContents( ITargetDefinition target, File temp, IProgressMonitor monitor ) 
+            throws CoreException, IOException {
+        File contents = contents( target );
+        FileUtils.cleanDirectory( contents );
+        FileUtils.copyDirectory( temp, contents );
+        
+        target.resolve( monitor );
+        LoadTargetDefinitionJob.load( target );
     }
     
     
@@ -103,4 +134,5 @@ public class TargetPlatformHelper {
 //            LoadTargetDefinitionJob.load(target);
 //        }
     }
+
 }

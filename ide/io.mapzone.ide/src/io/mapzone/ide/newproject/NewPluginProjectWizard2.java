@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 
 import io.mapzone.ide.IdePlugin;
 import io.mapzone.ide.MapzonePluginProject;
+import io.mapzone.ide.TargetPlatformHelper;
 
 /**
  * Extends the PDE {@link NewPluginProjectWizard} by the {@link LoginWizardPage}

@@ -67,5 +67,56 @@
          </enabledWhen>
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?before=additions">
+         <menu
+               id="io.mapzone.main"
+               label="mapzone.io">
+            <command
+                  commandId="io.mapzone.ide.command.updateTarget"
+                  label="Update target platform (from instance)"
+                  style="push">
+               <parameter
+                     name="io.mapzone.ide.parameter.targetSource"
+                     value="instance">
+               </parameter>
+            </command>
+            <command
+                  commandId="io.mapzone.ide.command.updateTarget"
+                  label="Update target platform (from jenkins)"
+                  style="push">
+               <parameter
+                     name="io.mapzone.ide.parameter.targetSource"
+                     value="jenkins">
+               </parameter>
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="io.mapzone.ide.command.updateTarget"
+            name="Update target platform">
+         <commandParameter
+               id="io.mapzone.ide.parameter.targetSource"
+               name="name"
+               optional="false">
+            <values
+                  class="io.mapzone.ide.UpdateTargetParameterValues">
+            </values>
+         </commandParameter>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="io.mapzone.ide.UpdateTargetHandler"
+            commandId="io.mapzone.ide.command.updateTarget">
+      </handler>
+   </extension>
 
 </plugin>
