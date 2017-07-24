@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.polymap.core.data.process.providers">
+      <provider
+            class="org.polymap.tutorial.process.TutorialModuleProvider">
+      </provider>
+   </extension>
+
+</plugin>
