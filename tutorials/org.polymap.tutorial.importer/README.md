@@ -1,27 +1,23 @@
 # Importer Tutorial
 
-This tutorial shows how to write a new importer. The importer in this tutorial does nothing useful it provides the skelleton that you can fill with your code in order to provide useful behaviour.
-
-Find the code of this tutorial here: [Plug-in example code](https://github.com/Polymap4/polymap4-tutorials/tree/master/org.polymap.tutorial.importer)
+This tutorial shows how to write a new importer. The importer in this tutorial does nothing useful it provides the skeleton that you can fill with your code in order to provide useful behaviour.
 
 ## Overview
 
 The goal of an "import" ist to transform a given input into something that can be used as a data source by the system. There is a huge number of input sources and formats that comes in many different flavours. A lot of those sources and formats are not well specified and even if so the particular input might diverge. So the import is about assumtions, guesses and questions. For example:
 
-  * What is the CRS of the shapefile? (if *.prj is missing)
-  * What is charset of a *.zip file? (filesnames and content)
+  * What is the CRS of the shapefile? (if \*.prj is missing)
+  * What is charset of a \*.zip file? (filesnames and content)
   * What is delimiter of a CSV?
-  * Does a WMS require authentication?
-  * What layers to import from a WFS? (?)
   * ... etc.
 
 The Import framework provides the notion of an [Importer](https://github.com/Polymap4/polymap4-p4/blob/master/org.polymap.p4.data.importer/src/org/polymap/p4/data/importer/Importer.java) and an [ImporterFactory](https://github.com/Polymap4/polymap4-p4/blob/master/org.polymap.p4.data.importer/src/org/polymap/p4/data/importer/ImporterFactory.java). Both are interfaces to extend. 
 
 ## The Importer
 
-Example: [SimpleImporter](https://github.com/Polymap4/polymap4-tutorials/blob/master/org.polymap.tutorial.importer/src/org/polymap/tutorial/importer/simple/SimpleImporter.java)
+Example: [SimpleImporter](./src/org/polymap/tutorial/importer/simple/SimpleImporter.java)
 
-An Importer basically connects any data source to the system. This does not necessarily mean that any data is actually transfered. The main purpose of an Importer is to gather information from the user (and maybe the data source) so that the data source can be connected to the system.
+An Importer basically connects any data source to the system. This does not necessarily mean that any data is actually transfered. The main purpose of an Importer is to gather information from the user (and maybe the data source) so that the data source can then be connected to the system.
 
 The job of an **Importer** is to:
 
@@ -39,7 +35,7 @@ An Importer works a specified **data/format**. It does not know where this data 
 
 Each step is handled by a particular Importer. When you write your own Importer you don't have to take care of downloading/uploading, unpacking archives, filename encoding, etc. Your ImportFactory just checks if a single file is available that is suited.
 
-Example: [SimpleImporterFactory](https://github.com/Polymap4/polymap4-tutorials/blob/master/org.polymap.tutorial.importer/src/org/polymap/tutorial/importer/simple/SimpleImporterFactory.java)
+Example: [SimpleImporterFactory](./src/org/polymap/tutorial/importer/simple/SimpleImporterFactory.java)
 
 ## Prompts
 
@@ -49,19 +45,19 @@ Verified assumptions and answered questions are **Prompts**. Prompts are generat
   * a single click action (verify, delete, multiple choice)
   * full blown UI to gather more information from the user
 
-Example: [SimpleImport.createPrompts()](https://github.com/Polymap4/polymap4-tutorials/blob/master/org.polymap.tutorial.importer/src/org/polymap/tutorial/importer/simple/SimpleImporter.java#L70-L97).
+Example: [SimpleImport.createPrompts()](./src/org/polymap/tutorial/importer/simple/SimpleImporter.java#L70-L97).
 
 There are a number of predefined **standard prompts**. Most of them can be found in the [org.polymap.p4.data.importer.prompts](https://github.com/Polymap4/polymap4-p4/tree/master/org.polymap.p4.data.importer/src/org/polymap/p4/data/importer/prompts) package.
 
 ## Output: FeatureCollection
 
-**Example**: [SimpleImporter.importFeatureCollection()](https://github.com/Polymap4/polymap4-tutorials/blob/master/org.polymap.tutorial.importer/src/org/polymap/tutorial/importer/simple/SimpleImporter.java#L163-L171)
+**Example**: [SimpleImporter.importFeatureCollection()](./src/org/polymap/tutorial/importer/simple/SimpleImporter.java#L163-L171)
 
 Importing a FeatureCollection into the internal database is easy. Just leave the FeatureCollection in a @ContextOut member and you are done. The framework will pick this FeatureCollection, copies its content into the the internal database and ask the user to create a new layer for it. Make sure that name of the schema does not already exists in the internal database. The [SchemaNamePrompt](https://github.com/Polymap4/polymap4-p4/blob/master/org.polymap.p4.data.importer/src/org/polymap/p4/data/importer/prompts/SchemaNamePrompt.java) helps to ensure this.
 
 ## Output: New Catalog entry
 
-**Example**: [SimpleImporter.importCatalogEntry()](https://github.com/Polymap4/polymap4-tutorials/blob/master/org.polymap.tutorial.importer/src/org/polymap/tutorial/importer/simple/SimpleImporter.java#L174-L232)
+**Example**: [SimpleImporter.importCatalogEntry()](./src/org/polymap/tutorial/importer/simple/SimpleImporter.java#L174-L232)
 
 Rather than copying features to the internal datastore you can also directly link a given DataStore to the [[Catalog]]. The Catalog holds the metadata of each and every data source connected to the system. Possible entries in the Catalog are:
 
@@ -78,8 +74,8 @@ Managing your own entries in the Catalog allows to connect **any type** of data 
 
 Consider the import of a Sqlite database. The Sqlite contains features and their schemas. GeoTools can read it directly, so there is no need to copy this into the internal datebase. We can simply copy the database file into the Workspace and create **one** new entry for its metadata in the Catalog. Afterwards the user will find a this new entry in the layer panel under *Data sources -> Project's data sources*.
 
-**Code example**: [SimpleImporter.createCatalogEntry()](https://github.com/Polymap4/polymap4-tutorials/blob/master/org.polymap.tutorial.importer/src/org/polymap/tutorial/importer/simple/SimpleImporter.java#L183-L210)
+**Code example**: [SimpleImporter.createCatalogEntry()](./src/org/polymap/tutorial/importer/simple/SimpleImporter.java#L183-L210)
 
 One possible next step is to **create layers** for resources in the Sqlite database. Maybe the structure of the Sqlite is well known and there is set of resources (tables) and schemas. An Importer can directly create new layer(s) connected to that resource(s). And also define names and styles.
 
-**Code example**: [SimpleImporter.createCatalogEntry()](https://github.com/Polymap4/polymap4-tutorials/blob/master/org.polymap.tutorial.importer/src/org/polymap/tutorial/importer/simple/SimpleImporter.java#L212-L225)
+**Code example**: [SimpleImporter.createCatalogEntry()](./src/org/polymap/tutorial/importer/simple/SimpleImporter.java#L212-L225)
