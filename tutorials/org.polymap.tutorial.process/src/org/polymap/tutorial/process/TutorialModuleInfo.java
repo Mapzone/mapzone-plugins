@@ -31,7 +31,7 @@ import org.polymap.core.data.process.ModuleInfo;
 /**
  * Provides information about a processing module.
  * <p/>
- * In this tutorial the SPI of modules is very simple: {@link TutorialModule}. This info
+ * In this tutorial the SPI of modules is very simple: {@link TutorialModuleBase}. This info
  * class gathers information just from the module class. For real world applications
  * that module may use annotations ot the like.
  *
@@ -40,10 +40,10 @@ import org.polymap.core.data.process.ModuleInfo;
 public class TutorialModuleInfo
         implements ModuleInfo {
 
-    private Class<? extends TutorialModule>       moduleType;
+    private Class<? extends TutorialModuleBase>       moduleType;
     
     
-    protected TutorialModuleInfo( Class<? extends TutorialModule> moduleType ) {
+    protected TutorialModuleInfo( Class<? extends TutorialModuleBase> moduleType ) {
         this.moduleType = moduleType;
     }
 
@@ -97,13 +97,13 @@ public class TutorialModuleInfo
 
     @Override
     public void execute( Object module, IProgressMonitor monitor ) throws OperationCanceledException, Exception {
-        ((TutorialModule)module).execute( monitor );
+        ((TutorialModuleBase)module).execute( monitor );
     }
 
 
     /**
      * Gather information from the plan {@link Field} object which represents
-     * a field of a {@link TutorialModule processing module}.
+     * a field of a {@link TutorialModuleBase processing module}.
      */
     class TutorialFieldInfo 
             implements FieldInfo {

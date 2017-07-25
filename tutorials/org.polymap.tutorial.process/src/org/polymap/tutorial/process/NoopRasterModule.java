@@ -23,16 +23,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
- * A module processing raster data ({@link GridCoverage2D}). This module does nothing
+ * This module processes raster data ({@link GridCoverage2D}). It does nothing
  * useful, it just waits for 10 seconds.
  *
  * @author Falko Bräutigam
  */
 public class NoopRasterModule
-        extends TutorialModule {
+        extends TutorialModuleBase {
 
     private static final Log log = LogFactory.getLog( NoopRasterModule.class );
 
+    // members are detected as input/output fields by TutorialModuleInfo
+    
     public GridCoverage2D       input;
     
     public int                  countInput = 5;

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
- * Basic SPI of processing modules.
+ * Defines the basic interface of processing modules of this tutorial.
  * <p/>
  * All public <b>members</b> are treated as module <b>fields</b>. If the name of the
  * member starts with "in" or ends with "input" then it is a input field. Otherwise
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * 
  * @author Falko Bräutigam
  */
-public abstract class TutorialModule {
+public abstract class TutorialModuleBase {
 
     public abstract void execute( IProgressMonitor monitor ) throws OperationCanceledException, Exception;
     
