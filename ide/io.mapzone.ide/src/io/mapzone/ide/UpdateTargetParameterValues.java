@@ -35,11 +35,15 @@ public class UpdateTargetParameterValues
     /** Parameter value */
     public static final String  JENKINS = "jenkins";
 
+    /** Parameter value */
+    public static final String  JENKINS_CREATE = "jenkins-create";
+
     @Override
     public Map getParameterValues() {
         Map<String, String> result = new HashMap();
         result.put( "Instance", INSTANCE );
         result.put( "Jenkins", JENKINS );
+        result.put( "Jenkins Create", JENKINS_CREATE );
         return result;
     }
 }

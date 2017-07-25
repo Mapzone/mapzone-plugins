@@ -16,6 +16,7 @@ package io.mapzone.ide;
 
 import static io.mapzone.ide.UpdateTargetParameterValues.INSTANCE;
 import static io.mapzone.ide.UpdateTargetParameterValues.JENKINS;
+import static io.mapzone.ide.UpdateTargetParameterValues.JENKINS_CREATE;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -67,6 +68,7 @@ public class UpdateTargetHandler
         implements IHandler {
 
     public static final String  ARENA_DOWNLOAD_URL = "http://build.mapzone.io/release/io.mapzone.arena.product/1.0.0-SNAPSHOT/io.mapzone.arena.product-1.0.0-SNAPSHOT-linux.gtk.x86_64.zip";
+   // public static final String  ARENA_DOWNLOAD_URL = "file:///home/falko/servers/arena.zip";
     
     
     @Override
@@ -86,7 +88,12 @@ public class UpdateTargetHandler
                             IProject project = (IProject)sel.getFirstElement();
                             return updateFromInstance( project, monitor ); 
                         }
-                        case JENKINS: return updateFromJenkins( monitor ); 
+                        case JENKINS: {
+                            return updateFromJenkins( monitor ); 
+                        }
+                        case JENKINS_CREATE: {
+                            return createFromJenkins( monitor ); 
+                        }
                         default: throw new RuntimeException( "Unknown command parameter value: " + sourceParam );
                     }
                 }
@@ -183,7 +190,32 @@ public class UpdateTargetHandler
         return Status.OK_STATUS;
     }
     
+    
+    protected IStatus createFromJenkins( IProgressMonitor monitor ) throws CoreException, IOException {
+        monitor.beginTask( "Target platform", 10 );
+        String targetName = "Mapzone Platform";
+        File bundlesDir = new File( IdePlugin.instance().targetDir(), targetName );
+        
+        TargetPlatformHelper platforms = TargetPlatformHelper.instance();
 
+        // check existing
+        if (bundlesDir.exists()) {
+            for (ITargetDefinition target : platforms.list( submon( monitor, 1 ) )) {
+                if (target.getName().equals( targetName )) {
+                    throw new IllegalStateException( "Target platform exists already: " + target.getName() );
+                }
+            }
+            if (bundlesDir.listFiles().length > 0) {
+                throw new IllegalStateException( "Target platform directory exists: " + bundlesDir );
+            }
+        }
+        
+        bundlesDir.mkdir();
+        platforms.create( targetName, bundlesDir, true, submon( monitor, 2 ) );
+        return updateFromJenkins( submon( monitor, 8 ) );
+    }
+
+    
     protected IProgressMonitor submon( IProgressMonitor monitor, int ticks ) {
         return new SubProgressMonitor( monitor, ticks );
     }
