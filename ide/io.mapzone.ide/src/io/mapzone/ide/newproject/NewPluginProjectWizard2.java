@@ -84,7 +84,7 @@ public class NewPluginProjectWizard2
             getContainer().run( true, true, monitor -> {
                 try {
                     monitor.beginTask( "Target platform", 10 );
-                    String targetName = getPluginId() + ".target";
+                    String targetName = getPluginId() + " Platform";
                     File bundlesDir = new File( IdePlugin.instance().targetDir(), targetName );
                     bundlesDir.mkdir();
                     

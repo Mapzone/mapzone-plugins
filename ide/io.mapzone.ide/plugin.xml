@@ -77,6 +77,16 @@
                label="mapzone.io">
             <command
                   commandId="io.mapzone.ide.command.updateTarget"
+                  label="Create target platform (latest build)"
+                  style="push"
+                  tooltip="Creates a new active target platform from latest build">
+               <parameter
+                     name="io.mapzone.ide.parameter.targetSource"
+                     value="jenkins-create">
+               </parameter>
+            </command>
+            <command
+                  commandId="io.mapzone.ide.command.updateTarget"
                   label="Update target platform (latest build)"
                   style="push"
                   tooltip="Update the currently active target from latest build">

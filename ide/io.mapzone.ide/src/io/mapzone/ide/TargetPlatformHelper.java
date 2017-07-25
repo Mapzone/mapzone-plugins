@@ -57,7 +57,7 @@ public class TargetPlatformHelper {
     }
     
 
-    public Iterable<ITargetDefinition> list( IProgressMonitor monitor ) {
+    public FluentIterable<ITargetDefinition> list( IProgressMonitor monitor ) {
         monitor = monitor != null ? monitor : new NullProgressMonitor();
         return FluentIterable.from( service.getTargets( monitor ) )
                 .transform( handle -> {
