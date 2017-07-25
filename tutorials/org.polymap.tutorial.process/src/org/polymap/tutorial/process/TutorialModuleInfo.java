@@ -31,9 +31,10 @@ import org.polymap.core.data.process.ModuleInfo;
 /**
  * Provides information about a processing module.
  * <p/>
- * In this tutorial the SPI of modules is very simple: {@link TutorialModuleBase}. This info
- * class gathers information just from the module class. For real world applications
- * that module may use annotations ot the like.
+ * In this tutorial the SPI of modules is very simple: {@link TutorialModuleBase}.
+ * This info class gathers information from the module class. For real world
+ * applications annotations might be used or any other source of meta data about a
+ * module.
  *
  * @author Falko Bräutigam
  */
@@ -41,7 +42,6 @@ public class TutorialModuleInfo
         implements ModuleInfo {
 
     private Class<? extends TutorialModuleBase>       moduleType;
-    
     
     protected TutorialModuleInfo( Class<? extends TutorialModuleBase> moduleType ) {
         this.moduleType = moduleType;
@@ -102,14 +102,15 @@ public class TutorialModuleInfo
 
 
     /**
-     * Gather information from the plan {@link Field} object which represents
-     * a field of a {@link TutorialModuleBase processing module}.
+     * Provides information about a field of a module.
+     * <p/>
+     * This info class gathers information from the plain {@link Field} object which
+     * represents a field of a {@link TutorialModuleBase processing module}.
      */
     class TutorialFieldInfo 
             implements FieldInfo {
 
         private Field           f;
-        
         
         protected TutorialFieldInfo( Field f ) {
             this.f = f;
