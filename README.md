@@ -25,3 +25,4 @@ A plugin can be installed in one or more projects of the organization. The dashb
 ## Guides and Tutorials
 
   * [Install and use Eclipse IDE](IDE.md)
+  * [Programming tutorials](tutorials/)
