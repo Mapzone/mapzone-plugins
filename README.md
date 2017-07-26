@@ -1,5 +1,10 @@
 # Developing plugins for mapzone.io
 
+### Guides and Tutorials
+
+  * [Install and use Eclipse IDE](IDE.md)
+  * [Programming tutorials](tutorials/)
+
 ## Introduction
 
 mapzone.io is an open and extensible platform for processing and publishing of geospatial data. It is based on the open source [Polymap4](https://github.com/Polymap4) project, which in turn is based on Eclipse and the [Equinox](http://www.eclipse.org/equinox/) plugin framework. On top of this foundation mapzone.io provides an API that allows to develop plugins and run them on the platform. Plugins can extend mapzone.io in every conceivable way, like importing new data formats, extending the style editor or adding a new sharelet. Plugins can be privat to a user or organization or they can be publicly available. Public plugins can be used by all users of mapzone.io.
@@ -21,8 +26,3 @@ A developer can provide **new versions** of the plugin at any time. The [Eclipse
 A user with admin privileges can choose a plugin to be used by an organization. If there is a fee for the plugin, then the admin is prompted to confirm that the monthly bill will be increased. Once activated a plugins can be used for **all projects** of an organization (or all personal projects of a user).
 
 A plugin can be installed in one or more projects of the organization. The dashboard of the organization lists all plugins currently in use. A user can terminate using a plugin at any time.
-
-## Guides and Tutorials
-
-  * [Install and use Eclipse IDE](IDE.md)
-  * [Programming tutorials](tutorials/)
