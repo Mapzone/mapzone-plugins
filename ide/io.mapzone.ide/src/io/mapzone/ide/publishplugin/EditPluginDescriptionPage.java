@@ -54,7 +54,9 @@ public class EditPluginDescriptionPage
     @Override
     public void dispose() {
         super.dispose();
-        form.dispose();
+        if (form != null) {
+            form.dispose();
+        }
     }
 
 

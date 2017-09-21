@@ -65,4 +65,10 @@ public class IdePlugin
         PDEPlugin.logException( e );
     }
     
+
+    public static void log( String msg ) {
+        System.err.println( msg );
+        PDEPlugin.log( msg );
+    }
+    
 }

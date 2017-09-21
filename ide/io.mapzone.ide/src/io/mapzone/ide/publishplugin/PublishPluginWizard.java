@@ -23,6 +23,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jdt.internal.core.JavaProject;
 
 import io.mapzone.ide.ExportPluginHelper;
 import io.mapzone.ide.ExportPluginHelper.PluginExportOperation2;
@@ -36,6 +37,7 @@ import io.mapzone.ide.util.UIUtils;
  *
  * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
+@SuppressWarnings( "restriction" )
 public class PublishPluginWizard
         extends Wizard {
 
@@ -50,8 +52,16 @@ public class PublishPluginWizard
         setNeedsProgressMonitor( true );
         setWindowTitle( "Publish Plug-in" );
 
-        IProject selection = UIUtils.currentSelection();
-        data.mproject = MapzonePluginProject.of( selection );
+        Object selection = UIUtils.currentSelection();
+        if (selection instanceof IProject) {
+            data.mproject = MapzonePluginProject.of( (IProject)selection );            
+        }
+        else if (selection instanceof JavaProject) {
+            data.mproject = MapzonePluginProject.of( ((JavaProject)selection).getProject() );            
+        }
+        else {
+            throw new RuntimeException( "Unknown selection type: " + selection.getClass().getName() );
+        }
     }
 
 

@@ -102,7 +102,7 @@
             locationURI="popup:org.eclipse.ui.popup.any?after=mapzone">
          <menu
                label="mapzone.io">
-            <visibleWhen
+            <!--visibleWhen
                   checkEnabled="false">
                <iterate
                      ifEmpty="false"
@@ -112,10 +112,10 @@
                         value="io.mapzone.ide.MapzoneNature">
                   </test>
                </iterate>
-            </visibleWhen>
+            </visibleWhen-->
             <command
                   commandId="io.mapzone.ide.command.publishPlugin"
-                  label="Publish Plug-in"
+                  label="Publish Plug-in..."
                   style="push"
                   tooltip="Publish this plugin on mapzone.io">
             </command>
@@ -129,6 +129,21 @@
                      value="instance">
                </parameter>
             </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <or>
+                     <instanceof
+                           value="org.eclipse.core.resources.IProject">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.jdt.internal.core.JavaProject">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </visibleWhen>
          </menu>
       </menuContribution>
       <menuContribution
@@ -147,6 +162,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            defaultHandler="io.mapzone.ide.UpdateTargetHandler"
             id="io.mapzone.ide.command.updateTarget"
             name="Update target platform">
          <commandParameter
@@ -159,11 +175,12 @@
          </commandParameter>
       </command>
       <command
+            defaultHandler="io.mapzone.ide.publishplugin.PublishPluginHandler"
             id="io.mapzone.ide.command.publishPlugin"
             name="Publish Plugin">
       </command>
    </extension>
-   <extension
+   <!--extension
          point="org.eclipse.ui.handlers">
       <handler
             class="io.mapzone.ide.UpdateTargetHandler"
@@ -173,6 +190,6 @@
             class="io.mapzone.ide.publishplugin.PublishPluginHandler"
             commandId="io.mapzone.ide.command.publishPlugin">
       </handler>
-   </extension>
+   </extension-->
 
 </plugin>

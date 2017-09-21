@@ -31,18 +31,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
+
 import org.apache.commons.io.IOUtils;
 
 import com.google.common.base.Throwables;
 
 import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
-
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -55,14 +53,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.pde.core.target.ITargetDefinition;
+
+import io.mapzone.ide.util.UIUtils;
 
 /**
  * Performs an update of the currently active target platform.
  *
  * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
-@SuppressWarnings( "deprecation" )
+@SuppressWarnings( {"deprecation", "restriction"} )
 public class UpdateTargetHandler
         extends AbstractHandler
         implements IHandler {
@@ -76,7 +77,7 @@ public class UpdateTargetHandler
         Map<String,String> params = ev.getParameters();
         String sourceParam = params.get( UpdateTargetParameterValues.PARAMETER_NAME );
         
-        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        final Object selection = UIUtils.currentSelection();
 
         Job job = new Job( "Update target platform" ) {
             @Override
@@ -84,8 +85,16 @@ public class UpdateTargetHandler
                 try {
                     switch (sourceParam) {
                         case INSTANCE: {
-                            IStructuredSelection sel = (IStructuredSelection)window.getSelectionService().getSelection();
-                            IProject project = (IProject)sel.getFirstElement();
+                            IProject project = null;
+                            if (selection instanceof IProject) {
+                                project = (IProject)selection;            
+                            }
+                            else if (selection instanceof JavaProject) {
+                                project = ((JavaProject)selection).getProject();            
+                            }
+                            else {
+                                throw new RuntimeException( "Unknown selection type: " + selection.getClass().getName() );
+                            }
                             return updateFromInstance( project, monitor ); 
                         }
                         case JENKINS: {
