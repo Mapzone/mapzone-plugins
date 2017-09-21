@@ -12,10 +12,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  */
-package io.mapzone.ide.newproject;
+package io.mapzone.ide.publishplugin;
 
-import io.mapzone.ide.apiclient.MapzoneAPIClient;
-import io.mapzone.ide.apiclient.MapzoneProject;
+import io.mapzone.ide.MapzonePluginProject;
+import io.mapzone.ide.apiclient.PublishedPlugin;
 
 /**
  * 
@@ -24,13 +24,10 @@ import io.mapzone.ide.apiclient.MapzoneProject;
  */
 public class WizardData {
 
-    /** Initialized by {@link LoginWizardPage}. */
-    public MapzoneAPIClient     mapzoneClient;
+    public MapzonePluginProject     mproject;
     
-    public MapzoneProject       mapzoneProject;
+    public PublishedPlugin          publishedPlugin;
 
-    
-    public WizardData( NewPluginProjectWizard2 wizard ) {
-    }
+    public boolean                  exportPlugin = true;
 
 }

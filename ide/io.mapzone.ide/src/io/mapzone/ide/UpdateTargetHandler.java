@@ -123,7 +123,7 @@ public class UpdateTargetHandler
                         @Override
                         public String isValid( final String s ) {
                             try {
-                                mproject.connect( s );
+                                mproject.connect( mproject.username(), s );
                                 return null;
                             }
                             catch (Exception e) {
@@ -139,7 +139,7 @@ public class UpdateTargetHandler
         // update active target
         if (connected.get()) {
             File temp = Files.createTempDirectory( IdePlugin.ID ).toFile();
-            mproject.connect( null ).downloadBundles( temp, submon( monitor, 90 ) );
+            mproject.connect( null, null ).downloadBundles( temp, submon( monitor, 90 ) );
             if (!monitor.isCanceled()) {
                 TargetPlatformHelper platforms = TargetPlatformHelper.instance();
                 ITargetDefinition activeTarget = platforms.active( submon( monitor, 5 ) );

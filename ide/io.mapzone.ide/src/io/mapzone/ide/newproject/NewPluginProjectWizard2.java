@@ -14,6 +14,8 @@
  */
 package io.mapzone.ide.newproject;
 
+import static io.mapzone.ide.util.UIUtils.submon;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,10 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 
@@ -42,7 +41,7 @@ import io.mapzone.ide.TargetPlatformHelper;
  *
  * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
-@SuppressWarnings( { "restriction", "deprecation" } )
+@SuppressWarnings( "restriction" )
 public class NewPluginProjectWizard2
         extends NewPluginProjectWizard {
 
@@ -139,17 +138,12 @@ public class NewPluginProjectWizard2
             return success;
         }
         catch (InvocationTargetException e) {
-            PDEPlugin.logException( e.getTargetException() );
+            IdePlugin.logException( e.getTargetException() );
         }
         catch (InterruptedException e) {
-            PDEPlugin.logException( e );
+            IdePlugin.logException( e );
         }
         return false;
-    }
-
-
-    protected IProgressMonitor submon( IProgressMonitor monitor, int ticks ) {
-        return new SubProgressMonitor( monitor, ticks );
     }
 
 

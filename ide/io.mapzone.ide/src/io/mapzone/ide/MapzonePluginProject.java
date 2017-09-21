@@ -17,6 +17,7 @@ package io.mapzone.ide;
 import static com.google.common.base.Suppliers.memoize;
 import static org.apache.commons.lang3.ArrayUtils.contains;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import org.osgi.service.prefs.BackingStoreException;
@@ -34,8 +35,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-
-import io.mapzone.ide.MapzoneAPIClient.MapzoneProject;
+import io.mapzone.ide.apiclient.MapzoneAPIClient;
+import io.mapzone.ide.apiclient.MapzoneProject;
 
 /**
  * 
@@ -75,6 +76,8 @@ public class MapzonePluginProject {
     
     private Supplier<IEclipsePreferences> projectNode = memoize( () -> projectScope.get().getNode( IdePlugin.ID ) );
     
+    private MapzoneAPIClient        client;
+    
     private MapzoneProject          clientProject;
     
     
@@ -89,9 +92,45 @@ public class MapzonePluginProject {
     }
 
     
-    public MapzoneAPIClient.MapzoneProject connect( String pwd ) {
+    /**
+     * Connect to the server and create the internal {@link MapzoneAPIClient}.
+     *
+     * @param username
+     * @param pwd
+     * @return Possibly cached {@link MapzoneAPIClient} instance.
+     * @throws RuntimeException If login failed.
+     */
+    public MapzoneAPIClient connectServer( String username, String pwd ) {
+        if (client == null) {
+            client = new MapzoneAPIClient( hostname(), port(), username, pwd );
+
+            // update username after successfully connected
+            try {
+                if (!Objects.equals( username(), username )) {
+                    projectNode.get().put( PROP_USERNAME.getLocalName(), username );
+                    projectNode.get().flush();
+                }
+            }
+            catch (BackingStoreException e) {
+                IdePlugin.logException( e );
+            }
+        }
+        return client;
+    }
+
+    
+    /**
+     * 
+     *
+     * @param username
+     * @param pwd
+     * @return Possibly cached {@link MapzoneProject} instance.
+     * @throws RuntimeException If login failed.
+     */
+    public MapzoneProject connect( String username, String pwd ) {
         if (clientProject == null) {
-            MapzoneAPIClient client = new MapzoneAPIClient( hostname(), port(), username(), pwd );
+            connectServer( username, pwd );
+            
             clientProject = client.findProjects( username() )
                     .stream().filter( p -> p.name().equals( projectname() ) )
                     .findAny().orElseThrow( () -> new IllegalStateException( "Project not found on server: " + projectname() ) );

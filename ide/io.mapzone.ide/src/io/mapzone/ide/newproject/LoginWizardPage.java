@@ -30,9 +30,9 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
 
-import io.mapzone.ide.MapzoneAPIClient;
-import io.mapzone.ide.MapzoneAPIClient.MapzoneProject;
-import io.mapzone.ide.MapzoneAPIException;
+import io.mapzone.ide.apiclient.MapzoneAPIClient;
+import io.mapzone.ide.apiclient.MapzoneAPIException;
+import io.mapzone.ide.apiclient.MapzoneProject;
 import io.mapzone.ide.util.FormDataFactory;
 import io.mapzone.ide.util.InputForm;
 
@@ -69,10 +69,10 @@ public class LoginWizardPage
         form = new InputForm( container );
 
         // username / password
-        userText = form.createText( "Account name", null );
+        userText = form.createText( "Account name", "" );
         userText.setToolTipText( "mapzone.io account name" );
         
-        pwdText = form.createText( "Password", null, SWT.PASSWORD );
+        pwdText = form.createText( "Password", "", SWT.PASSWORD );
         
         Button loginBtn = new Button( container, SWT.PUSH );
         loginBtn.setText( "Login" );

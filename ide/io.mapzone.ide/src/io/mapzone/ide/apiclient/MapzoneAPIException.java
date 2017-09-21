@@ -12,25 +12,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  */
-package io.mapzone.ide.newproject;
-
-import io.mapzone.ide.apiclient.MapzoneAPIClient;
-import io.mapzone.ide.apiclient.MapzoneProject;
+package io.mapzone.ide.apiclient;
 
 /**
  * 
  *
- * @author <a href="http://mapzone.io">Falko Bräutigam</a>
+ * @author Falko Bräutigam
  */
-public class WizardData {
+public class MapzoneAPIException
+        extends RuntimeException {
 
-    /** Initialized by {@link LoginWizardPage}. */
-    public MapzoneAPIClient     mapzoneClient;
-    
-    public MapzoneProject       mapzoneProject;
+    protected MapzoneAPIException() {
+        super();
+    }
 
-    
-    public WizardData( NewPluginProjectWizard2 wizard ) {
+    protected MapzoneAPIException( String message, Throwable cause ) {
+        super( message, cause );
+    }
+
+    protected MapzoneAPIException( String message ) {
+        super( message );
+    }
+
+    protected MapzoneAPIException( Throwable cause ) {
+        super( cause );
     }
 
 }

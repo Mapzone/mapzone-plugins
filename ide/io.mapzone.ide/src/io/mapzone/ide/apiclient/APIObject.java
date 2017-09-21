@@ -12,30 +12,28 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  */
-package io.mapzone.ide;
+package io.mapzone.ide.apiclient;
 
 /**
  * 
  *
- * @author Falko Bräutigam
+ * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
-public class MapzoneAPIException
-        extends RuntimeException {
+abstract class APIObject {
 
-    protected MapzoneAPIException() {
-        super();
+    public MapzoneAPIClient     client;
+    
+
+    protected APIObject( MapzoneAPIClient client ) {
+        this.client = client;
     }
 
-    protected MapzoneAPIException( String message, Throwable cause ) {
-        super( message, cause );
+    public MapzoneAPIClient client() {
+        return client;
     }
 
-    protected MapzoneAPIException( String message ) {
-        super( message );
-    }
-
-    protected MapzoneAPIException( Throwable cause ) {
-        super( cause );
+    protected RuntimeException propagate( Throwable e ) {
+        return MapzoneAPIClient.propagate( e );
     }
 
 }

@@ -12,25 +12,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  */
-package io.mapzone.ide.newproject;
+package io.mapzone.ide.util;
 
-import io.mapzone.ide.apiclient.MapzoneAPIClient;
-import io.mapzone.ide.apiclient.MapzoneProject;
+import com.google.common.base.Strings;
+
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import io.mapzone.ide.IdePlugin;
 
 /**
  * 
  *
  * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
-public class WizardData {
+public class NotEmptyValidator
+        implements IValidator {
 
-    /** Initialized by {@link LoginWizardPage}. */
-    public MapzoneAPIClient     mapzoneClient;
-    
-    public MapzoneProject       mapzoneProject;
-
-    
-    public WizardData( NewPluginProjectWizard2 wizard ) {
+    @Override
+    public IStatus validate( Object value ) {
+        return Strings.isNullOrEmpty( (String)value )
+                ? new Status( IStatus.ERROR, IdePlugin.ID, "Value must not be empty" )
+                : Status.OK_STATUS;
     }
 
 }

@@ -20,11 +20,14 @@ import org.osgi.framework.BundleContext;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import org.eclipse.pde.internal.ui.PDEPlugin;
+
 /**
  * 
  *
  * @author Falko Bräutigam
  */
+@SuppressWarnings( "restriction" )
 public class IdePlugin
         extends AbstractUIPlugin {
     
@@ -54,6 +57,12 @@ public class IdePlugin
         File result = new File( getStateLocation().toFile(), "targets" );
         result.mkdir();
         return result;
+    }
+
+    
+    public static void logException( Throwable e ) {
+        e.printStackTrace( System.err );
+        PDEPlugin.logException( e );
     }
     
 }
