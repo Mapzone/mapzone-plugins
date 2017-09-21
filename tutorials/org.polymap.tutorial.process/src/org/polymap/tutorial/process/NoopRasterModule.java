@@ -15,6 +15,7 @@
 package org.polymap.tutorial.process;
 
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.io.GridCoverage2DReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +36,7 @@ public class NoopRasterModule
 
     // members are detected as input/output fields by TutorialModuleInfo
     
-    public GridCoverage2D       input;
+    public GridCoverage2DReader       input;
     
     public int                  countInput = 5;
     
