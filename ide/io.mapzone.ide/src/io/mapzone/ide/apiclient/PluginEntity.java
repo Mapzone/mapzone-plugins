@@ -44,6 +44,8 @@ public class PluginEntity
 
     public Property<Boolean>        isReleased = new Property( "isReleased" );
 
+    public Property<Float>          fee = new Property( "fee" );
+
     public PluginEntity( JSONObject json ) {
         super( json );
     }

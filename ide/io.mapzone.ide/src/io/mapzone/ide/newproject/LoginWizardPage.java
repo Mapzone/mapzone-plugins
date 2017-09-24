@@ -116,7 +116,7 @@ public class LoginWizardPage
     protected void doLogin() {
         try {
             String username = userText.getText();
-            MapzoneAPIClient service = new MapzoneAPIClient( "mapzone.io", 80, username, pwdText.getText() );
+            MapzoneAPIClient service = new MapzoneAPIClient( username, pwdText.getText() );
 //            MapzoneAPIClient service = new MapzoneAPIClient( "localhost", 8090, username, pwdText.getText() );
             List<MapzoneProject> projects = service.findProjects( username );
             

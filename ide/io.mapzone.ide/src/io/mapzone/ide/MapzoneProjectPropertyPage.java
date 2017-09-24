@@ -48,8 +48,8 @@ public class MapzoneProjectPropertyPage
         
         MapzonePluginProject mproject = MapzonePluginProject.of( project() );
 
-        // hostname
-        form.createLabel( "Host", mproject.hostname() );
+//        // hostname
+//        form.createLabel( "Host", mproject.hostname() );
 
         // username
         userText = form.createText( "Account name", mproject.username() );

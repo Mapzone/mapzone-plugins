@@ -86,17 +86,25 @@ public class EditPluginDescriptionPage
             
             form.createText( "Vendor URL", SWT.BORDER, entity.vendorUrl.newObservable(), null );
             
-            form.addAllChangeListener( ev -> {
-                container.getDisplay().asyncExec( () -> { // delay after validation
-                    setPageComplete( form.isValid() );
-                });
-            });
-            
+            Text feeTxt = form.createText( "Fee (not yet supported)", "0", SWT.BORDER ); //, entity.fee.newObservable(), null );
+            feeTxt.setEnabled( false );
+
+//            Button freeBtn = form.createCheckbox( "Free of charge", data.exportPlugin, SWT.BORDER );
+//            freeBtn.setToolTipText( "Currently all plugins are free. Later we will add payment." );
+//            freeBtn.setEnabled( false );
+
             Button exportBtn = form.createCheckbox( "Export a new version of the plugin", data.exportPlugin, SWT.BORDER );
+            exportBtn.setToolTipText( "Build a new version of the plugin binary and send it to the catalog" );
             exportBtn.addSelectionListener( new SelectionAdapter() {
                 @Override public void widgetSelected( SelectionEvent ev ) {
                     data.exportPlugin = exportBtn.getSelection();
                 }
+            });
+
+            form.addAllChangeListener( ev -> {
+                container.getDisplay().asyncExec( () -> { // delay after validation
+                    setPageComplete( form.isValid() );
+                });
             });
         }
         catch (Exception e) {

@@ -16,6 +16,7 @@ package io.mapzone.ide.apiclient;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +39,8 @@ import io.milton.httpclient.Resource;
 public class MapzoneAPIClient {
         //implements AutoCloseable {
 
+    public static final String  DEFAULT_HOST = "mapzone.io:80";
+    
     public static final String  WEBDAV_PATH = "/webdav";
     
     public static final Path    PROJECTS = Path.path( "projects" );
@@ -52,9 +55,13 @@ public class MapzoneAPIClient {
      * @param baseUrl
      * @throws RuntimeException If login failed.
      */
-    public MapzoneAPIClient( String server, int port, String user, String password ) {
+    public MapzoneAPIClient( String user, String password ) {
         try {
-            host = new Host( server, WEBDAV_PATH, port, user, password, null, 30000, null, null );
+            String[] hostProp = System.getProperty( "io.mapzone.ide.apiclient.host", DEFAULT_HOST ).split( ":" );
+            assert hostProp.length == 2 : "Malformed property io.mapzone.ide.apiclient.host" ;
+            System.out.println( "Host: " + Arrays.asList( hostProp ) );
+            
+            host = new Host( hostProp[0], WEBDAV_PATH, Integer.parseInt( hostProp[1] ), user, password, null, 30000, null, null );
             findPlugins( "my" );  // check connection
         }
         catch (Exception e) {
@@ -175,29 +182,29 @@ public class MapzoneAPIClient {
     public static void main( String[] args ) throws Exception {
         String pwd = System.getProperty( "io.mapzone.ide.MapzoneAPIClient.pwd" );
 //        MapzoneAPIClient client = new MapzoneAPIClient( "mapzone.io", 80, "falko", pwd );
-        MapzoneAPIClient client = new MapzoneAPIClient( "localhost", 8090, "falko", pwd );
+        MapzoneAPIClient client = new MapzoneAPIClient( "falko", pwd );
 
-        PublishedPlugin newPlugin = client.newPlugin( "test.plugin6" );
-        newPlugin.entity().vendor.set( "Abend" );
-        newPlugin.applyChanges( null );
-                
-        for (PublishedPlugin plugin : client.findPlugins( "my" )) {
-            System.out.println( "Plugin: " + plugin.id() );
-            System.out.println( "    " + plugin.entity().id.get() );
-            System.out.println( "    " + plugin.entity().vendor.get() );
-            System.out.println( "    " + plugin.entity().vendorUrl.get() );
-            System.out.println( "    " + plugin.entity().created.get() );
-            System.out.println( "    " + plugin.entity().updated.get() );
-            System.out.println( "    " + plugin.entity().isReleased.get() );
-        }
+//        PublishedPlugin newPlugin = client.newPlugin( "test.plugin6" );
+//        newPlugin.entity().vendor.set( "Abend" );
+//        newPlugin.applyChanges( null );
+//                
+//        for (PublishedPlugin plugin : client.findPlugins( "my" )) {
+//            System.out.println( "Plugin: " + plugin.id() );
+//            System.out.println( "    " + plugin.entity().id.get() );
+//            System.out.println( "    " + plugin.entity().vendor.get() );
+//            System.out.println( "    " + plugin.entity().vendorUrl.get() );
+//            System.out.println( "    " + plugin.entity().created.get() );
+//            System.out.println( "    " + plugin.entity().updated.get() );
+//            System.out.println( "    " + plugin.entity().isReleased.get() );
+//        }
         
 //        PublishedPlugin plugin = client.findPlugins( "all" ).stream().filter( p -> p.id().equals( "test.plugin1" ) ).findAny().get();
 //        plugin.entity().vendor.set( "Polymap GmbH" );
 //        plugin.applyChanges();
         
         
-//        client.findProjects( "falko" ).forEach( p ->
-//                System.out.println( "Project: " + p.organization() + " / " + p.name() ) );
+        client.findProjects( "falko" ).forEach( p ->
+                System.out.println( "Project: " + p.organization() + " / " + p.name() ) );
             
 //        downloadTarget( service, "falko", "develop" );
     }

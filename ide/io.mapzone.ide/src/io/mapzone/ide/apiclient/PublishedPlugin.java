@@ -16,9 +16,14 @@ package io.mapzone.ide.apiclient;
 
 import static io.mapzone.ide.util.UIUtils.submon;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -121,15 +126,8 @@ public class PublishedPlugin
         monitor.subTask( "Send " + CONTENTS_JSON );
         String json = entity.toJsonString( 4 );
         byte[] bytes = json.getBytes( "UTF-8" );        
-        ByteArrayInputStream in = new ByteArrayInputStream( bytes );
         
-        // XXX ETag handling in milton client File does not work for me
-        String newUri = entityContentsFile.encodedUrl();
-        HttpResult result = client().host.doPut( newUri, in, (long)bytes.length, null, null/*new IfMatchCheck(etag)*/,
-                new ProgressListenerAdapter( UIUtils.submon( monitor, 2 ) ) );
-        //String etag = result.getHeaders().get( Response.Header.ETAG.code );
-        int resultCode = result.getStatusCode();
-        Utils.processResultCode( resultCode, newUri );
+        put( entityContentsFile.path(), new ByteArrayInputStream( bytes ), bytes.length, UIUtils.submon( monitor, 2 ) );
         
 //      entityContentsFile.setContent( in, (long)bytes.length, null );
         monitor.done();
@@ -160,10 +158,31 @@ public class PublishedPlugin
             }
         }
         monitor.worked( 1 );
+
+        Path target = folder.path().child( f.getName() );
+        InputStream content = new BufferedInputStream( new FileInputStream( f ) );
+        put( target, content, f.length(), submon( monitor, 2 ) );
         
-        folder.upload( f, new ProgressListenerAdapter( submon( monitor, 2 ) ) );
+//        folder.upload( f, new ProgressListenerAdapter( submon( monitor, 2 ) ) );
         
         monitor.done();
+    }
+    
+    
+    protected void put( Path target, InputStream content, long contentLength, IProgressMonitor monitor ) 
+            throws NotAuthorizedException, ConflictException, BadRequestException, NotFoundException, HttpException {
+        try {
+            // XXX ETag handling in milton client File does not work for me
+            String newUri = client().host.buildEncodedUrl( target );
+            HttpResult result = client().host.doPut( newUri, content, contentLength, null, null/*new IfMatchCheck(etag)*/,
+                    new ProgressListenerAdapter( monitor ) );
+            //String etag = result.getHeaders().get( Response.Header.ETAG.code );
+            int resultCode = result.getStatusCode();
+            Utils.processResultCode( resultCode, newUri );
+        }
+        finally {
+            IOUtils.closeQuietly( content );
+        }
     }
     
 }

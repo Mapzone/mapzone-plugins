@@ -102,7 +102,7 @@ public class MapzonePluginProject {
      */
     public MapzoneAPIClient connectServer( String username, String pwd ) {
         if (client == null) {
-            client = new MapzoneAPIClient( hostname(), port(), username, pwd );
+            client = new MapzoneAPIClient( username, pwd );
 
             // update username after successfully connected
             try {
@@ -169,14 +169,14 @@ public class MapzonePluginProject {
         return projectNode.get().get( name.getLocalName(), null );
     }
 
-    public String hostname() {
-        return property( PROP_HOSTNAME );
-    }
-    
-    public Integer port() {
-        String result = property( PROP_PORT );
-        return result != null ? Integer.valueOf( result ) : null;
-    }
+//    public String hostname() {
+//        return property( PROP_HOSTNAME );
+//    }
+//    
+//    public Integer port() {
+//        String result = property( PROP_PORT );
+//        return result != null ? Integer.valueOf( result ) : null;
+//    }
     
     public String username() {
         return property( PROP_USERNAME );
