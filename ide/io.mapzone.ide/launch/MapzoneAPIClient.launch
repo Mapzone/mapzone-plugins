@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/io.mapzone.ide/src/io/mapzone/ide/apiclient/MapzoneAPIClient.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="io.mapzone.ide.apiclient.MapzoneAPIClient"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="io.mapzone.ide"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -XX:+UseG1GC  -Xmx256m  -XX:+TieredCompilation -Dio.mapzone.ide.MapzoneAPIClient.pwd=71sheepY  -Dio.mapzone.ide.apiclient.host=http://localhost:8090"/>
+</launchConfiguration>

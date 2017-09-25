@@ -14,10 +14,9 @@
  */
 package io.mapzone.ide.apiclient;
 
-import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
+import org.json.JSONObject;
 
-import net.sf.json.JSONNull;
-import net.sf.json.JSONObject;
+import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 
 /**
  * An entity with its data stored in an {@link JSONObject}. {@link Property} members
@@ -63,7 +62,7 @@ public abstract class JsonEntity {
         
         public T get() {
             Object result = json.get( name );
-            if (result instanceof JSONNull ) {
+            if (result.equals( JSONObject.NULL ) ) {
                 return null;
             }
             else {

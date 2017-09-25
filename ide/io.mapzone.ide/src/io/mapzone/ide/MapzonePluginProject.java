@@ -15,18 +15,16 @@
 package io.mapzone.ide;
 
 import static com.google.common.base.Suppliers.memoize;
-import static org.apache.commons.lang3.ArrayUtils.contains;
-
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import org.osgi.service.prefs.BackingStoreException;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ObjectArrays;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -44,10 +42,6 @@ import io.mapzone.ide.apiclient.MapzoneProject;
  * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
 public class MapzonePluginProject {
-
-    public static final QualifiedName PROP_HOSTNAME = new QualifiedName( IdePlugin.ID, "hostname" );
-
-    public static final QualifiedName PROP_PORT = new QualifiedName( IdePlugin.ID, "port" );
 
     public static final QualifiedName PROP_USERNAME = new QualifiedName( IdePlugin.ID, "username" );
 
@@ -104,8 +98,8 @@ public class MapzonePluginProject {
         if (client == null) {
             client = new MapzoneAPIClient( username, pwd );
 
-            // update username after successfully connected
             try {
+                // update username after successfully connected
                 if (!Objects.equals( username(), username )) {
                     projectNode.get().put( PROP_USERNAME.getLocalName(), username );
                     projectNode.get().flush();
@@ -141,8 +135,8 @@ public class MapzonePluginProject {
     
     public void addNature( IProgressMonitor monitor ) throws CoreException {
         IProjectDescription description = project.getDescription();
-        assert !contains( description.getNatureIds(), MapzoneProjectNature.ID ) : "Nature is already there.";
-        String[] newNatures = ArrayUtils.add( description.getNatureIds(), MapzoneProjectNature.ID );
+        assert !Arrays.asList( description.getNatureIds() ).contains( MapzoneProjectNature.ID ) : "Nature is already there.";
+        String[] newNatures = ObjectArrays.concat( description.getNatureIds(), MapzoneProjectNature.ID );
         description.setNatureIds( newNatures );
         project.setDescription( description, monitor );    
     }
@@ -157,8 +151,6 @@ public class MapzonePluginProject {
 //        project.setPersistentProperty( PROP_USERNAME, client.username() );
 //        project.setPersistentProperty( PROP_PROJECTNAME, clientProject.name() );
         
-        projectNode.get().put( PROP_HOSTNAME.getLocalName(), client.hostname() );
-        projectNode.get().put( PROP_PORT.getLocalName(), client.port().toString() );
         projectNode.get().put( PROP_USERNAME.getLocalName(), client.username() );
         projectNode.get().put( PROP_PROJECTNAME.getLocalName(), clientProject.name() );
         projectNode.get().flush();
@@ -169,14 +161,6 @@ public class MapzonePluginProject {
         return projectNode.get().get( name.getLocalName(), null );
     }
 
-//    public String hostname() {
-//        return property( PROP_HOSTNAME );
-//    }
-//    
-//    public Integer port() {
-//        String result = property( PROP_PORT );
-//        return result != null ? Integer.valueOf( result ) : null;
-//    }
     
     public String username() {
         return property( PROP_USERNAME );

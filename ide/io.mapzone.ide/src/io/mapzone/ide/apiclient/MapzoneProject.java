@@ -16,13 +16,16 @@ package io.mapzone.ide.apiclient;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
+import org.apache.commons.io.FileUtils;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import io.milton.httpclient.File;
-import io.milton.httpclient.Folder;
-import io.milton.httpclient.Resource;
 
 /**
  * Represents a project on the mapzone server. 
@@ -34,13 +37,13 @@ public class MapzoneProject
     
     private String      organization;
     
-    private Folder      folder;
+    private IPath       folderPath;
     
     
-    protected MapzoneProject( MapzoneAPIClient client, Folder folder, String organization ) {
+    protected MapzoneProject( MapzoneAPIClient client, IPath folderPath, String organization ) {
         super( client );
         this.organization = organization;
-        this.folder = folder;
+        this.folderPath = folderPath;
     }
 
     public String organization() {
@@ -48,14 +51,18 @@ public class MapzoneProject
     }
     
     public String name() {
-        return folder.displayName;
+        try {
+            return URLDecoder.decode( folderPath.lastSegment(), "UTF-8" );
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException( e );
+        }
     }
 
     public boolean exists() throws MapzoneAPIException {
         try {
-            String path = MapzoneAPIClient.PROJECTS.child( organization ).child( name() ).toPath();
-            Resource res = client.host.find( path );
-            return res != null && res instanceof Folder;
+            return client().sardine.exists( client().url( folderPath ) );
+            //return folder.getStatusCode() != 200;
         }
         catch (Exception e) {
             throw propagate( e );
@@ -64,14 +71,16 @@ public class MapzoneProject
 
     public void downloadBundles( java.io.File destDir, IProgressMonitor monitor ) throws MapzoneAPIException {
         try {
-            Folder pluginsFolder = (Folder)folder.child( "plugins" );
-            List<? extends Resource> children = pluginsFolder.children();
+            List<IPath> children = client().list( folderPath.append( "plugins" ) );
             monitor.beginTask( "Downloading bundles", children.size() );
 
-            for (Resource child : children) {
-                try {
-                    monitor.subTask( child.displayName );
-                    ((File)child).downloadTo( destDir, null );
+            for (IPath child : children) {
+                monitor.subTask( child.lastSegment() );
+                try (
+                    InputStream in = client().get( child );
+                ){
+                    File f = new File( destDir, child.lastSegment() );
+                    FileUtils.copyInputStreamToFile( in, f );
                 }
                 catch (Exception e) {
                     System.out.println( e );
@@ -84,28 +93,36 @@ public class MapzoneProject
             throw propagate( e );
         }
     }
-    
+
+    /**
+     * @deprecated See {@link ExportPluginProjectWizard}
+     */
     public void installBundle( java.io.File bundle, IProgressMonitor monitor ) throws MapzoneAPIException {
         try {
             monitor.beginTask( "Installing bundle " + bundle.getName(), (int)bundle.length() );
-            Folder pluginsFolder = (Folder)folder.child( "plugins" );
+            IPath pluginsPath = folderPath.append( "plugins" );
             
             // delete previous versions
-            String basename = StringUtils.substringBefore( bundle.getName(), "_" );
-            for (Resource child : pluginsFolder.children()) {
-                if (child.name.startsWith( basename )) {
-                    monitor.subTask( "Delete previous version " + child.name );
-                    child.delete();
+            String basename = bundle.getName().split( "_" )[0];
+            for (IPath child : client().list( pluginsPath )) {
+                if (child.lastSegment().startsWith( basename )) {
+                    monitor.subTask( "Delete previous version " + child.lastSegment() );
+                    client.delete( child );
                 }
             }
             
             // upload
-            monitor.subTask( "Uploading" );
-            pluginsFolder.upload( bundle, new ProgressListenerAdapter( monitor ) );
+            try (
+                InputStream in = new BufferedInputStream( new FileInputStream( bundle ) );
+            ){
+                monitor.subTask( "Uploading" );
+                client().put( pluginsPath.append( bundle.getName() ), in, bundle.length() );
+            }
             monitor.done();
         }
         catch (Exception e) {
             propagate( e );
         }
     }
+    
 }

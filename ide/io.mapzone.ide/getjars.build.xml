@@ -66,14 +66,12 @@
 			<localRepository refid="local.repository" />
 			<remoteRepository refid="ettrema.repository" />
 			<remoteRepository refid="central.repository" />
-
-            <dependency groupId="com.google.guava" artifactId="guava" version="22.0" />
-		    <dependency groupId="io.milton" artifactId="milton-client" version="2.7.2.6"/>
-		    
-		    <dependency groupId="org.slf4j" artifactId="slf4j-simple" version="1.7.5" />
-            <!--dependency groupId="org.slf4j" artifactId="slf4j-jcl" version="1.5.8" /-->
-            <dependency groupId="org.slf4j" artifactId="slf4j-log4j12" version="1.5.6" scope="provided" />
-
+            
+            <dependency groupId="com.github.lookfirst" artifactId="sardine" version="5.8"/>
+            <dependency groupId="com.google.guava" artifactId="guava" version="23.0"/>
+            <dependency groupId="commons-io" artifactId="commons-io" version="2.4" />
+            <dependency groupId="org.apache.commons" artifactid="commons-lang3" version="3.3.2" />
+            <dependency groupId="org.json" artifactId="json" version="20141113" />
 		</artifact:dependencies>
         
 		<restrict id="filtered.dependencies">

@@ -30,6 +30,7 @@ import io.mapzone.ide.ExportPluginHelper.PluginExportOperation2;
 import io.mapzone.ide.IdePlugin;
 import io.mapzone.ide.MapzonePluginProject;
 import io.mapzone.ide.apiclient.MapzoneAPIClient;
+import io.mapzone.ide.apiclient.MapzoneAPIClient.PluginsFolder;
 import io.mapzone.ide.util.UIUtils;
 
 /**
@@ -90,7 +91,7 @@ public class PublishPluginWizard
         MapzoneAPIClient client = data.mproject.connectServer( null, null );
         String pluginId = data.mproject.project().getName();
         data.publishedPlugin = client
-                .findPlugin( "my", pluginId )
+                .findPlugin( PluginsFolder.my, pluginId )
                 .orElseGet( () -> client.newPlugin( pluginId ) );
     }
 
@@ -101,7 +102,7 @@ public class PublishPluginWizard
             // update description
             getContainer().run( false, false, monitor -> {
                 try {
-                    data.publishedPlugin.applyChanges( monitor );
+                    data.publishedPlugin.submitChanges( monitor );
                 }
                 catch (Exception e) {
                     IdePlugin.logException( e );

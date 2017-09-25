@@ -14,33 +14,21 @@
  */
 package io.mapzone.ide.apiclient;
 
-import static io.mapzone.ide.util.UIUtils.submon;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.json.JSONObject;
+
 import org.apache.commons.io.IOUtils;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-import io.mapzone.ide.util.UIUtils;
-import io.milton.common.Path;
-import io.milton.http.exceptions.BadRequestException;
-import io.milton.http.exceptions.ConflictException;
-import io.milton.http.exceptions.NotAuthorizedException;
-import io.milton.http.exceptions.NotFoundException;
-import io.milton.httpclient.File;
-import io.milton.httpclient.Folder;
-import io.milton.httpclient.HttpException;
-import io.milton.httpclient.HttpResult;
-import io.milton.httpclient.Resource;
-import io.milton.httpclient.Utils;
-import net.sf.json.JSONObject;
+import io.mapzone.ide.apiclient.MapzoneAPIClient.PluginsFolder;
 
 /**
  * 
@@ -58,10 +46,8 @@ public class PublishedPlugin
     
     private PluginEntity    entity;
 
-    private Folder          folder;
+    private IPath           folderPath;
     
-    private File            entityContentsFile;
-
 
     public PublishedPlugin( MapzoneAPIClient client, String pluginId ) {
         super( client );
@@ -71,11 +57,11 @@ public class PublishedPlugin
         this.entity.id.set( pluginId );
     }
     
-    public PublishedPlugin( MapzoneAPIClient client, Folder folder ) {
+    public PublishedPlugin( MapzoneAPIClient client, IPath folderPath ) {
         super( client );
         this.isNew = false;
-        this.folder = folder;
-        this.pluginId = folder.name;
+        this.folderPath = folderPath;
+        this.pluginId = folderPath.lastSegment();
     }
     
     public boolean isNew() {
@@ -88,14 +74,13 @@ public class PublishedPlugin
     }
     
     
-    public PluginEntity entity() throws NotAuthorizedException, BadRequestException, IOException, HttpException {
+    public PluginEntity entity() throws IOException {
         if (entity == null) {
-            entityContentsFile = (File)folder.child( CONTENTS_JSON );
             try (
-                ByteArrayOutputStream out = new ByteArrayOutputStream( 1024 );
+                InputStream in = client().get( folderPath.append( CONTENTS_JSON ) );
             ){
-                entityContentsFile.download( out, null );
-                JSONObject json = JSONObject.fromObject( out.toString( "UTF-8" ) );
+                String content = IOUtils.toString( in, "UTF-8" );
+                JSONObject json = new JSONObject( content );
                 entity = new PluginEntity( json );
             }
         }
@@ -103,33 +88,22 @@ public class PublishedPlugin
     }
 
     
-    public void applyChanges( IProgressMonitor monitor )
-            throws NotAuthorizedException, BadRequestException, IOException, HttpException, ConflictException, NotFoundException {
+    public void submitChanges( IProgressMonitor monitor ) throws IOException {
         monitor.beginTask( "Apply changes", 4 );
         
         // isNew
         if (isNew) {
             monitor.subTask( "Creating folder" );
-            Path path = MapzoneAPIClient.PLUGINS.child( "my" ).child( id() );
-            client().host.createFolder( path.toPath() );
-            monitor.worked( 1 );
-            
-            monitor.subTask( "Retrieve " + CONTENTS_JSON );
-            folder = (Folder)client().host.find( path.toPath(), true );
-            entityContentsFile = (File)folder.child( "contents.json" );
-            monitor.worked( 1 );
+            folderPath = MapzoneAPIClient.PLUGINS.append( PluginsFolder.my.name() ).append( id() );
+            client().createFolder( folderPath );
         }
-        else {
-            monitor.worked( 2 );
-        }
+        monitor.worked( 2 );
         
         monitor.subTask( "Send " + CONTENTS_JSON );
         String json = entity.toJsonString( 4 );
         byte[] bytes = json.getBytes( "UTF-8" );        
         
-        put( entityContentsFile.path(), new ByteArrayInputStream( bytes ), bytes.length, UIUtils.submon( monitor, 2 ) );
-        
-//      entityContentsFile.setContent( in, (long)bytes.length, null );
+        client().put( folderPath.append( CONTENTS_JSON ), new ByteArrayInputStream( bytes ), bytes.length );
         monitor.done();
     }
 
@@ -139,50 +113,38 @@ public class PublishedPlugin
      *
      * @param f The plugin *.jar file.
      * @param monitor
-     * @throws HttpException 
      * @throws IOException 
-     * @throws BadRequestException 
-     * @throws NotAuthorizedException 
-     * @throws NotFoundException 
-     * @throws ConflictException 
      */
-    public void updateContents( java.io.File f, IProgressMonitor monitor ) 
-            throws NotAuthorizedException, BadRequestException, IOException, HttpException, ConflictException, NotFoundException {
+    public void updateContents( java.io.File f, IProgressMonitor monitor ) throws IOException {
         monitor = monitor != null ? monitor : new NullProgressMonitor();
         monitor.beginTask( "Update plugin contents", 3 );
         
         // delete current version
-        for (Resource child : folder.children()) {
-            if (child instanceof File && !((File)child).name.equals( CONTENTS_JSON )) {
-                ((File)child).delete();
+        for (IPath child : client.list( folderPath )) {
+            if (!child.lastSegment().equals( CONTENTS_JSON )) {
+                client().delete( child );
             }
         }
         monitor.worked( 1 );
 
-        Path target = folder.path().child( f.getName() );
         InputStream content = new BufferedInputStream( new FileInputStream( f ) );
-        put( target, content, f.length(), submon( monitor, 2 ) );
-        
-//        folder.upload( f, new ProgressListenerAdapter( submon( monitor, 2 ) ) );
+        client().put( folderPath.append( f.getName() ), content, f.length() );
         
         monitor.done();
     }
     
-    
-    protected void put( Path target, InputStream content, long contentLength, IProgressMonitor monitor ) 
-            throws NotAuthorizedException, ConflictException, BadRequestException, NotFoundException, HttpException {
-        try {
-            // XXX ETag handling in milton client File does not work for me
-            String newUri = client().host.buildEncodedUrl( target );
-            HttpResult result = client().host.doPut( newUri, content, contentLength, null, null/*new IfMatchCheck(etag)*/,
-                    new ProgressListenerAdapter( monitor ) );
-            //String etag = result.getHeaders().get( Response.Header.ETAG.code );
-            int resultCode = result.getStatusCode();
-            Utils.processResultCode( resultCode, newUri );
-        }
-        finally {
-            IOUtils.closeQuietly( content );
-        }
+
+    /**
+     * Deletes this plugin on the server.
+     * <p/>
+     * <b>JUST FOR TESTS!</b> Do NOT use for regular client code! 
+     */
+    public void delete() throws IOException {
+        client().delete( folderPath );
+        client = null;
+        entity = null;
+        pluginId = null;
+        folderPath = null;
     }
     
 }

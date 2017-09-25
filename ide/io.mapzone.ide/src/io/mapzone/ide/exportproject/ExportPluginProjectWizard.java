@@ -39,7 +39,9 @@ import io.mapzone.ide.MapzonePluginProject;
 /**
  * Uses the PDE {@link PluginExportOperation} to create a plugin jar and then send it
  * to the mapzone project.
- *
+ * 
+ * @deprecated Directly installing plugin into project is no longer supported because
+ *             the controller does not know about the plugin.
  * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
 @SuppressWarnings( "restriction" )
