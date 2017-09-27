@@ -1,0 +1,4288 @@
+{
+	"tags" : [
+		{
+			"key" : "",
+			"values" : [ "????????????????"]
+		},
+		{
+			"key" : " water_p and water_l",
+			"values" : [ "waterway"]
+		},
+		{
+			"key" : "%line%",
+			"values" : [ ]
+		},
+		{
+			"key" : "%route%",
+			"values" : [ ]
+		},
+		{
+			"key" : "4wd_only",
+			"values" : [ ]
+		},
+		{
+			"key" : "FIXME:ja",
+			"values" : [ "???????????????????? name:ja ? name?????????"]
+		},
+		{
+			"key" : "ISO3166-1",
+			"values" : [ ]
+		},
+		{
+			"key" : "ISO3166-1:alpha2",
+			"values" : [ ]
+		},
+		{
+			"key" : "ISO3166-2",
+			"values" : [ ]
+		},
+		{
+			"key" : "TMC",
+			"values" : [ ]
+		},
+		{
+			"key" : "TMC:cid_58:tabcd_1:Class",
+			"values" : [ "Area","Point","Road","Segment"]
+		},
+		{
+			"key" : "TMC:cid_58:tabcd_1:LCLversion",
+			"values" : [ "9.00"]
+		},
+		{
+			"key" : "abandoned",
+			"values" : [ "village"]
+		},
+		{
+			"key" : "abandoned:amenity",
+			"values" : [ "prison","prison_camp"]
+		},
+		{
+			"key" : "abandoned:landuse",
+			"values" : [ "quarry"]
+		},
+		{
+			"key" : "abandoned:man_made",
+			"values" : [ "kiln","mine_shaft","watermill","windmill"]
+		},
+		{
+			"key" : "abandoned:military",
+			"values" : [ "bunker"]
+		},
+		{
+			"key" : "abandoned:place",
+			"values" : [ "*","village"]
+		},
+		{
+			"key" : "abandoned:sport",
+			"values" : [ "ski_jumping"]
+		},
+		{
+			"key" : "abutters",
+			"values" : [ "retail"]
+		},
+		{
+			"key" : "access",
+			"values" : [ "agricultural","allowed","customers","delivery","designated","destination","discouraged","dismount","forestry","no","official","permissive","private","public","restricted","unknown","use_sidepath","yes"]
+		},
+		{
+			"key" : "addr",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:city",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:conscriptionnumber",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:country",
+			"values" : [ "TW"]
+		},
+		{
+			"key" : "addr:country_code",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:district",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:flats",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:full",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:hamlet",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:housename",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:housenumber",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:inclusion",
+			"values" : [ "actual","estimate","potential"]
+		},
+		{
+			"key" : "addr:interpolation",
+			"values" : [ "all","alphabetic","even","odd"]
+		},
+		{
+			"key" : "addr:place",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:postcode",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:province",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:state",
+			"values" : [ "AK","AL","AR","AS","AZ","CA","CO","CT","DC","DE","FL","GA","GU","HI","IA","ID","IL","IN","KS","KY","LA","MA","MD","ME","MI","MN","MO","MP","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX","UM","UT","VA","VI","VT","WA","WI","WV"]
+		},
+		{
+			"key" : "addr:state_code",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:street",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:streetnumber",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:subdistrict",
+			"values" : [ ]
+		},
+		{
+			"key" : "addr:suburb",
+			"values" : [ ]
+		},
+		{
+			"key" : "admin_level",
+			"values" : [ "1","10","11","2","3","4","5","6","7","8","9"]
+		},
+		{
+			"key" : "advertising",
+			"values" : [ "billboard","column"]
+		},
+		{
+			"key" : "aerial",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "aerialway",
+			"values" : [ "cable_car","chair_lift","drag_lift","gondola","goods","high_speed_chair_lift","j-bar","limited","magic_carpet","mixed_lift","no","only","platter","pylon","rope-tow","rope_tow","station","t-bar","true","yes","zip_line"]
+		},
+		{
+			"key" : "aerialway:bubble",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "aerialway:capacity",
+			"values" : [ ]
+		},
+		{
+			"key" : "aerialway:duration",
+			"values" : [ ]
+		},
+		{
+			"key" : "aerialway:heating",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "aerialway:occupancy",
+			"values" : [ ]
+		},
+		{
+			"key" : "aerodrome",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "aeroway",
+			"values" : [ "aerodrome","apron","gate","hangar","helipad","heliport","navigationaid","parking_position","runway","taxiway","terminal","windsock"]
+		},
+		{
+			"key" : "agricultural",
+			"values" : [ "designated","destination","no","official","permissive","private","yes"]
+		},
+		{
+			"key" : "airspace",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "alt_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "amenity",
+			"values" : [ "airport","animal_boarding","animal_shelter","animal_training","arts_centre","atm","baby_hatch","bank","bar","bbq","beergarten","bench","bicycle_parking","bicycle_rental","bicycle_repair_station","biergarten","biergaten","boat_rental","boat_sharing","brothel","bureau_de_change","bus_station","cafe","car_rental","car_sharing","car_wash","casino","charging_station","childcare","cinema","clinic","clock","college","community_centre","compressed_air","courthouse","coworking_space","crematorium","crypt","dentist","diving_center","doctors","dog_park","dojo","drinking_water","driving_school","embassy","emergency_access_point","emergency_phone","fast_food","ferry_terminal","fire_hydrant","fire_station","food_court","fountain","fuel","grave_yard","grit_bin","gym","hospice","hospital","hunting_stand","ice_cream","kindergarten","kneipp_water_cure","library","life_ring","marketplace","monastery","mortuary","motorcycle_parking","music_venue","nightclub","nursery","nursing_home","parcel_box","parking","parking_entrance","parking_space","pharmacy","photo_booth","place_of_worship","planetarium","police","post_box","post_office","prison","pub","public_bookcase","public_building","ranger_station","recycling","register_office","restaurant","sanitary_dump_station","sauna","school","shelter","shower","social_centre","social_facility","station","stripclub","studio","swimming_pool","swingerclub","taxi","telephone","theatre","toilet","toilets","townhall","university","vehicle_inspection","vending_machine","vending_machines","veterinary","waste_basket","waste_disposal","water_point","watering_place","wlan"]
+		},
+		{
+			"key" : "amperage",
+			"values" : [ ]
+		},
+		{
+			"key" : "animal",
+			"values" : [ "school","wellness"]
+		},
+		{
+			"key" : "animal_training",
+			"values" : [ "dog"]
+		},
+		{
+			"key" : "arcade:left",
+			"values" : [ "no","open"]
+		},
+		{
+			"key" : "arcade:right",
+			"values" : [ "no","open"]
+		},
+		{
+			"key" : "area",
+			"values" : [ "no","true","yes"]
+		},
+		{
+			"key" : "area:highway",
+			"values" : [ ]
+		},
+		{
+			"key" : "arete",
+			"values" : [ "","yes"]
+		},
+		{
+			"key" : "artist_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "artwork_type",
+			"values" : [ "mural","sculpture","statue"]
+		},
+		{
+			"key" : "ascent",
+			"values" : [ ]
+		},
+		{
+			"key" : "atm",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "attribution",
+			"values" : [ ]
+		},
+		{
+			"key" : "atv",
+			"values" : [ ]
+		},
+		{
+			"key" : "avalanche_protector:left",
+			"values" : [ "no","open"]
+		},
+		{
+			"key" : "avalanche_protector:right",
+			"values" : [ "no","open"]
+		},
+		{
+			"key" : "backrest",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "barometer",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "barrier",
+			"values" : [ "block","bollard","border_control","bump_gate","bus_trap","cable barrier","cable_barrier","cattle_grid","chain","city_wall","cycle_barrier","czech_hedgehog","debris","ditch","drawbridge","entrance","fence","full-height_turnstile","gate","guard_rail","hampshire_gate","handrail","hedge","height_restrictor","horse_stile","jersey_barrier","kent_carriage_gap","kerb","kissing_gate","lift_gate","log","motorcycle_barrier","portcullis","removable","retaining_wall","rope","sally_port","spikes","stile","sump_buster","swing_gate","toll_booth","turnstile","wall","yes"]
+		},
+		{
+			"key" : "barriers",
+			"values" : [ "full","no","partly"]
+		},
+		{
+			"key" : "basin",
+			"values" : [ "detention","infiltration","retention"]
+		},
+		{
+			"key" : "bdouble",
+			"values" : [ ]
+		},
+		{
+			"key" : "bench",
+			"values" : [ "limited","no","only","true","yes"]
+		},
+		{
+			"key" : "bicycle",
+			"values" : [ "agricultural","allowed","delivery","designated","destination","dismount","forestry","lane","no","none","official","permissive","private","share_busway","shared","shared_lane","sidepath","track","use_sidepath","yes"]
+		},
+		{
+			"key" : "bicycle:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "bicycle:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "bicycle:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "bicycle:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "bicycle:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "bicycle:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "bicycle:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "bicycle:oneway",
+			"values" : [ ]
+		},
+		{
+			"key" : "bicycle_parking",
+			"values" : [ "anchors","building","ground_slots","informal","lockers","rack","shed","stands","wall_loops"]
+		},
+		{
+			"key" : "bicycle_road",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "biergarten",
+			"values" : [ ]
+		},
+		{
+			"key" : "bin",
+			"values" : [ "limited","only","true","yes"]
+		},
+		{
+			"key" : "board_type",
+			"values" : [ "geology","history","nature","notice","plants","wildlife"]
+		},
+		{
+			"key" : "boat",
+			"values" : [ ]
+		},
+		{
+			"key" : "bollard",
+			"values" : [ "removable","rising"]
+		},
+		{
+			"key" : "books",
+			"values" : [ "comicsr"]
+		},
+		{
+			"key" : "border_type",
+			"values" : [ ]
+		},
+		{
+			"key" : "boundary",
+			"values" : [ "administrative","barony","civil","civil_parish","historic","maritime","marker","national","national_park","political","postal_code","protected_area"]
+		},
+		{
+			"key" : "branch",
+			"values" : [ ]
+		},
+		{
+			"key" : "branch:type",
+			"values" : [ "cross","loop","split","tap"]
+		},
+		{
+			"key" : "brand",
+			"values" : [ "100????","7 ELEVEN","7-ELEVEn","ABC-MART","AEON","ANTENOR","AOKI","AUTOBACS ???????","Agip","Aigan","Aral","Avia","BEST","BOOK?OFF","BP","BePark","Blokker","CAFFÉ VELOCE","COCO'S","COMIC BUSTER","COSMO","COSPA","CO?OP","Cafe de CRIE","Casa","Chevron","Chiyoda","Châteraisé","Citgo","CoCo???","Coco!","DAIKI","DAIMARU","DAISO","DOUTOR","Daily YAMAZAKI","DeODEO","Denny's","EDION","EIDEN","ENEOS","ESSO","EXCELSIOR CAFFE","Esso","Exxon","FRESCO","FamilyMart","GAMERS","GEO","GS Park","GU","Gulf","HANSHIN","HMV","Hankyu","Heart?in","Homac","HottoMotto ??????","IDEMITSU","ISETAN","Independent","JA","JEANS MATE","JEUGIA","JUNKUDO","Joshin","J????????","K's ??????","K-BOOKS","KASUMI","KFC","KOHYO","KOMERI","KYGNUS","KeIHaN","Kintetsu","LAWSON","LAWSON STORE 100","LIBRO","LIFE","LOFT","Leen Bakker","MARUZEN","MINISTOP","MITSUI","MITSUKOSHI","MMC????????????","MOS BURGER","Matsuzakaya","MaxValu","MediaCafe POPEYE","Melonbooks","Mobil","NATURAL LAWSON","NTT docomo","OK·MART","OMV","P.ZONE","PARIS MIKI","PRONTO","Petro-Canada","Pioneer","Q8","RECOfan","Repsol","Royal Host","SEIBU ??","SEIYU","SHOE?PLAZA","SOGO","SOLATO","SPS","STARBUCKS","SUBWAY","Santoku","Seicomart","Shell","Simachu","SoftBank","Statoil","Sunoco","TOKYU HANDS","TOMO","TOWER RECORDS","TSUTAYA","TULLY?S COFFEE","Takashimaya","Tamoil","Texaco","Times 24th","Total","UNIQLO","UNITED ARROWS","Valor","Y!mobile","YAMADA","YAOKO","Yamazaki Shop","YellowHat","Yodobashi","animate","au","baskin BR robbins","bpost","careco","daiei","disc union","gourmet city","green label relaxing","ikari","independent","nojima","sunkus","takeone","welcia","????????? ???????","??? Café ???","?????? ???","?????","??????","????","???? ????","????","???","???","????","?????","???","??????","???","????? ??","???????","????","????????","???????","???????","???????","?????","??? ?????","??????? ??","????","?????","?????","????????","????","??????","??????????","??????????","????","???????","???????","???","??????????","???????","????????","???","??????????","??????","????","????PRO","?????","????????","????K","??????","????","???????","?????","???????","????","?????","?????????","??????","????","?????","?????????","??????????","????","???????","?????????","??.????","???","?????????","?????????","?????","??????","???????","??????","?????","????????","??????????????","????!!","???","??????","????","???????","?????????","????????","???21","???????","?????","?????","?????","???????","?????","????","????","????????","??????","??????","??","????","?????","????","??????","??? YOSHINOYA","?? ????","??","????","?????","????","??","????","????","???","???","????","?????? ???","???","???","???????","???????","???? ??","???????? ???","???","?????","??????","???","?????????","??","??","????","??????","?????","???????","?????? ?????","???? ?????","??? ???","????","??","???","????","???","????","???????","????????","??","??????","??????","???","????","???","??","???","????????? ???","???","??","???","???","??????","??OASIS","??","???? ????","?????","????","??????","???","????"]
+		},
+		{
+			"key" : "brand:en",
+			"values" : [ "Chunghwa Telecom","Far EasTone","Taiwan Mobile"]
+		},
+		{
+			"key" : "brewery",
+			"values" : [ ]
+		},
+		{
+			"key" : "brewery:note",
+			"values" : [ ]
+		},
+		{
+			"key" : "bridge",
+			"values" : [ "1","aqueduct","boardwalk","cantilever","covered","drawbridge","low_water_crossing","movable","suspension","swing","trestle","true","viaduct","yes"]
+		},
+		{
+			"key" : "bridge:name",
+			"values" : [ ]
+		},
+		{
+			"key" : "brigde",
+			"values" : [ "cantilever"]
+		},
+		{
+			"key" : "building",
+			"values" : [ "","apartments","barn","basilica","bridge","bungalow","bunker","cabin","cathedral","chapel","church","civic","collapsed","college","commercial","construction","cowshed","detached","detuched","dormitory","entrance","farm","farm_auxiliary","garage","garages","gasometer","greenhouse","hangar","hospital","hotel","house","houseboat","hut","industrial","kindergarten","kiosk","manufacture","monastery","mosque","office","public","residential","retail","roof","ruins","school","semidetached_house","service","shed","shrine","sport","stable","stadium","static_caravan","storage_tank","sty","supermarket","synagogue","temple","terrace","train_station","transformer_tower","transportation","university","warehouse","yes"]
+		},
+		{
+			"key" : "building:architecture",
+			"values" : [ "timber_frame","umgebinde"]
+		},
+		{
+			"key" : "building:fireproof",
+			"values" : [ ]
+		},
+		{
+			"key" : "building:levels",
+			"values" : [ ]
+		},
+		{
+			"key" : "building:part",
+			"values" : [ "barn","commercial","construction","cowshed","farm_auxiliary","garage","garages","greenhouse","hangar","hospital","industrial","office","retail","roof","school","shed","supermarket","transportation","university","warehouse","yes"]
+		},
+		{
+			"key" : "buildingpart",
+			"values" : [ ]
+		},
+		{
+			"key" : "buildingpart:verticalpassage",
+			"values" : [ ]
+		},
+		{
+			"key" : "bus",
+			"values" : [ "delivery","designated","destination","limited","no","only","permissive","restricted","true","urban","yes"]
+		},
+		{
+			"key" : "bus:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "bus:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "bus:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "bus:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "bus:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "bus:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "bus:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "busway",
+			"values" : [ "lane","opposite","opposite_lane"]
+		},
+		{
+			"key" : "busway:left",
+			"values" : [ "lane"]
+		},
+		{
+			"key" : "busway:right",
+			"values" : [ "lane"]
+		},
+		{
+			"key" : "cables",
+			"values" : [ "1","12","3","6","9"]
+		},
+		{
+			"key" : "camera:angle",
+			"values" : [ ]
+		},
+		{
+			"key" : "camera:direction",
+			"values" : [ ]
+		},
+		{
+			"key" : "camera:mount",
+			"values" : [ "ceiling","pole","wall"]
+		},
+		{
+			"key" : "camera:type",
+			"values" : [ "dome","fixed","panning"]
+		},
+		{
+			"key" : "canal:type_idn",
+			"values" : [ "irigasi_primer","irigasi_sekunder"]
+		},
+		{
+			"key" : "capacity",
+			"values" : [ ]
+		},
+		{
+			"key" : "capacity:disabled",
+			"values" : [ "1","2","3","no","unknown","yes"]
+		},
+		{
+			"key" : "capacity:parent",
+			"values" : [ "1","2","3","no","unknown","yes"]
+		},
+		{
+			"key" : "capacity:women",
+			"values" : [ "1","2","3","no","unknown","yes"]
+		},
+		{
+			"key" : "caravans",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "cargo",
+			"values" : [ "bicycle","hgv","passengers","passengers;vehicle","vehicle"]
+		},
+		{
+			"key" : "castle_type",
+			"values" : [ "defensive","fortress","kremlin","manor","palace","shiro","stately"]
+		},
+		{
+			"key" : "change",
+			"values" : [ ]
+		},
+		{
+			"key" : "change:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "change:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "change:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "change:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "change:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "change:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "change:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "charge",
+			"values" : [ ]
+		},
+		{
+			"key" : "circuits",
+			"values" : [ "1","2","3"]
+		},
+		{
+			"key" : "cliff",
+			"values" : [ "","yes"]
+		},
+		{
+			"key" : "clothes",
+			"values" : [ "brand","no","yes"]
+		},
+		{
+			"key" : "club",
+			"values" : [ ]
+		},
+		{
+			"key" : "coastline",
+			"values" : [ "bogus"]
+		},
+		{
+			"key" : "collection_times",
+			"values" : [ "11:30","Mo-Fr 09:00-12:00,17:15; Sa 14:00; Su,PH off","Mo-Fr 15:00,17:45,19:00,23:00; Sa 15:10; Su 10:30,23:00"]
+		},
+		{
+			"key" : "colonnade:left",
+			"values" : [ "no","open"]
+		},
+		{
+			"key" : "colonnade:right",
+			"values" : [ "no","open"]
+		},
+		{
+			"key" : "color",
+			"values" : [ ]
+		},
+		{
+			"key" : "colour",
+			"values" : [ "#CD853F","black","blue","brown","gray","green","red","red/white","white"]
+		},
+		{
+			"key" : "colour:arrow",
+			"values" : [ ]
+		},
+		{
+			"key" : "colour:back",
+			"values" : [ ]
+		},
+		{
+			"key" : "colour:text",
+			"values" : [ ]
+		},
+		{
+			"key" : "comment",
+			"values" : [ ]
+		},
+		{
+			"key" : "communication",
+			"values" : [ "line"]
+		},
+		{
+			"key" : "communication:mobile_phone",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "compensator",
+			"values" : [ "filter","series_capacitor","series_reactor","shunt_capacitor","shunt_reactor","statcom","static_var","synchronous_condenser"]
+		},
+		{
+			"key" : "construction",
+			"values" : [ "light_rail","rail","tram"]
+		},
+		{
+			"key" : "contact:email",
+			"values" : [ ]
+		},
+		{
+			"key" : "contact:fax",
+			"values" : [ ]
+		},
+		{
+			"key" : "contact:phone",
+			"values" : [ ]
+		},
+		{
+			"key" : "contact:website",
+			"values" : [ ]
+		},
+		{
+			"key" : "converter",
+			"values" : [ "back-to-back","lcc","vsc"]
+		},
+		{
+			"key" : "country_code",
+			"values" : [ ]
+		},
+		{
+			"key" : "covered",
+			"values" : [ "arcade","colonnade","no","yes"]
+		},
+		{
+			"key" : "craft",
+			"values" : [ "agricultural_engines","basket_maker","beekeeper","blacksmith","boatbuilder","bookbinder","brewery","builder","cabinet_maker","carpenter","carpet_layer","caterer","chimney_sweeper","cleaning","clockmaker","confectionery","construction","distillery","dressmaker","electrician","electronics","falles","floorer","furniture","gardener","glass","glaziery","handicraft","heating_engineer","hvac","insulation","jeweler","jeweller","joiner","key_cutter","laboratory","leather","locksmith","mason","metal_construction","metal_works","optician","painter","parquet_layer","photo_studio","photographer","photographic_laboratory","plasterer","plumber","pottery","print_shop","rigger","roofer","saddler","sailmaker","sawmill","scaffolder","sculpter","sculptor","shoemaker","stand_builder","stonemason","sun_protection","sweep","tailor","tiler","tinsmith","turner","upholsterer","watchmaker","window_construction","winery"]
+		},
+		{
+			"key" : "crossing",
+			"values" : [ "","island","no","traffic_signals","uncontrolled","unknown","unmarked","zebra"]
+		},
+		{
+			"key" : "crossing:barrier",
+			"values" : [ "double_half","full","half","no","yes"]
+		},
+		{
+			"key" : "crossing:bell",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "crossing:light",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "crossing_ref",
+			"values" : [ "pegasus","pelican","puffin","tiger","toucan","zebra"]
+		},
+		{
+			"key" : "cuisine",
+			"values" : [ "asian","bbq","beef_bowl","burger","chicken","chinese","curry","fish_and_chips","french","german","greek","ice_cream","indian","italian","japanese","kebab","mexican","noodle;ramen","noodle;soba;udon;ramen","pizza","regional","sandwich","savory_pancakes","sushi","thai","turkish"]
+		},
+		{
+			"key" : "currency:EUR",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "cutting",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "cycleway",
+			"values" : [ "allowed","designated","destination","dismount","lane","no","none","opposite","opposite_lane","opposite_share_busway","opposite_shared_lane","opposite_track","permissive","private","segregated","share_busway","shared","shared_lane","sharrow","sidepath","track","true","unmarked_lane","use_sidepath","yes"]
+		},
+		{
+			"key" : "cycleway:both",
+			"values" : [ "lane","opposite_lane","opposite_track","share_busway","shared","shared_lane","track"]
+		},
+		{
+			"key" : "cycleway:left",
+			"values" : [ "lane","opposite","opposite_lane","opposite_track","share_busway","shared","shared_lane","track"]
+		},
+		{
+			"key" : "cycleway:right",
+			"values" : [ "lane","opposite","opposite_lane","opposite_track","share_busway","shared","shared_lane","track"]
+		},
+		{
+			"key" : "damage:event",
+			"values" : [ "nepal_earthquake_2015"]
+		},
+		{
+			"key" : "date",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "day_off",
+			"values" : [ ]
+		},
+		{
+			"key" : "day_on",
+			"values" : [ ]
+		},
+		{
+			"key" : "delivery_hours",
+			"values" : [ ]
+		},
+		{
+			"key" : "dennert_fir_tree",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "denomination",
+			"values" : [ "anglican","baptist","baptist ","catholic","conservative","evangelical","greek_catholic","greek_orthodox","ibadi","jehovahs_witness","lutheran","mahayana","methodist","mormon","new_apostolic","orthodox","pentecostal","presbyterian","protestant","quaker","reform","roman_catholic","russian_orthodox","seventh_day_adventist","shaivism","shaktism","shia","smartism","sunni","theravada","vaishnavism","vajrayana"]
+		},
+		{
+			"key" : "denotation",
+			"values" : [ "natural_monument"]
+		},
+		{
+			"key" : "department",
+			"values" : [ "store_section"]
+		},
+		{
+			"key" : "depth",
+			"values" : [ ]
+		},
+		{
+			"key" : "descent",
+			"values" : [ ]
+		},
+		{
+			"key" : "description",
+			"values" : [ ]
+		},
+		{
+			"key" : "design",
+			"values" : [ "asymmetric","barrel","bipole","delta","delta_two-level","donau","donau;one-level","flag","four-level","guyed_h-frame","guyed_v-frame","h-frame","monopolar","nine-level","one-level","portal","portal_three-level","portal_two-level","six-level","three-level","triangle","two-level","x-frame","y-frame"]
+		},
+		{
+			"key" : "design:incomplete",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "designation",
+			"values" : [ "byway_open_to_all_traffic","permissive_bridleway","permissive_footpath","public_bridleway","public_footpath","restricted_byway"]
+		},
+		{
+			"key" : "destination",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:colour",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:colour:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:colour:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:colour:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:colour:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:colour:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:colour:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:colour:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:country",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:country:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:country:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:country:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:country:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:country:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:country:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:country:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:to",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:to:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:to:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:to:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:to:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:to:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:to:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:ref:to:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:street",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:street:to",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:symbol",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:symbol:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:symbol:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:symbol:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:symbol:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:symbol:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:symbol:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "destination:symbol:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "detour",
+			"values" : [ ]
+		},
+		{
+			"key" : "diet",
+			"values" : [ ]
+		},
+		{
+			"key" : "direction",
+			"values" : [ "clockwise","forward"]
+		},
+		{
+			"key" : "disc_golf",
+			"values" : [ "basket","hole","tee"]
+		},
+		{
+			"key" : "dispensing",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "display",
+			"values" : [ "analog","digital","sundial","unorthodox"]
+		},
+		{
+			"key" : "display:analog",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "display:digital",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "distance",
+			"values" : [ "100","200","300"]
+		},
+		{
+			"key" : "disused",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "disused:landuse",
+			"values" : [ "quarry"]
+		},
+		{
+			"key" : "disused:man_made",
+			"values" : [ "kiln"]
+		},
+		{
+			"key" : "disused:shop",
+			"values" : [ ]
+		},
+		{
+			"key" : "ditch:type_idn",
+			"values" : [ "irigasi_tersier"]
+		},
+		{
+			"key" : "door",
+			"values" : [ ]
+		},
+		{
+			"key" : "drinking_water",
+			"values" : [ "no","seasonal","yes"]
+		},
+		{
+			"key" : "drive_in",
+			"values" : [ ]
+		},
+		{
+			"key" : "drive_through",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "driving_side",
+			"values" : [ ]
+		},
+		{
+			"key" : "duration",
+			"values" : [ ]
+		},
+		{
+			"key" : "ele",
+			"values" : [ ]
+		},
+		{
+			"key" : "electrified",
+			"values" : [ "contact_line","no","rail","yes"]
+		},
+		{
+			"key" : "email",
+			"values" : [ ]
+		},
+		{
+			"key" : "embankment",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "emergency",
+			"values" : [ "access_point","ambulance_station","assembly_point","defibrillator","designated","destination","fire_extinguisher","fire_flapper","fire_hose","fire_hydrant","life_ring","life_saving_equipment","lifeguard_base","lifeguard_place","lifeguard_platform","lifeguard_tower","no","official","permissive","phone","private","ses_station","siren","water_tank","yes"]
+		},
+		{
+			"key" : "emergency:amenity",
+			"values" : [ "social_facility"]
+		},
+		{
+			"key" : "emergency:social_facility",
+			"values" : [ "shelter"]
+		},
+		{
+			"key" : "emergency:social_facility:for",
+			"values" : [ "displaced_people"]
+		},
+		{
+			"key" : "emergency:social_facility:opening_hours",
+			"values" : [ "closed "]
+		},
+		{
+			"key" : "end_date",
+			"values" : [ ]
+		},
+		{
+			"key" : "enforcement",
+			"values" : [ "check ","maxheight","maxspeed","maxweight","mindistance","traffic_signals"]
+		},
+		{
+			"key" : "entrance",
+			"values" : [ "emergency","exit","main","service","yes"]
+		},
+		{
+			"key" : "entrance:type_idn",
+			"values" : [ "gerbang_jalan"]
+		},
+		{
+			"key" : "escalator",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "est_width",
+			"values" : [ ]
+		},
+		{
+			"key" : "exit_to",
+			"values" : [ ]
+		},
+		{
+			"key" : "fair_trade",
+			"values" : [ "no","only","yes"]
+		},
+		{
+			"key" : "fax",
+			"values" : [ ]
+		},
+		{
+			"key" : "fee",
+			"values" : [ "interval","no","yes"]
+		},
+		{
+			"key" : "fence_type",
+			"values" : [ "barbed_wire","chain_link","electric","metal","pole","split_rail","wire","wood"]
+		},
+		{
+			"key" : "ferry",
+			"values" : [ "limited","no","only","true","yes"]
+		},
+		{
+			"key" : "fire_boundary",
+			"values" : [ ]
+		},
+		{
+			"key" : "fire_hydrant:count",
+			"values" : [ ]
+		},
+		{
+			"key" : "fire_hydrant:diameter",
+			"values" : [ "100","150","200","250","300","400","50","80"]
+		},
+		{
+			"key" : "fire_hydrant:position",
+			"values" : [ "green","lane","parking_lot","sidewalk"]
+		},
+		{
+			"key" : "fire_hydrant:pressure",
+			"values" : [ "5","6","8","suction"]
+		},
+		{
+			"key" : "fire_hydrant:type",
+			"values" : [ "pillar","pond","suction_point","underground","wall"]
+		},
+		{
+			"key" : "fire_object:type",
+			"values" : [ ]
+		},
+		{
+			"key" : "fire_operator",
+			"values" : [ ]
+		},
+		{
+			"key" : "fire_rank",
+			"values" : [ ]
+		},
+		{
+			"key" : "fireplace",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fixme",
+			"values" : [ ]
+		},
+		{
+			"key" : "food",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "foot",
+			"values" : [ "agricultural","allowed","crossing","customers","delivery","designated","destination","discouraged","footway","forestry","no","official","passable","permissive","private","public","restricted","sidewalk","unknown","use_sidepath","yes"]
+		},
+		{
+			"key" : "foot:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "foot:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "foot:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "foot:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "foot:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "foot:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "foot:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "footway",
+			"values" : [ "crossing","sidewalk"]
+		},
+		{
+			"key" : "ford",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "forestry",
+			"values" : [ ]
+		},
+		{
+			"key" : "frequency",
+			"values" : [ "0","16.67","16.7","50","60"]
+		},
+		{
+			"key" : "from",
+			"values" : [ ]
+		},
+		{
+			"key" : "fuel",
+			"values" : [ "charcoal","electric","wood"]
+		},
+		{
+			"key" : "fuel:1_25",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:1_50",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:GTL_diesel",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:HGV_diesel",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:biodiesel",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:cng",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:diesel",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:e10",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:e85",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:lpg",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:octane_100",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:octane_80",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:octane_91",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:octane_92",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:octane_95",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "fuel:octane_98",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "function",
+			"values" : [ "retail"]
+		},
+		{
+			"key" : "funicular",
+			"values" : [ "limited","no","only","true","yes"]
+		},
+		{
+			"key" : "gaelic_games:camogie",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "gaelic_games:football",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "gaelic_games:hurling",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "gaelic_games:rounders",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "galli",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "garden:type",
+			"values" : [ "community"]
+		},
+		{
+			"key" : "gas_insulated",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "gauge",
+			"values" : [ "1000","1067","1435","1495","1520","1522","1524","1600","1668","1674","1676","750","760","762","914"]
+		},
+		{
+			"key" : "generator:method",
+			"values" : [ "anaerobic_digestion","barrage","combustion","fission","fusion","gasification","photovoltaic","pyrolysis","run-of-the-river","stream","thermal","water-pumped-storage","water-storage","wind_turbine"]
+		},
+		{
+			"key" : "generator:output",
+			"values" : [ ]
+		},
+		{
+			"key" : "generator:output:biogas",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "generator:output:cold_air",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "generator:output:cold_water",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "generator:output:compressed_air",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "generator:output:electricity",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "generator:output:hot_air",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "generator:output:hot_water",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "generator:output:steam",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "generator:output:vacuum",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "generator:source",
+			"values" : [ "biofuel","biogas","biomass","coal","diesel","gas","gasoline","geothermal","hydro","nuclear","oil","osmotic","solar","tidal","waste","water","wave","wind"]
+		},
+		{
+			"key" : "generator:type",
+			"values" : [ "bioreactor","combined_cycle","gas_turbine","heat_pump","horizontal_axis","reciprocating_engine","steam_generator","steam_turbine","vertical_axis"]
+		},
+		{
+			"key" : "genus",
+			"values" : [ "Acer","Aesculus","Alnus","Betula","Carpinus","Corylus","Crataegus","Fagus","Fraxinus","Ginkgo","Juglans","Larix","Picea","Pinus","Platanus","Populus","Pseudotsuga","Quercus","Robinia","Salix","Sambucus","Sorbus","Taxus","Tilia","Ulmus"]
+		},
+		{
+			"key" : "geological",
+			"values" : [ "moraine","outcrop","palaeontological_site"]
+		},
+		{
+			"key" : "gladed",
+			"values" : [ ]
+		},
+		{
+			"key" : "golf",
+			"values" : [ "bunker","clubhouse","driving_range","fairway","green","hole","lateral_water_hazard","pin","practice","rough","tee","water_hazard"]
+		},
+		{
+			"key" : "goods",
+			"values" : [ "agricultural","delivery","designated","destination","forestry","no","official","permissive","private","yes"]
+		},
+		{
+			"key" : "grassland",
+			"values" : [ "pampas","prairie","puszta","savanna","steppe","veld"]
+		},
+		{
+			"key" : "handrail",
+			"values" : [ "no"]
+		},
+		{
+			"key" : "handrail:center",
+			"values" : [ "","yes"]
+		},
+		{
+			"key" : "handrail:left",
+			"values" : [ "","yes"]
+		},
+		{
+			"key" : "handrail:right",
+			"values" : [ "","yes"]
+		},
+		{
+			"key" : "happy_hours",
+			"values" : [ ]
+		},
+		{
+			"key" : "harbour",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "hazmat",
+			"values" : [ "no"]
+		},
+		{
+			"key" : "headframe",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "health_facility:type",
+			"values" : [ "office"]
+		},
+		{
+			"key" : "health_specialty:dentistry",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "health_specialty:diet",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "health_specialty:family_medicine",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "health_specialty:general",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "health_specialty:internal_medicine",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "health_specialty:physiotherapy",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "healthcare",
+			"values" : [ "blood_donation"]
+		},
+		{
+			"key" : "healthcare:speciality",
+			"values" : [ ]
+		},
+		{
+			"key" : "height",
+			"values" : [ "10","15","20","5","full","half","low"]
+		},
+		{
+			"key" : "heritage",
+			"values" : [ "","1","4"]
+		},
+		{
+			"key" : "heritage:operator",
+			"values" : [ "OnroerendErfgoed","aatl","ctl"]
+		},
+		{
+			"key" : "heritage:website",
+			"values" : [ ]
+		},
+		{
+			"key" : "hgv",
+			"values" : [ "agricultural","delivery","designated","destination","forestry","no","official","permissive","private","yes"]
+		},
+		{
+			"key" : "hgv:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "hgv:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "hgv:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "hgv:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "hgv:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "hgv:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "hgv:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "hide",
+			"values" : [ "no","unknown","yes"]
+		},
+		{
+			"key" : "highway",
+			"values" : [ "bridleway","bus_guideway","bus_stop","construction","corridor","crossing","cycleway","elevator","emergency_access_point","escape","footway","ford","give_way","incline","incline_steep","living_street","milestone","mini_roundabout","motorway","motorway_junction","motorway_link","no","passing_place","path","pedestrian","platform","primary","primary_link","private","proposed","raceway","residential","residential_link","rest_area","road","secondary","secondary_link","service","services","speed_camera","steps","stop","street_lamp","tertiary","tertiary_link","track","traffic_mirror","traffic_signals","trunk","trunk_link","turning_circle","turning_loop","unclassified","undefined","unknown","unsurfaced","via_ferrata"]
+		},
+		{
+			"key" : "hiking",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "historic",
+			"values" : [ "aircraft","aqueduct","archaeological_site","battlefield","bomb_crater","boundary_stone","bridge","building","cannon","castle","chapel","church","city_gate","citywalls","farm","fort","gallows","heritage","house","industrial","lavoir","locomotive","manor","memorial","milestone","mine","mine_shaft","monastery","monument","optical_telegraph","pa","palace","pillory","plaque","quarry","ruins","rune_stone","ship","stone","summer_mountain_farm","technical_monument","threshing_floor","tomb","tower","tree_shrine","wall","wayside_chapel","wayside_cross","wayside_shrine","wreck","yes"]
+		},
+		{
+			"key" : "horse",
+			"values" : [ "agricultural","delivery","designated","destination","forestry","no","official","permissive","private","yes"]
+		},
+		{
+			"key" : "hour_off",
+			"values" : [ ]
+		},
+		{
+			"key" : "hour_on",
+			"values" : [ ]
+		},
+		{
+			"key" : "hov",
+			"values" : [ "designated","destination","no","official","permissive","private","yes"]
+		},
+		{
+			"key" : "hov:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "hov:minimum",
+			"values" : [ ]
+		},
+		{
+			"key" : "hygrometer",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "iata",
+			"values" : [ ]
+		},
+		{
+			"key" : "icao",
+			"values" : [ ]
+		},
+		{
+			"key" : "ice_road",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "icn",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "icn_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "idp:camp_site",
+			"values" : [ "spontaneous_camp"]
+		},
+		{
+			"key" : "image",
+			"values" : [ ]
+		},
+		{
+			"key" : "impassable",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "incline",
+			"values" : [ "-10%","-10Â°","10%","10Â°","down","up"]
+		},
+		{
+			"key" : "indoor",
+			"values" : [ "area","corridor","no","room","wall","yes"]
+		},
+		{
+			"key" : "industrial",
+			"values" : [ ]
+		},
+		{
+			"key" : "information",
+			"values" : [ "audioguide","board","guidepost","map","office","terminal"]
+		},
+		{
+			"key" : "inline_skates",
+			"values" : [ ]
+		},
+		{
+			"key" : "inscription",
+			"values" : [ ]
+		},
+		{
+			"key" : "int_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "int_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "intermittent",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "internet_access",
+			"values" : [ "no","terminal","wired","wlan","yes"]
+		},
+		{
+			"key" : "internet_access:fee",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "is_in",
+			"values" : [ "Hokai-do, Japan","Japan","xx City, yy Prefecture, Japan","xx Prefecture, Japan","yy Prefecture, Japan"]
+		},
+		{
+			"key" : "is_in:city",
+			"values" : [ ]
+		},
+		{
+			"key" : "is_in:country",
+			"values" : [ ]
+		},
+		{
+			"key" : "is_in:country_code",
+			"values" : [ ]
+		},
+		{
+			"key" : "is_in:ja",
+			"values" : [ "??","??xx?","??yy?","??yy?xx?","?????"]
+		},
+		{
+			"key" : "jams",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "jel",
+			"values" : [ "k","k+","k3","k4","katl","katlv","kb","kc","keml","kii","kl","km","kmtb","kq","kt","ktfl","ktmp","kx","lm","p","p+","p3","p4","palp","patl","patlv","pb","pc","peml","pii","pl","pm","pmtb","pq","pt","ptfl","ptmp","px","s","s+","s3","s4","salp","satl","satlv","sb","sc","seml","sgy","sii","sl","sm","smtb","sq","st","ste","stfl","stj","stmp","sx","z","z+","z3","z4","zatl","zatlv","zb","zbic","zc","zeml","zii","zl","zm","zmtb","zq","zt","ztfl","ztmp","zx"]
+		},
+		{
+			"key" : "junction",
+			"values" : [ "jughandle","roundabout","yes"]
+		},
+		{
+			"key" : "junction:ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "kct_blue",
+			"values" : [ "bicycle","interesting_object","local","major","peak","ruin","spring"]
+		},
+		{
+			"key" : "kct_green",
+			"values" : [ "bicycle","interesting_object","learning","local","major","peak","ruin","spring"]
+		},
+		{
+			"key" : "kct_red",
+			"values" : [ "bicycle","interesting_object","local","major","peak","ruin","spring"]
+		},
+		{
+			"key" : "kct_white",
+			"values" : [ "bicycle"]
+		},
+		{
+			"key" : "kct_yellow",
+			"values" : [ "interesting_object","local","major","peak","ruin","spring"]
+		},
+		{
+			"key" : "kiln",
+			"values" : [ "bricks","charcoal","glass","lime","pottery","tar"]
+		},
+		{
+			"key" : "laboratory",
+			"values" : [ ]
+		},
+		{
+			"key" : "landfill",
+			"values" : [ "spoil_heap"]
+		},
+		{
+			"key" : "landuse",
+			"values" : [ "allotments","basin","brownfield","cemetery","churchyard","commercial","construction","farm","farmland","farmyard","fishfarm","forest","garages","grass","greenfield","greenhouse_horticulture","industrial","landfill","landuse","meadow","military","nature_reserve","observatory","orchard","park","plant_nursery","quarry","railway","recreation_ground","religious","reservoir","residential","retail","salt_pond","scrub","traffic_island","village_green","vineyard","wood"]
+		},
+		{
+			"key" : "lanes",
+			"values" : [ "1","2","3","4","5"]
+		},
+		{
+			"key" : "lanes:backward",
+			"values" : [ "0","1","2"]
+		},
+		{
+			"key" : "lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "lanes:bus",
+			"values" : [ "1","2"]
+		},
+		{
+			"key" : "lanes:forward",
+			"values" : [ "1","2","3","4"]
+		},
+		{
+			"key" : "lanes:psv:backward",
+			"values" : [ "1","2","bus","designated","permissive","yes"]
+		},
+		{
+			"key" : "lanes:psv:forward",
+			"values" : [ "1","2","bus","delivery","designated","destination","no","permissive","restricted","urban","yes"]
+		},
+		{
+			"key" : "layer",
+			"values" : [ "-1","-2","-3","-4","-5","0","1","2","3","4","5"]
+		},
+		{
+			"key" : "lcn",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "lcn_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "leaf_cycle",
+			"values" : [ "deciduous","evergreen","mixed","semi_deciduous","semi_evergreen"]
+		},
+		{
+			"key" : "leaf_type",
+			"values" : [ "broadleaved","leafless","mixed","needleleaved"]
+		},
+		{
+			"key" : "leisure",
+			"values" : [ "adult_gaming_centre","amusement_arcade","bandstand","beach_resort","bird_hide","bowling_alley","common","dance","disc_golf_course","dog_park","firepit","fishing","garden","golf_course","hackerspace","horse_riding","ice_rink","marina","miniature_golf","natural_reserve","nature_reserve","park","picnic_table","pitch","playground","recreation_ground","sauna","slipway","sports_centre","sports_cetre","stadium","summer_camp","swimming_area","swimming_pool","track","water_park","wildlife_hide"]
+		},
+		{
+			"key" : "length",
+			"values" : [ ]
+		},
+		{
+			"key" : "level",
+			"values" : [ ]
+		},
+		{
+			"key" : "level_crossing",
+			"values" : [ "automatic_barrier","uncontrolled"]
+		},
+		{
+			"key" : "level_crossing:category",
+			"values" : [ "category1","category2","category3","category4","category5"]
+		},
+		{
+			"key" : "license_classes",
+			"values" : [ "A;A1;B;B1;C;C1;D;D1;BE;CE;C1E;DE;D1E","A;A1;B;BE;C"]
+		},
+		{
+			"key" : "life_saving_equipment",
+			"values" : [ "life_buoy"]
+		},
+		{
+			"key" : "light_rail",
+			"values" : [ "limited","only","true","yes"]
+		},
+		{
+			"key" : "light_source",
+			"values" : [ "aviation","floodlight","lantern","signal_lamp","warning"]
+		},
+		{
+			"key" : "line",
+			"values" : [ "bay","busbar","ferry"]
+		},
+		{
+			"key" : "lit",
+			"values" : [ "interval","no","yes"]
+		},
+		{
+			"key" : "loc_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "loc_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "locality",
+			"values" : [ "subtownland","townland"]
+		},
+		{
+			"key" : "location",
+			"values" : [ "indoor","kiosk","outdoor","overground","platform","underground","underwater"]
+		},
+		{
+			"key" : "lock",
+			"values" : [ "no","unknown","yes"]
+		},
+		{
+			"key" : "logainm:ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "man_made",
+			"values" : [ "adit","antenna","beacon","breakwater","bridge","bunker_silo","buoy","campanile","cellar_entrance","chimney","clearcut","communications_tower","container_terminal","crane","cross","cutline","dyke","embankment","flagpole","gasometer","goods_conveyor","groyne","kiln","lighthouse","mast","mine","mine_shaft","mineshaft","monitoring station","monitoring_station","obelisk","observatory","offshore_platform","petroleum_well","pier","pipeline","piste:halfpipe","pumping_rig","reservoir_covered","silo","snow_fence","snow_net","spoil_heap","storage_tank","street_cabinet","submarine_cable","surveillance","survey_point","telescope","tower","wastewater_plant","water_tap","water_tower","water_well","water_work","water_works","watermill","windmill","works"]
+		},
+		{
+			"key" : "map_size",
+			"values" : [ "city","region","site"]
+		},
+		{
+			"key" : "map_type",
+			"values" : [ "scheme","street","topo","toposcope"]
+		},
+		{
+			"key" : "mapillary",
+			"values" : [ ]
+		},
+		{
+			"key" : "marker",
+			"values" : [ "stone"]
+		},
+		{
+			"key" : "material",
+			"values" : [ "concrete","metal","plastic","steel","stone","wood"]
+		},
+		{
+			"key" : "maxaxleload",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxgcweight",
+			"values" : [ ""]
+		},
+		{
+			"key" : "maxgcweight:conditional",
+			"values" : [ ""]
+		},
+		{
+			"key" : "maxgcweightrating:hgv:conditional",
+			"values" : [ "none @ marked"]
+		},
+		{
+			"key" : "maxgvweightrating:hgv",
+			"values" : [ "3.5"]
+		},
+		{
+			"key" : "maxgvweightrating:hgv:conditional",
+			"values" : [ "none @ marked"]
+		},
+		{
+			"key" : "maxheight",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxheight:physical",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxlength",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxspeed",
+			"values" : [ "","100","110","120","130","140","20","30","40","50","60","70","80","90","RU:living_street","RU:motorway","RU:rural","RU:urban","implicit","none","signals"]
+		},
+		{
+			"key" : "maxspeed:backward",
+			"values" : [ "","100","50","90"]
+		},
+		{
+			"key" : "maxspeed:backward:conditional",
+			"values" : [ "","60 @ (23:00-05:00)"]
+		},
+		{
+			"key" : "maxspeed:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxspeed:bus",
+			"values" : [ "","70","80"]
+		},
+		{
+			"key" : "maxspeed:bus:backward",
+			"values" : [ "","70","80"]
+		},
+		{
+			"key" : "maxspeed:bus:forward",
+			"values" : [ "","70","80"]
+		},
+		{
+			"key" : "maxspeed:conditional",
+			"values" : [ "","60 @ (23:00-05:00)"]
+		},
+		{
+			"key" : "maxspeed:forward",
+			"values" : [ "","100","50","90"]
+		},
+		{
+			"key" : "maxspeed:forward:conditional",
+			"values" : [ "","60 @ (23:00-05:00)"]
+		},
+		{
+			"key" : "maxspeed:hgv",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxspeed:hgv:backward:conditional",
+			"values" : [ "","100 @ (weight<=3.5); 80 @ (weight>3.5)","90 @ (weight<=3.5); 70 @ (weight>3.5)"]
+		},
+		{
+			"key" : "maxspeed:hgv:conditional",
+			"values" : [ "","100 @ (weight<=3.5); 80 @ (weight>3.5)","120 @ (weight<=3.5); 80 @ (weight>3.5)","140 @ (weight<=3.5); 80 @ (weight>3.5)","90 @ (weight<=3.5); 70 @ (weight>3.5)"]
+		},
+		{
+			"key" : "maxspeed:hgv:forward:conditional",
+			"values" : [ "","100 @ (weight<=3.5); 80 @ (weight>3.5)","90 @ (weight<=3.5); 70 @ (weight>3.5)"]
+		},
+		{
+			"key" : "maxspeed:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxspeed:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxspeed:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxspeed:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxspeed:trailer",
+			"values" : [ "","70","80"]
+		},
+		{
+			"key" : "maxspeed:trailer:backward",
+			"values" : [ "","70","80"]
+		},
+		{
+			"key" : "maxspeed:trailer:forward",
+			"values" : [ "","70","80"]
+		},
+		{
+			"key" : "maxstay",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxweight",
+			"values" : [ ]
+		},
+		{
+			"key" : "maxwidth",
+			"values" : [ ]
+		},
+		{
+			"key" : "medical_system:western",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "megalith_type",
+			"values" : [ "alignment","chamber","dolmen","menhir","passage_grave","stone_circle"]
+		},
+		{
+			"key" : "memorial",
+			"values" : [ "blue_plaque","obelisk","plaque","statue"]
+		},
+		{
+			"key" : "memorial:type",
+			"values" : [ "obelisk","plaque","plate","statue","stolperstein"]
+		},
+		{
+			"key" : "memorial:website",
+			"values" : [ ]
+		},
+		{
+			"key" : "memorial_plaque:colour",
+			"values" : [ "blue"]
+		},
+		{
+			"key" : "microbrewery",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "military",
+			"values" : [ "airfield","ammunition","barracks","bunker","checkpoint","danger_area","naval_base","nuclear_explosion_site","obstacle_course","office","range","training_area"]
+		},
+		{
+			"key" : "mineshaft_type",
+			"values" : [ "air","winding"]
+		},
+		{
+			"key" : "minspeed",
+			"values" : [ "implicit"]
+		},
+		{
+			"key" : "mofa",
+			"values" : [ ]
+		},
+		{
+			"key" : "monitoring:air_quality",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monitoring:galileo",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monitoring:glonass",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monitoring:gps",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monitoring:noise",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monitoring:radiation",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monitoring:seismic_activity",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monitoring:tide_gauge",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monitoring:traffic",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monitoring:water_level",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monitoring:weather",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "monorail",
+			"values" : [ "hanging","limited","magnetic","no","only","true","yes"]
+		},
+		{
+			"key" : "mooring",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "moped",
+			"values" : [ ]
+		},
+		{
+			"key" : "motor_vehicle",
+			"values" : [ "agricultural","allowed","customers","delivery","designated","destination","discouraged","dismount","forestry","no","official","permissive","private","public","restricted","use_sidepath","yes"]
+		},
+		{
+			"key" : "motorboat",
+			"values" : [ ]
+		},
+		{
+			"key" : "motorcar",
+			"values" : [ "agricultural","allowed","customers","delivery","designated","destination","discouraged","dismount","forestry","no","official","permissive","private","public","restricted","use_sidepath","yes"]
+		},
+		{
+			"key" : "motorcycle",
+			"values" : [ "agricultural","delivery","designated","destination","forestry","no","official","permissive","private","yes"]
+		},
+		{
+			"key" : "motorroad",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "mountain_pass",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "mtb",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "mtb:description",
+			"values" : [ ]
+		},
+		{
+			"key" : "mtb:scale",
+			"values" : [ "0","1","2","3","4","5"]
+		},
+		{
+			"key" : "mtb:scale:imba",
+			"values" : [ ]
+		},
+		{
+			"key" : "mtb_scale",
+			"values" : [ ]
+		},
+		{
+			"key" : "name",
+			"values" : [ "100????","ABC MART","ANTENOR","AOKI","BePark","Blokker","Bread","CO?OP","Casa","CoCo???","Dog-Station","ENEOS","ESSO","GU","HMV","JA-SS","JEUGIA","J????????","K-BOOKS","KEIHAN","KOHYO","LOFT","Leen Bakker","MMC????????????","Mobil","P.ZONE","PRONTO","SHOE?PLAZA","TOMO?????","TSUTAYA","UNITED ARROWS","au????","disc union","green label relaxing","???","???????","??????????","?????","??????","????","?????","????","????","???","???","???","???","????","???","???","???????","????","????????","???????","??????","???????","???????","?????","????","????","?????","?????","?????","???????","???","????????","?????","????","???????? ???","?????","????","??????","??????????","??????????","???????","????","???????","???","?????????","?????????","???????","???","???","??????","??????????","??????","?????????????","??????","????????","??","?????","???","?????","???","???","?????","???","?????????","????????","??????????","??????","???","????","????PRO","?????","?????","????","????????","????K","?????????????","??????","???????","??????","????","???????","???????","?????","???????","?????","???????","???????","????","???????","???????","?????","?????????","????????","??????","???????","???-????","????","??????????","?????","????","?????????","??????????","????","????????","???????","????","???","????","???","???????","??????","????????","????","????","?????????","???????","????????????","??.????","?????????","???","?????????","?????????","???","?????","???","?????","??????","???????","??????","?????","????????","????!!","????????","?????","???? ???????","?????","?????","???","??????","???????","????","???????","?????????","????????","??????","???21","??????","???????","?????","??????????","???????","??????","????","????????","?????","????","???????","???","???","?????","???????","?????","????","???????100","??????","?????","???????","????","??","?????","??","????","????","??","???","???","??","??","?????","???","??","??","????","?????","????","??","??","????","????","??","????","???","?????","???","????","???","??","???","??","????","???","???","???????","???????","?????","???","???","?????","??????","???","?????????","?????","?????","??","???","??","??????","?????","???????","????","??","???","???","????","???","????","???????","????????","??","??","??????","????","??","??","???","??","???","??","????","???","???","??????","??","??????","??","?????","????","??????","???","??","???","????","????"]
+		},
+		{
+			"key" : "name:botanical",
+			"values" : [ ]
+		},
+		{
+			"key" : "name:census1901",
+			"values" : [ ]
+		},
+		{
+			"key" : "name:census1911",
+			"values" : [ ]
+		},
+		{
+			"key" : "name:en",
+			"values" : [ "ABC MART","AEON","AMATARO","ANTENOR","AOKI","AOYAMA","AUTOBACS","Aigan","Aiya","Akiyoshi","Animate","Anrakutei","Ansuri","BEST","BIC CAMERA","BOOKS KINOKUNIYA","BOOKS SANSEIDO","BOOK?OFF","BUFFET GRAND CHINA","Bamiyan","Baskin-Robbins","BePark","Bikkuri-Donkey","Bunkyodo","CAFFE VELOCE","CAINZ","CAINZ HOME","CHIBO","COCO'S","COMIC BUSTER","COMMUNITY STORE","COSMO","CO?OP","Cafe de CRIE","Capricchosa","Chateraise","Chiyoda","Circle K","CoCo ICHIBANYA","Coco Store","Comic Toranoana","Cospa","DAIKI","DAIMARU","DAISO","DOMA-DOMA","DOUTOR","Daily YAMAZAKI","DeODEO","Denny's","Don Quijote","EDION","EIDEN","ENEOS","ESSO","EXCELSIOR CAFFE","Eki Rent-a-car","F-ONE","FRESCO","FUGETSU","FamilyMart","Famima!!","Fujisoba","GS Park","GU","Gamers","General","Geo","Grazie gardens","Gusto","Gyomu Super","Gyu-Kaku","HAKKENDEN","HANAMARU","HANSHIN","HMV","Hankyu","Hankyu OASIS","Haruyama","Heart?in","Hiikiya","Hokka-Hokka Tei","Homac","Honkekamadoya","HottoMotto","Hyaku-man Volt","IDEMITSU","ISETAN","Irohanihoheto","Ishinden","Ito-Yokado","J-net Rent A Car","JA-SS","JAPAN","JEANS MATE","JEUGIA","JOYFUL HONDA","JUNKUDO","Jiyu Kukan","Jolly Pasta","Joshin","K's","K-BOOKS","KASUMI","KEIHAN","KINEYA","KINNO-KURA","KISOJI","KO:HI:KAN","KOBEYA KITCHEN","KOBEYA RESTAURANT","KOHNAN","KOHNAN PRO","KOHYO","KOMERI","KONAKA","KOURAKUEN","KYGNUS","Kansai Super","Kappazushi","Kazokutei","Keibundo","Keiyo D2","Kentucky Fried Chicken","Kintetsu","Komeda","Kurashi House","Kurazushi","Kushiya Monogatari","LAWSON","LAWSON STORE 100","LIBRO","LIFE","LOFT","LOTTERIA","MARUZEN","MEGANE SUPER","MINISTOP","MIRAIYA SHOTEN","MITSUI","MITSUKOSHI","MMC DIAMOND FINANCE","MOS BURGER","MUJI","Maido-Ohkini","Mandarake","Matsumoto","MatsumotoKiyoshi","Matsuya","Matsuzakaya","MaxValu","McDonald's","MediaCafe POPEYE","Megane HOMPO","Megane Ichiba","Megane21","Melonbooks","Mister Donut","Miyakosoba","Miyamoto Munashi","Mobil","Mr Tireman","Murasaki","My Basket","NAKAU","NATURAL LAWSON","NICONICO RENTACAR","NISSAN Rent a Car","Nafuko","Nippon Rent-A-Car","Nisshin Rent a Car","OHSHO","ORIX CarShare","ORIX Rent A Car","OSAKA OHSHO","Ohashi cafe Gusto","Origin Bento","P.ZONE","PARIS MIKI","PARK NET","PEACOCK STORE","POPLAR","PRONTO","RECOfan","Repark","Royal Host","SEIBU","SEIJOISHII","SEIYU","SHIMAMURA","SHINSEIDO","SHIROKIYA","SHOE PLAZA","SOGO","SOLATO","ST-MARC CAFE","STEAK GUSTO","SUBWAY","SUIKODEN","SUKIYA","SYABU-YO","Saizeriya","Sakura Suisan","Santoku","Seicomart","Seikatsu Saika","Seven-Eleven","Showa-shell","Simachu","Sofmap","SoftBank shop","Sojibo","Starbucks","Super VIVA HOME","SuperTamade","Sushiro","Systempark","TENKAIPPIN","TOHO-KENBUN-ROKU","TOKYO SHOES RETAILING CENTER","TOKYU HANDS","TOMO","TOYOTA Rent a Car","TSUTAYA","Taiyakan","Takashimaya","Tengu","The SHOES","Three-F","Times","Times Car PLUS","Times Car Rental","Toraya","Torikizoku","Tower Records","Tsubohachi","Tsuki no Shizuku","Tsuruha Drugstore","Tsurumaru","Tully's Coffee","UNIQLO","UNITED ARROWS","Uotami","VIVA HOME","Valor","Vision Megane","WAKO","WORKMAN","Warawara","Washoku SATO","Watami","Y!mobile","YAMADA","YAOKO","YAYOIKEN","YOSHINOYA","Yamazaki Shop","YellowHat","Yodobashi","Yomen-ya Goemon","Yoronotaki","Yumean","asnas","au shop","careco","daiei","disc union","docomo shop","earthcar","gourmet city","green label relaxing","ikari","jonathan's","kojima","nishimatsuya","nojima","sunkus","takeone","welcia"]
+		},
+		{
+			"key" : "name:fr",
+			"values" : [ "Châteraisé"]
+		},
+		{
+			"key" : "name:ga",
+			"values" : [ ]
+		},
+		{
+			"key" : "name:ja",
+			"values" : [ "100????","ABC???","CoCo???","HMV","J????????","MMC????????????","P.???","TOMO?????","au????","???","???????","??????????","?????","??????","????","?????","????","????","???","???","???","???","???","????","???","???","???????","????","????????","???????","??????","???????","???????","?????","????","???","????","?????","?????","??????","?????","???????","???","????????","?????","????","???????? ???","???","?????","????","????","??????","??????????","??????????","???????","????","???????","???","?????????","?????????","???????","???","???","??????","??????????","???????? ??????","??????","???????","?????????????","??????","????????","??","?????","???","?????","???","???","?????","???","?????????","????????","??????????","??????","???","????","????PRO","???","????","?????","?????","????","????????","????K","?????????????","??????","???????","??????","??????","?????-????","????","???????","?????","???????","?????","???????","?????","???????","????","???????","????","???????","???????","?????","?????????","????????","??????","???????","???-????","????","??????????","?????","????","?????????","??????????","????","????????","???????","????","???","????","???","???","???????","??????","????????","????????","????","????","?????????","???????","????????????","??.????","?????????","???","?????????","?????????","???","?????","???","?????","??????","???????","??????","?????","?????","????????","????!!","????????","?????","???? ???????","????","?????","?????","???","??????","???????","????","???????","?????????","????????","??????","???21","??????","???????","?????","??????????","???????","??????","????","????","????????","?????","??????????","????","???????","???","???","?????","???????","?????","???","????","???????100","??????","?????","???????","????","??","?????","??","????","??","??","???","???","??","??","???","??","??","????","?????","????","??","??","????","????","??","????","???","?????","???","????","???","??","???","??","????","???","???","???????","???????","?????","???","???","?????","??????","???","?????????","?????","?????","??","???","??","??????","?????","???????","????","??","???","???","????","???","????","???????","????????","??","??","??????","????","??","??","???","??","???","??","???","???","??????","??","??????","??","?????","????","??????","???","??","???","????","????"]
+		},
+		{
+			"key" : "name:ja_kana",
+			"values" : [ "","????","???","???","????","????","?????","?????","?????","??????","??????","?????","???????","???","???","?????","????","????","????????","???????","?????","????","??? ?? ??","????","???????","???","?????","????","????","??????????????????","?????????","????????","?????????","??????????","????????","??????????","??????????","???????","????","???????","???????? ???","???","?????","?????","?????????","?????????","???????","???","????????","???","???????","???","???","?????????","????","?????","?????","??????????","????????","????????","??????","????","??????????","??????","????","??????????","???????","?????????????","??????","????????","??","????????","?????????","??????","???????","???","?????","???","???","??????","???","?????????","????????","??????????","?????????","???","????","??????","??????","???","????","?????","?????","????","??????????","????????","??????","??????????????","??????","???????","?????","????","??????","?????","??????","???????","????","??????","?????-????","???????????","????","??????????","?????","???????","????????","?????","?????","???????","????","???????","?????","???","????","???????","???????","?????","???????","?????????","????????","???????","???????","????????","????","???-????","????","???","????","??????????","?????","????","?????????","??????????","?????","???????","?????","????????","???????","????","???","????","????","???","???","??????","???","????","????????","???????","????","??????","???????","???","????????","????????","????","????","????????","????????????????","??????????","???????","?????????","???","?????","???????","????????????","????","??.????","???","?????????","???","?????????","?????","?????????","?????????","?????????","???","??????","???????","????","?????","?????????","????","?????","???","?????","??????","????","????????","???????","??????","????????","?????","????? ???????","?????","????????","?????","????!!","????????","????","?????","???????","????","??????","???????","??????","???????","?????","???","???????","???????","??????","???????","?????","????","???????","???","????","?????","?????????","????????","??????","????????","??????","?????","???????","????????","?????????","????","??? ?????","??????","???????","??????","??????","??????????","???????","??????","????","????","????????","??????","?????","??????????","????","????","?????????","?????????","???????","????","???????","???","???","?????","???????","?????","???","????","??????? ???","??????","???","??????","???","????","?????"]
+		},
+		{
+			"key" : "name:ja_rm",
+			"values" : [ "Aigan","Aiya","Akiyoshi","Amatar?","Animeito","Anraku-tei","Ansur?","Anten?ru","Aoki","Azunasu","Bar?","Besuto Denki","Biba h?mu","Bijon Megane","Bikkukamera","Bikkuri Donk?","Buffe Guran Chaina","Bukkuofu","Bunkyod?","B?miyan","B? P?ku","Chib?","Chiyoda","Daiki","Daimaru","Dais?","Dai?","Deir? Yamazaki","Den?zu","Deodeo","Dhisuku Yunion","Dokomo Shoppu","Domadoma","Don kih?te","Dot?ru K?h? Shoppu","Edhion","Efuwan","Eichi Emu Bui","Eiden","Eki Rentak?","Ekuserusi?ru Kafe","Emuemush? Daiamondo fainansu","Eneosu","Esso","Famima!!","Famir? M?to","Fuji-soba","Gasuto","Geo","Guracche g?denzu","Gurumeshithi","Gur?nr?beru Rirakushingu","Gy?mu S?p?","Gy?za no ?hsho","Gy?kaku","G?m?zu","Hakkenden","Hanamaru Udon","Hanky?","Hanky? Oasisu","Hanshin","Haruyama","Hiikiya","Hokkahokka-tei","Honke Kamado-ya","Hottomotto","Hyakumanboruto","H?to In","H?makku","Idemitsu","Ier? Hatto","Ikari","Ion","Irohanihoheto","Isetan","Ishinden","It?-y?ka-d?","Japan","Jei netto Rentak?","Jeiei EsuEsu","Jiy? K?kan","Joifuru Honda","Jor? Pasuta","Junkud? Shoten","J?esu P?ku","J?nzumeito","J?y?","J?shin","J?jiya","Kafe Ber?che","Kafe Do Kurie","Kainzu","Kainzu h?mu","Kansai S?p?","Kappa-zushi","Kapurich?za","Kareko","Kasumi","Kazoku-tei","Kei Bukkusu","Keibund? Shoten","Keihan","Kentakk? Furaidochikin","Kigunasu Sekiyu","Kineya","Kinnokura","Kinokuniya Shoten","Kintetsu","Kisoji","Koh?kan","Kojima","Koko Ichiban-ya","Koko Sutoa","Kokosu","Komeda Koh?ten","Komeri","Komikku Basut?","Komikku Toranoana","Komyunithi Sutoa","Konaka","Kosumo Sekiyu","Kosupa","Kura-zushi","Kurashi hausu","Kushiya Monogatari","K?y? deits?","K?zu Denki","K?beya Kittin","K?beya Resutoran","K?nan","K?nan Puro","K?pu","K?rakuen","K?y?","Maibasuketto","Maido-?kini","Makkusubaryu","Makudonarudo","Mandarake","Maruzen","MatsumotoKiyoshi","Matsuya","Matsuzakaya","Matumoto","Medhia Kafe Popai","Megane Honpo","Megane Ichiba","Megane S?p?","Megane Tw?wan","Megane no Miki","Meronbukkusu","Mini Sutoppu","Miraiya Shoten","Misut? D?natsu","Misut? Taiyaman","Mitsui Sekiyu","Mitsui no Rip?ku","Mitsukoshi","Miyako-soba","Miyamoto Munashi","Mosu B?g?","Mujirushi ry?hin","Murasaki","M?biru","Nachuraru R?son","Nafuko","Nakau","Nikoniko Rentak?","Nippon Rentak?","Nishimatsuya","Nissan Rentak?","Nisshin Rentak?","Nojima","Ohashi kafe Gasuto","Origin Bent?","Orikkusu K?syea","Orikkusu Rentak?","Popura","Puronto","P?ku netto","P? Z?n","P?kokku Sutoa","Raifu","Reko Fan","Riburo","Rofuto","Roiyaruhosuto","Rotteria","R?son","R?son Sutoa Hyaku","Sabuwei","Saizeriya","Sakura Suisan","Sankusu","Sanmaruku Kafe","Sanseid? Shoten","Santoku","Sebun-Irebun","Seibu","Seij? Ishii","Seikatsu saika","Seik?m?to","Seiy?","Shabu y?","Shator?ze","Shimach?","Shimamura","Shin Sei D?","Shirokiya","Shisutemu P?ku","Sh?wa Sheru","Sh? puraza","Sofumappu","Sofutobanku Shoppu","Sog?","Sojib?","Suikoden","Sukiya","Sur?efu","Sushir?","Sut?bakkusu","Sut?ki Gasuto","S?kuru-Kei","S?thiwan Aisukur?mu","S?p? Biba h?mu","S?p? Furesuko","S?p? Tamade","Taimuzu","Taimuzu K? Purasu","Taimuzu K? Rentaru","Taiyakan","Taiy? Sekiyu","Takashimaya","Tar?zu Koh?","Taw? Rek?do","Teiku Wan","Tengu","Tenka Ippin","Tomo P?kingu","Toraya","Torikizoku","Toyota Rentar?su","Tsubohachi","Tsuki no shizuku","Tsuruha Doraggu","Tsuruhashi F?getsu","Tsurumaru","Tsutaya","T?h?kenbunroku","T?ky? kutsu ry?t? sent?","T?ky? Hanzu","Uerusia","Uotami","Wai mobairu","Wak?","Warawara","Washoku Sato","Watami","W?kuman","Yamada Denki","Yamazaki shoppu","Yaok?","Yayoiken","Yodobashikamera","Yoshinoya","Yume-an","Yunaiteddo Ar?zu","Yunikuro","Y?fuku no Aoyama","Y?men-ya goemon","Y?r? no Taki","Za sh?zu","Zeneraru","jonasan","?suk?","?-B?-Sh? M?to","?yu Shoppu","?saka ?sho","?tobakkusu"]
+		},
+		{
+			"key" : "name_1",
+			"values" : [ ]
+		},
+		{
+			"key" : "narrow",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "nat_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "nat_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "natural",
+			"values" : [ "arete","bare_rock","bay","beach","birds_nest","cave_entrance","cliff","coastline","fell","glacier","grassland","heath","land","moor","mud","peak","reef","ridge","river_terrace","rock","saddle","sand","scree","scrub","shingle","sinkhole","spring","stone","tree","tree_row","valley","volcano","water","wetland","wood"]
+		},
+		{
+			"key" : "navaid",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "ncn",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "ncn_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "network",
+			"values" : [ "Stolpersteine Witten","Stolpersteine in Dortmund","call-a-bike","co:dc:sitp","co:dc:transmilenio","icn","iwn","lcn","lwn","ncn","nwn","rcn","rwn","sitp","transmilenio","uk_ldp"]
+		},
+		{
+			"key" : "noexit",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "note",
+			"values" : [ ]
+		},
+		{
+			"key" : "note:maxgcweight",
+			"values" : [ ""]
+		},
+		{
+			"key" : "nudism",
+			"values" : [ ]
+		},
+		{
+			"key" : "observatory:type",
+			"values" : [ "meteorological"]
+		},
+		{
+			"key" : "obstacle",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "office",
+			"values" : [ "accountant","administrative","advertising_agency","architect","association","camping","company","consulting","cooperative","educational_institution","employment_agency","estate_agent","financial","forestry","foundation","government","guide","health_insurance","insurance","it","lawyer","logistics","newspaper","ngo","notary","parish","physician","political_party","publisher","quango","realtor","register","religion","research","tax_advisor","telecommunication","therapist","travel_agent","vacant","water_utility"]
+		},
+		{
+			"key" : "official_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "official_name:en",
+			"values" : [ ]
+		},
+		{
+			"key" : "official_name:ga",
+			"values" : [ ]
+		},
+		{
+			"key" : "old_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "old_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "oneway",
+			"values" : [ "-1","1","false","no","reversible","true","yes"]
+		},
+		{
+			"key" : "oneway:bicycle",
+			"values" : [ "-1","1","no","true","yes"]
+		},
+		{
+			"key" : "oneway:bus",
+			"values" : [ "-1","1","true","yes"]
+		},
+		{
+			"key" : "openGeoDB:location",
+			"values" : [ "locality"]
+		},
+		{
+			"key" : "openGeoDB:type",
+			"values" : [ "District","Gemeinde","Kreis","Ort","Stadt"]
+		},
+		{
+			"key" : "opening_hours",
+			"values" : [ "08:30-12:30,15:30-20:00","24/7","Mo-Fr 08:30-20:00, Tu-Su 08:00-15:00; Sa 08:00-12:00","Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off","Mo-Fr 22:00-05:00","Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off","Sa-Su 00:00-24:00","Su 10:00+","sunrise-sunset","week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00"]
+		},
+		{
+			"key" : "opening_hours:delivery",
+			"values" : [ ]
+		},
+		{
+			"key" : "opening_hours:kitchen",
+			"values" : [ ]
+		},
+		{
+			"key" : "opening_hours:warm_kitchen",
+			"values" : [ ]
+		},
+		{
+			"key" : "operator",
+			"values" : [ "21","ANTENOR","AOKI","B-R ?????? ???????","Belgacom","Christelijke Mutualiteiten","De Voorzorg","J-net??????","JEUGIA","KDDI","LIXIL??","MMC????????????","NTT???","UCC????????????","UG????","bpost","cz:K?T","????????","????????????","??????????","????","??????","??????","???","????","??????","??????????","?????","????","?????","???","?????????","???????","????????","???","???????","??????","???????","????","?????","????","??????????","??????","????????","??????????","????","???","?????????","?????????????????","?????????????","?????","???????","????","??","?????","???????","?????","???","???","???","???","???","?????","??????","?????","????????????","?????","????????","????K????","???????","??????","??????","????","???????","??????? ","???????","????","???????","???????","???????????????","?????","?????","??????","???????","????????????","??????????????","?????","??????????","?????","????????????????","???","????????????","???????","????","???","???????","????","???","???","????","??????","????????","????????","??","????????","???????","???","?????","???","???????","???????","???","???24","???????","??????","????????","??????????","?????????????","??????","????","????????????","?????","?????","????????","???","????","????","??????","???????","??????","???????","?????????","??????","????","?????","??????????","????","???????","???????????","??????","???","?????????????","???????","?????","???","????","????HMV????????","???????","??????","??????????","?????","??????????","????????????","??????????????","??","??","?????","?????","????","??????????","??????????","????","??????","?????","??????????","??","????????????","??????????","??????????","??","??????????","??????????","??????????????","???????????","????????????","???","???? ","????????????","???","????????","????","??????","??????","???","???","?????","??","???","??????????","??","????","???","?????","???","?????????????????","???????","????????","???????????","???????????????","???????","???","?????","??????","?????","??????????","?????????","?????????","????????","????","??????????","????????","??????","??????????","??????????","????","???????????","???","??","??","???????","???????????","?????","??????????","??","???????????","???????","??","????","????","???","???"]
+		},
+		{
+			"key" : "organic",
+			"values" : [ "no","only","yes"]
+		},
+		{
+			"key" : "osmc:symbol",
+			"values" : [ "blue:blue:shell_modern","blue:white::T:blue","blue:white:blue_L","blue:white:blue_L ","blue:white:blue_arch","blue:white:blue_bar","blue:white:blue_bowl","blue:white:blue_circle","blue:white:blue_corner","blue:white:blue_cross","blue:white:blue_dot","blue:white:blue_rectangle","blue:white:blue_triangle","blue:white:blue_turned_T","blue:yellow:blue_bar","green:white:::M:blue","green:white:::M:green","green:white:::M:purple ","green:white:::M:red","green:white::T:green","green:white:green_L","green:white:green_L ","green:white:green_arch","green:white:green_backslash","green:white:green_bar","green:white:green_bowl","green:white:green_circle","green:white:green_corner","green:white:green_cross","green:white:green_dot","green:white:green_rectangle","green:white:green_triangle","green:white:green_turned_T","green:yellow:green_bar","red:white::T:red","red:white:red_L","red:white:red_L ","red:white:red_arch","red:white:red_bar","red:white:red_bowl","red:white:red_circle","red:white:red_corner","red:white:red_cross","red:white:red_dot","red:white:red_rectangle","red:white:red_triangle","red:white:red_turned_T","red:yellow:red_bar","red:yellow:white_bar","yellow:white:::M:yellow","yellow:white::T:yellow","yellow:white:yellow_L","yellow:white:yellow_L ","yellow:white:yellow_arch","yellow:white:yellow_bar","yellow:white:yellow_bowl","yellow:white:yellow_circle","yellow:white:yellow_corner","yellow:white:yellow_cross","yellow:white:yellow_dot","yellow:white:yellow_rectangle","yellow:white:yellow_triangle","yellow:white:yellow_turned_T"]
+		},
+		{
+			"key" : "overtaking",
+			"values" : [ "backward","both","forward","no","yes"]
+		},
+		{
+			"key" : "overtaking:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "overtaking:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "overtaking:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "overtaking:hgv",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "park_ride",
+			"values" : [ "bus","ferry","metro","no","train","tram","yes"]
+		},
+		{
+			"key" : "parking",
+			"values" : [ "bicycle","multi-storey","multistorey","rooftop","surface","underground"]
+		},
+		{
+			"key" : "parking:condition",
+			"values" : [ ]
+		},
+		{
+			"key" : "parking:condition:both",
+			"values" : [ "free"]
+		},
+		{
+			"key" : "parking:condition:left",
+			"values" : [ "free"]
+		},
+		{
+			"key" : "parking:condition:right",
+			"values" : [ "free"]
+		},
+		{
+			"key" : "parking:lane",
+			"values" : [ ]
+		},
+		{
+			"key" : "parking:lane:both",
+			"values" : [ "no_stopping","parallel"]
+		},
+		{
+			"key" : "parking:lane:both:parallel",
+			"values" : [ "on_street"]
+		},
+		{
+			"key" : "parking:lane:left",
+			"values" : [ "no_parking","no_stopping","parallel"]
+		},
+		{
+			"key" : "parking:lane:left:parallel",
+			"values" : [ "on_street"]
+		},
+		{
+			"key" : "parking:lane:right",
+			"values" : [ "no_parking","no_stopping","parallel"]
+		},
+		{
+			"key" : "parking:lane:right:parallel",
+			"values" : [ "on_street"]
+		},
+		{
+			"key" : "parts",
+			"values" : [ "brand","no","oldtimer","yes"]
+		},
+		{
+			"key" : "passing_places",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "payment",
+			"values" : [ "none"]
+		},
+		{
+			"key" : "payment:account_cards",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "payment:coins",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "payment:credit_cards",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "payment:debit_cards",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "payment:electronic_purses",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "payment:notes",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "payment:telephone_cards",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "pcode:1",
+			"values" : [ ]
+		},
+		{
+			"key" : "pcode:2",
+			"values" : [ ]
+		},
+		{
+			"key" : "pcode:3",
+			"values" : [ ]
+		},
+		{
+			"key" : "pedestrian",
+			"values" : [ "agricultural","allowed","crossing","customers","delivery","designated","destination","discouraged","footway","forestry","no","official","passable","permissive","private","public","restricted","sidewalk","use_sidepath","yes"]
+		},
+		{
+			"key" : "phases",
+			"values" : [ "1","3"]
+		},
+		{
+			"key" : "phone",
+			"values" : [ ]
+		},
+		{
+			"key" : "pipeline",
+			"values" : [ "marker","valve"]
+		},
+		{
+			"key" : "piste:difficulty",
+			"values" : [ "advanced","easy","expert","freeride","intermediate","novice"]
+		},
+		{
+			"key" : "piste:grooming",
+			"values" : [ "backcountry","classic","classic;skating","mogul","scooter","skating"]
+		},
+		{
+			"key" : "piste:name",
+			"values" : [ ]
+		},
+		{
+			"key" : "piste:oneway",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "piste:ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "piste:type",
+			"values" : [ "alpine","downhill","hike","nordic","skitour","sled","sleigh","snow_park"]
+		},
+		{
+			"key" : "place",
+			"values" : [ "allotments","archipelago","city","city_block","continent","country","county","district","farm","hamlet","island","islet","isolated_dwelling","locality","municipality","neighbourhood","plot","quarter","region","state","suburb","town","village"]
+		},
+		{
+			"key" : "place_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "placement",
+			"values" : [ "right_of:1"]
+		},
+		{
+			"key" : "placement:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "placement:backward:end",
+			"values" : [ ]
+		},
+		{
+			"key" : "placement:backward:start",
+			"values" : [ ]
+		},
+		{
+			"key" : "placement:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "placement:forward:end",
+			"values" : [ ]
+		},
+		{
+			"key" : "placement:forward:start",
+			"values" : [ ]
+		},
+		{
+			"key" : "places",
+			"values" : [ ]
+		},
+		{
+			"key" : "plant:output:cold_air",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "plant:output:cold_water",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "plant:output:compressed_air",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "plant:output:electricity",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "plant:output:hot_air",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "plant:output:hot_water",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "plant:output:steam",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "plant:output:vacuum",
+			"values" : [ "2 W","3 kW","5 MW","7 GW","yes"]
+		},
+		{
+			"key" : "poles",
+			"values" : [ "bipole","monopole"]
+		},
+		{
+			"key" : "political_division",
+			"values" : [ "canton","euro_const","linguistic_community","local_const","parl_const","ward"]
+		},
+		{
+			"key" : "population",
+			"values" : [ ]
+		},
+		{
+			"key" : "postal_code",
+			"values" : [ ]
+		},
+		{
+			"key" : "postcode",
+			"values" : [ ]
+		},
+		{
+			"key" : "power",
+			"values" : [ "RMU","TEE-OFF","cable","cable_distribution_cabinet","catenary_mast","compensator","converter","generator","heliostat","insulator","isolator","line","minor_cable","minor_line","minor_underground_cable","plant","pole","portal","station","sub_station","substation","switch","switchgear","tower","transformer"]
+		},
+		{
+			"key" : "power_source",
+			"values" : [ "hydro","photovoltaic","wind"]
+		},
+		{
+			"key" : "power_supply",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "priority",
+			"values" : [ "backward","forward"]
+		},
+		{
+			"key" : "prison_camp",
+			"values" : [ "concentration_camp","labor_camp","pow_camp"]
+		},
+		{
+			"key" : "proposed",
+			"values" : [ ]
+		},
+		{
+			"key" : "protect_class",
+			"values" : [ "1","2","22","3","4","5","98"]
+		},
+		{
+			"key" : "protected_area",
+			"values" : [ ]
+		},
+		{
+			"key" : "protection_status",
+			"values" : [ "state"]
+		},
+		{
+			"key" : "protection_title",
+			"values" : [ "biosphere_reserve","botanic_garden","conservation_stow","dendrological_park","national_park","nature_monument","nature_reserve","park_monument_of_landscape_art","protected_site","regional_landscape_park","zoological_park"]
+		},
+		{
+			"key" : "psv",
+			"values" : [ "1","2","bus","delivery","designated","destination","no","official","permissive","private","restricted","urban","yes"]
+		},
+		{
+			"key" : "psv:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "psv:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "psv:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "psv:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "psv:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "psv:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "psv:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "public_transport",
+			"values" : [ "entrance","network","platform","station","stop","stop_area","stop_position"]
+		},
+		{
+			"key" : "public_transport:version",
+			"values" : [ "1","2"]
+		},
+		{
+			"key" : "pump",
+			"values" : [ "manual"]
+		},
+		{
+			"key" : "raba:id",
+			"values" : [ "1100","1160","1180","1190","1211","1212","1221","1222","1230","1300","1321","1410","1800"]
+		},
+		{
+			"key" : "rail",
+			"values" : [ "limited","only","station","true","yes"]
+		},
+		{
+			"key" : "railway",
+			"values" : [ "abandoned","blockpost","buffer_stop","car_shuttle","carrier_truck_pit","coaling_facility","construction","container_terminal","crossing","crossover","derail","disused","engine_shed","facility","ferry","ferry_terminal","fuel","funicular","gauge_conversion","halt","hump_yard","isolated_track_section","junction","level_crossing","light_rail","loading_gauge","loading_ramp","milestone","miniature","monorail","museum","narrow_gauge","no","owner_change","phone","pit","platform","preserved","proposed","radio","rail","rail_brake","railway_crossing","razed","rolling_highway","roundhouse","service_station","signal","signal_box","site","spur_junction","station","stop","subway","subway_entrance","switch","track_scale","tram","tram_station","tram_stop","traverser","turntable","vacancy_detection","wash","water_crane","water_tower","workshop","yard"]
+		},
+		{
+			"key" : "railway:derail",
+			"values" : [ "wedge"]
+		},
+		{
+			"key" : "railway:preserved",
+			"values" : [ ]
+		},
+		{
+			"key" : "railway:signal:brake_test",
+			"values" : [ "AT-V2:bremsprobesignal","DE-ESO:zp"]
+		},
+		{
+			"key" : "railway:signal:brake_test:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:brake_test:states",
+			"values" : [ "AT-V2:bremsen_anlegen;AT-V2:bremsen_lösen;AT-V2:bremsprobe_beendet","DE-ESO:db:zp6;DE-ESO:db:zp7;DE-ESO:db:zp8"]
+		},
+		{
+			"key" : "railway:signal:combined",
+			"values" : [ "DE-BOStrab:h","DE-ESO:hl","DE-ESO:ks","DE-ESO:sk","DE-ESO:sv"]
+		},
+		{
+			"key" : "railway:signal:combined:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:crossing",
+			"values" : [ "AT-V2:ek_überwachungssignal","DE-AVG:bü200","DE-BOStrab:bü","DE-ESO:bü","DE-ESO:so16"]
+		},
+		{
+			"key" : "railway:signal:crossing:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:crossing:states",
+			"values" : [ "AT-V2:ek_grundstellung;AT-V2:ek_gesichert","DE-AVG:bü200;DE-AVG:bü201"]
+		},
+		{
+			"key" : "railway:signal:crossing_distant",
+			"values" : [ "AT-V2:rautentafel","AT-V2:schaltstellenpflock","DE-AVG:bü200v","DE-BOStrab:bü2","DE-ESO:bü2","DE-ESO:bü3","DE-ESO:so14","DE-ESO:so15"]
+		},
+		{
+			"key" : "railway:signal:crossing_distant:form",
+			"values" : [ "light","sign"]
+		},
+		{
+			"key" : "railway:signal:crossing_distant:states",
+			"values" : [ "DE-AVG:bü200v;DE-AVG:bü201v"]
+		},
+		{
+			"key" : "railway:signal:crossing_hint",
+			"values" : [ "AT-V2:eküs","DE-ESO:bü-ankündetafel"]
+		},
+		{
+			"key" : "railway:signal:crossing_hint:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:crossing_info",
+			"values" : [ "AT-V2:eküs","DE-ESO:bü-kennzeichentafel"]
+		},
+		{
+			"key" : "railway:signal:crossing_info:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:departure",
+			"values" : [ "AT-V2:abfahrt","AT-V2:fahrerlaubnissignal","DE-AVG:a1","DE-BOStrab:a1","DE-ESO:zp","DE-HHA:a1"]
+		},
+		{
+			"key" : "railway:signal:departure:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:departure:states",
+			"values" : [ "DE-AVG:a1;off"]
+		},
+		{
+			"key" : "railway:signal:direction",
+			"values" : [ "both"]
+		},
+		{
+			"key" : "railway:signal:distant",
+			"values" : [ "AT-V2:kreuztafel","AT-V2:vorsignal","DE-AVG:vf1","DE-BOStrab:h","DE-ESO:db:ne2","DE-ESO:dr:so3","DE-ESO:dr:so3b","DE-ESO:hl","DE-ESO:ks","DE-ESO:sk","DE-ESO:so106","DE-ESO:vr","DE-HHA:v"]
+		},
+		{
+			"key" : "railway:signal:distant:form",
+			"values" : [ "light","semaphore","sign"]
+		},
+		{
+			"key" : "railway:signal:distant:states",
+			"values" : [ "AT-V2:vorsicht;AT-V2:hauptsignal_frei"]
+		},
+		{
+			"key" : "railway:signal:electricity",
+			"values" : [ "AT-V2:schaltzeiger","DE-BOStrab:st3","DE-BOStrab:st4","DE-BOStrab:st5","DE-BOStrab:st7","DE-BOStrab:st8","DE-HHA:s1","DE-HHA:s2"]
+		},
+		{
+			"key" : "railway:signal:electricity:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:electricity:states",
+			"values" : [ "AT-V2:eingeschaltet;AT-V2:ausgeschaltet"]
+		},
+		{
+			"key" : "railway:signal:electricity:type",
+			"values" : [ "end_of_catenary","pantograph_down","pantograph_up","power_indicator","power_off","power_off_shortly","power_on"]
+		},
+		{
+			"key" : "railway:signal:expected_position",
+			"values" : [ "left","right"]
+		},
+		{
+			"key" : "railway:signal:fouling_point",
+			"values" : [ "AT-V2:grenzmarke","AT-V2:grenzmarke_rollwagenbetrieb","AT-V2:markierte_grenzmarke","AT-V2:verschub-grenzmarke","DE-ESO:ra12"]
+		},
+		{
+			"key" : "railway:signal:humping",
+			"values" : [ "AT-V2:abdrücksignal","DE-ESO:ra"]
+		},
+		{
+			"key" : "railway:signal:humping:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:humping:states",
+			"values" : [ "AT-V2:abdrücken_verboten;AT-V2:langsam_abdrücken;AT-V2:schnell_abdrücken","DE-ESO:ra6;DE-ESO:ra7;DE-ESO:ra8;DE-ESO:ra9"]
+		},
+		{
+			"key" : "railway:signal:loading_gauge",
+			"values" : [ "DE-AVG:ra14"]
+		},
+		{
+			"key" : "railway:signal:loading_gauge:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:main",
+			"values" : [ "AT-V2:hauptsignal","AT-V2:trapeztafel","DE-AVG:f","DE-BOStrab:f","DE-BOStrab:h","DE-ESO:hl","DE-ESO:hp","DE-ESO:ks","DE-ESO:ne1","DE-ESO:sk","DE-HHA:h"]
+		},
+		{
+			"key" : "railway:signal:main:form",
+			"values" : [ "light","semaphore","sign"]
+		},
+		{
+			"key" : "railway:signal:main:function",
+			"values" : [ "entry","exit"]
+		},
+		{
+			"key" : "railway:signal:main:states",
+			"values" : [ "DE-AVG:f0;DE-AVG:f1","DE-ESO:hp0;DE-ESO:hp1;DE-AVG:hp2"]
+		},
+		{
+			"key" : "railway:signal:main:substitute_signal",
+			"values" : [ "AT-V2:dienstruhe"]
+		},
+		{
+			"key" : "railway:signal:main:substitute_signal:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:main_repeated",
+			"values" : [ "AT-V2:signalnachahmer","DE-ESO:fahrtanzeiger"]
+		},
+		{
+			"key" : "railway:signal:main_repeated:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:main_repeated:states",
+			"values" : [ "AT-V2:hauptsignal_halt;AT-V2:hauptsignal_frei;AT-V2:hauptsignal_frei_geschwindigkeitsbeschränkung"]
+		},
+		{
+			"key" : "railway:signal:minor",
+			"values" : [ "AT-V2:fahrwegende","AT-V2:haltscheibe","AT-V2:schutzsignal","AT-V2:sperrsignal","AT-V2:weiterfahrt_verboten","DE-BOStrab:sh1","DE-BOStrab:sh2","DE-BOStrab:sh3d","DE-ESO:sh","DE-ESO:sh1","DE-ESO:sh2","DE-HHA:sh3"]
+		},
+		{
+			"key" : "railway:signal:minor:form",
+			"values" : [ "light","semaphore","sign"]
+		},
+		{
+			"key" : "railway:signal:minor:height",
+			"values" : [ "dwarf","normal"]
+		},
+		{
+			"key" : "railway:signal:minor:states",
+			"values" : [ "AT-V2:weiterfahrt_verboten;AT-V2:weiterfahrt_erlaubt","AT:fahrverbot;AT:fahrverbot_aufgehoben"]
+		},
+		{
+			"key" : "railway:signal:minor_distant",
+			"values" : [ "DE-ESO:dr:sh3","DE-HHA:l2"]
+		},
+		{
+			"key" : "railway:signal:minor_distant:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:passing",
+			"values" : [ "DE-BOStrab:so5","DE-BOStrab:so6"]
+		},
+		{
+			"key" : "railway:signal:passing:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:passing:type",
+			"values" : [ "no_passing","passing_allowed"]
+		},
+		{
+			"key" : "railway:signal:position",
+			"values" : [ "in_track"]
+		},
+		{
+			"key" : "railway:signal:radio",
+			"values" : [ "DE-ESO:zugfunk-kanalhinweis"]
+		},
+		{
+			"key" : "railway:signal:radio:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:request",
+			"values" : [ "DE-AVG:st9"]
+		},
+		{
+			"key" : "railway:signal:request:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:request:states",
+			"values" : [ "DE-AVG:st9;off"]
+		},
+		{
+			"key" : "railway:signal:resetting_switch",
+			"values" : [ "AT-V2:weichenüberwachungssignal","DE-ESO:ne13"]
+		},
+		{
+			"key" : "railway:signal:resetting_switch:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:resetting_switch:states",
+			"values" : [ "DE-ESO:so18;DE-ESO:so18b"]
+		},
+		{
+			"key" : "railway:signal:resetting_switch_distant",
+			"values" : [ "DE-ESO:ne12"]
+		},
+		{
+			"key" : "railway:signal:resetting_switch_distant:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:ring",
+			"values" : [ "DE-BOStrab:sh4","DE-ESO:bü5"]
+		},
+		{
+			"key" : "railway:signal:ring:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:route",
+			"values" : [ "DE-ESO:zs2","DE-HHA:so7"]
+		},
+		{
+			"key" : "railway:signal:route:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:route_distant",
+			"values" : [ "DE-ESO:zs2v"]
+		},
+		{
+			"key" : "railway:signal:route_distant:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:short_route",
+			"values" : [ "DE-ESO:dr:zs106","DE-ESO:dr:zs6","DE-ESO:zs13"]
+		},
+		{
+			"key" : "railway:signal:shunting",
+			"values" : [ "AT-V2:verschubhalttafel","AT-V2:verschubsignal","AT-V2:wartesignal","DE-ESO:ra10","DE-ESO:ra11","DE-ESO:ra11b","DE-HHA:h5"]
+		},
+		{
+			"key" : "railway:signal:shunting:form",
+			"values" : [ "light","sign"]
+		},
+		{
+			"key" : "railway:signal:shunting:states",
+			"values" : [ "AT-V2:verschubverbot;AT-V2:verschubverbot_aufgehoben","AT-V2:wartesignal;AT-V2:verschubverbot_aufgehoben"]
+		},
+		{
+			"key" : "railway:signal:snowplow",
+			"values" : [ "AT-V2:mittelräumer_heben","AT-V2:räumarbeit_aufnehmen","AT-V2:räumarbeit_einstellen","DE-ESO:ne7"]
+		},
+		{
+			"key" : "railway:signal:snowplow:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:snowplow:type",
+			"values" : [ "down","up"]
+		},
+		{
+			"key" : "railway:signal:speed_limit",
+			"values" : [ "AT-V2:anfangssignal","AT-V2:endsignal","AT-V2:geschwindigkeitsanzeiger","AT-V2:geschwindigkeitstafel","DE-BOStrab:g2a","DE-BOStrab:g2b","DE-BOStrab:g3","DE-BOStrab:g4","DE-ESO:db:lf5","DE-ESO:db:zs10","DE-ESO:dr:lf1/2","DE-ESO:dr:lf5","DE-ESO:lf2","DE-ESO:lf3","DE-ESO:lf7","DE-ESO:zs3","DE-HHA:l3","DE-HHA:l4","DE-HHA:l5"]
+		},
+		{
+			"key" : "railway:signal:speed_limit:form",
+			"values" : [ "light","sign"]
+		},
+		{
+			"key" : "railway:signal:speed_limit:speed",
+			"values" : [ "none"]
+		},
+		{
+			"key" : "railway:signal:speed_limit:turn_direction",
+			"values" : [ ""]
+		},
+		{
+			"key" : "railway:signal:speed_limit_distant",
+			"values" : [ "AT-V2:ankündigungssignal","AT-V2:ankündigungstafel","AT-V2:geschwindigkeitvorsanzeiger","DE-BOStrab:g1a","DE-BOStrab:g1b","DE-ESO:db:lf4","DE-ESO:dr:lf4","DE-ESO:lf1","DE-ESO:lf6","DE-ESO:zs3v","DE-HHA:l1","DE-HHA:v"]
+		},
+		{
+			"key" : "railway:signal:speed_limit_distant:form",
+			"values" : [ "light","sign"]
+		},
+		{
+			"key" : "railway:signal:speed_limit_distant:turn_direction",
+			"values" : [ ""]
+		},
+		{
+			"key" : "railway:signal:station_distant",
+			"values" : [ "AT-V2:haltestellentafel","DE-ESO:ne6"]
+		},
+		{
+			"key" : "railway:signal:station_distant:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:stop",
+			"values" : [ "AT-V2:haltepunkt","DE-BOStrab:sh7","DE-ESO:ne5","DE-HHA:so3"]
+		},
+		{
+			"key" : "railway:signal:stop:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:stop_demand",
+			"values" : [ "DE-AVG:hw1","DE-ESO:ne5"]
+		},
+		{
+			"key" : "railway:signal:stop_demand:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:stop_demand:states",
+			"values" : [ "DE-AVG:hw1;off"]
+		},
+		{
+			"key" : "railway:signal:switch",
+			"values" : [ "DE-AVG:w","DE-AVG:wv","DE-BOStrab:w","DE-VBK:w","DE-VBK:wv"]
+		},
+		{
+			"key" : "railway:signal:switch:form",
+			"values" : [ "light"]
+		},
+		{
+			"key" : "railway:signal:switch:states",
+			"values" : [ "DE-AVG:wv0;DE-AVG:wv1","DE-VBK:wv0;DE-VBK:wv1"]
+		},
+		{
+			"key" : "railway:signal:train_protection",
+			"values" : [ "AT-V2:etcs-blockkennzeichen","AT-V2:lzb-bereichskennzeichen","DE-AVG:so1","DE-AVG:so2","DE-BOStrab:so1","DE-BOStrab:so2","DE-ESO:blockkennzeichen","DE-ESO:lzb-bereichskennzeichen","DE-ESO:ne14"]
+		},
+		{
+			"key" : "railway:signal:train_protection:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:train_protection:type",
+			"values" : [ "block_marker","end","start"]
+		},
+		{
+			"key" : "railway:signal:whistle",
+			"values" : [ "AT-V2:endpflock","AT-V2:gruppenpfeifpflock","AT-V2:pfeifpflock"]
+		},
+		{
+			"key" : "railway:signal:whistle:form",
+			"values" : [ "sign"]
+		},
+		{
+			"key" : "railway:signal:wrong_road",
+			"values" : [ "DE-ESO:db:zs6","DE-ESO:db:zs8","DE-ESO:dr:zs7","DE-ESO:dr:zs8","DE-HHA:so4"]
+		},
+		{
+			"key" : "railway:track_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "railway:traffic_mode",
+			"values" : [ "freight","passenger"]
+		},
+		{
+			"key" : "ramp:bicycle",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "ramp:luggage",
+			"values" : [ "automatic","manual","yes"]
+		},
+		{
+			"key" : "ramp:stroller",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "ramp:wheelchair",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "rating",
+			"values" : [ "1 Mvar","100 MVA","12500 kVA","15 MVA","2700 kVA","5 Mvar","50 MVA","500 kvar"]
+		},
+		{
+			"key" : "razed:historic",
+			"values" : [ "optical_telegraph"]
+		},
+		{
+			"key" : "razed:man_made",
+			"values" : [ "adit","mine_shaft","watermill","windmill"]
+		},
+		{
+			"key" : "rcn",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "rcn_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "recording:automated",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "recording:manually",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "recording:remote",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "recycling:batteries",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "recycling:cans",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "recycling:clothes",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "recycling:glass",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "recycling:glass_bottles",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "recycling:paper",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "recycling:scrap_metal",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "recycling_type",
+			"values" : [ "centre","container"]
+		},
+		{
+			"key" : "ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:FR:FANTOIR",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:INSEE",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:fgkz",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:gnbc",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:gnis",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:isil",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:lmi",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:mhs",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:nid",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:nrhp",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:rce",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:regine",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:sandre",
+			"values" : [ ]
+		},
+		{
+			"key" : "ref:whc",
+			"values" : [ ]
+		},
+		{
+			"key" : "reference",
+			"values" : [ ]
+		},
+		{
+			"key" : "reference_point",
+			"values" : [ ]
+		},
+		{
+			"key" : "refugee",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "reg_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "reg_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "religion",
+			"values" : [ "bahai","buddhist","christian","hindu","jain","jewish","muslim","pastafarian","shinto","sikh","spiritualist","taoist","unitarian","zoroastrian"]
+		},
+		{
+			"key" : "rental",
+			"values" : [ "brand","no","yes"]
+		},
+		{
+			"key" : "repair",
+			"values" : [ "brand","no","oldtimer","yes"]
+		},
+		{
+			"key" : "reservoir_type",
+			"values" : [ "sewage"]
+		},
+		{
+			"key" : "residential",
+			"values" : [ ]
+		},
+		{
+			"key" : "resource",
+			"values" : [ "","aggregate","bauxite","coal","copper","dimension_stone","gold","ilmenite","iron_ore","lead","limestone","nickel","rutile","salt","silver","tin","zinc","zircon"]
+		},
+		{
+			"key" : "restriction",
+			"values" : [ "no_left_turn","no_right_turn","no_straight_on","no_u_turn","only_left_turn","only_right_turn","only_straight_on"]
+		},
+		{
+			"key" : "roadtrain",
+			"values" : [ ]
+		},
+		{
+			"key" : "room",
+			"values" : [ ]
+		},
+		{
+			"key" : "roundtrip",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "route",
+			"values" : [ "aerialway","bicycle","bus","canoe","detour","emergency_access","ferry","flight","foot","hiking","horse","inline_skates","light_rail","monorail","mtb","ncn","nordic_walking","pipeline","piste","power","pub_crawl","railway","road","running","ski","subsea","subway","tour","tracks","train","training_area","tram","trolleybus","walking"]
+		},
+		{
+			"key" : "route_master",
+			"values" : [ "aerialway","bus","ferry","monorail","subway","train","tram","trolleybus"]
+		},
+		{
+			"key" : "ruins",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "sac_scale",
+			"values" : [ ]
+		},
+		{
+			"key" : "safety_inspection",
+			"values" : [ "DEKRA","GTÃ?","MOT","TÃ?V","no","yes"]
+		},
+		{
+			"key" : "sale",
+			"values" : [ "brand","no","yes"]
+		},
+		{
+			"key" : "salt",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "school_type",
+			"values" : [ "dog"]
+		},
+		{
+			"key" : "seamakr:building:function",
+			"values" : [ "temple"]
+		},
+		{
+			"key" : "seamark:anchorage:type",
+			"values" : [ "seaplane"]
+		},
+		{
+			"key" : "seamark:beacon_cardinal:category",
+			"values" : [ "east","north","south","west"]
+		},
+		{
+			"key" : "seamark:beacon_cardinal:colour",
+			"values" : [ "black;yellow","black;yellow;black","yellow;black","yellow;black;yellow"]
+		},
+		{
+			"key" : "seamark:beacon_cardinal:colour_pattern",
+			"values" : [ "horizontal"]
+		},
+		{
+			"key" : "seamark:beacon_isolated_danger:colour",
+			"values" : [ "black;red;black"]
+		},
+		{
+			"key" : "seamark:beacon_isolated_danger:colour_pattern",
+			"values" : [ "horizontal"]
+		},
+		{
+			"key" : "seamark:beacon_lateral:category",
+			"values" : [ "bridge_pier","channel_left_bank","channel_right_bank","crossover_left","crossover_right","port","preferred_channel_port","preferred_channel_starboard","starboard"]
+		},
+		{
+			"key" : "seamark:beacon_lateral:colour",
+			"values" : [ "green","green;red;green","red","red;green;green","red;green;red","yellow"]
+		},
+		{
+			"key" : "seamark:beacon_lateral:colour_pattern",
+			"values" : [ "","horizontal"]
+		},
+		{
+			"key" : "seamark:beacon_lateral:shape",
+			"values" : [ "stake"]
+		},
+		{
+			"key" : "seamark:beacon_lateral:system",
+			"values" : [ "cevni","iala-a","iala-b"]
+		},
+		{
+			"key" : "seamark:beacon_safe_water:colour",
+			"values" : [ "red;white"]
+		},
+		{
+			"key" : "seamark:beacon_safe_water:colour_pattern",
+			"values" : [ "vertical"]
+		},
+		{
+			"key" : "seamark:beacon_special_purpose:colour",
+			"values" : [ "yellow"]
+		},
+		{
+			"key" : "seamark:beacon_special_purpose:colour_pattern",
+			"values" : [ ""]
+		},
+		{
+			"key" : "seamark:bridge:category",
+			"values" : [ "fixed","lifting","opening"]
+		},
+		{
+			"key" : "seamark:building:function",
+			"values" : [ "","buddhist_temple","customs","harbour_master","health","hospital","marabout","mosque","pagoda","post_office","shinto_shrine","transit_shed"]
+		},
+		{
+			"key" : "seamark:buoy_cardinal:category",
+			"values" : [ "east","north","south","west"]
+		},
+		{
+			"key" : "seamark:buoy_cardinal:colour",
+			"values" : [ "black;yellow","black;yellow;black","yellow;black","yellow;black;yellow"]
+		},
+		{
+			"key" : "seamark:buoy_cardinal:colour_pattern",
+			"values" : [ "horizontal"]
+		},
+		{
+			"key" : "seamark:buoy_isolated_danger:colour",
+			"values" : [ "black;red;black"]
+		},
+		{
+			"key" : "seamark:buoy_isolated_danger:colour_pattern",
+			"values" : [ "horizontal"]
+		},
+		{
+			"key" : "seamark:buoy_lateral:category",
+			"values" : [ "bridge_pier","port","preferred_channel_port","preferred_channel_starboard","starboard"]
+		},
+		{
+			"key" : "seamark:buoy_lateral:colour",
+			"values" : [ "green","green;red;green","green;white;green;white","red","red;green;red","red;green;red;green","red;white;red;white","yellow"]
+		},
+		{
+			"key" : "seamark:buoy_lateral:colour_pattern",
+			"values" : [ "","horizontal"]
+		},
+		{
+			"key" : "seamark:buoy_lateral:system",
+			"values" : [ "cevni","iala-a","iala-b"]
+		},
+		{
+			"key" : "seamark:buoy_safe_water:colour",
+			"values" : [ "red;white"]
+		},
+		{
+			"key" : "seamark:buoy_safe_water:colour_pattern",
+			"values" : [ "vertical"]
+		},
+		{
+			"key" : "seamark:buoy_special_purpose:category",
+			"values" : [ "warning"]
+		},
+		{
+			"key" : "seamark:buoy_special_purpose:colour",
+			"values" : [ "yellow","yellow;blue"]
+		},
+		{
+			"key" : "seamark:buoy_special_purpose:colour_pattern",
+			"values" : [ "","vertical"]
+		},
+		{
+			"key" : "seamark:conspicuity",
+			"values" : [ "conspicuous"]
+		},
+		{
+			"key" : "seamark:conveyor:category",
+			"values" : [ "aerial"]
+		},
+		{
+			"key" : "seamark:dumping_ground:category",
+			"values" : [ "chemical","explosives","spoil"]
+		},
+		{
+			"key" : "seamark:gate:category",
+			"values" : [ "flood_barrage","lock"]
+		},
+		{
+			"key" : "seamark:gridiron:water_level",
+			"values" : [ "covers"]
+		},
+		{
+			"key" : "seamark:harbour:category",
+			"values" : [ "fishing","marina","roro"]
+		},
+		{
+			"key" : "seamark:landmark:category",
+			"values" : [ "cemetery","chimney","cross","dish_aerial","dome","flagstaff","flare_stack","mast","radar_scanner","spire","tower","windmill","windmotor"]
+		},
+		{
+			"key" : "seamark:landmark:function",
+			"values" : [ "church","mosque","radar"]
+		},
+		{
+			"key" : "seamark:light:1:category",
+			"values" : [ "directional"]
+		},
+		{
+			"key" : "seamark:light:2:category",
+			"values" : [ "directional"]
+		},
+		{
+			"key" : "seamark:light:3:category",
+			"values" : [ "directional"]
+		},
+		{
+			"key" : "seamark:light:4:category",
+			"values" : [ "directional"]
+		},
+		{
+			"key" : "seamark:light:5:category",
+			"values" : [ "directional"]
+		},
+		{
+			"key" : "seamark:military_area:category",
+			"values" : [ "firing","mine_laying","submarine"]
+		},
+		{
+			"key" : "seamark:mooring:category",
+			"values" : [ "bollard","buoy","deviation_dolphin","dolphin","post"]
+		},
+		{
+			"key" : "seamark:notice:1:category",
+			"values" : [ "cross_river_to_port","cross_river_to_starboard","isolated_danger","keep_to_mid-river","keep_to_port_margin","keep_to_starboard_margin","main_waterway_left_secondary_ahead_right","main_waterway_right_secondary_ahead_left","opening_to_left","opening_to_right"]
+		},
+		{
+			"key" : "seamark:notice:1:system",
+			"values" : [ "bniwr","ppwbc"]
+		},
+		{
+			"key" : "seamark:notice:2:category",
+			"values" : [ "cross_river_to_port","cross_river_to_starboard","isolated_danger","keep_to_mid-river","keep_to_port_margin","keep_to_starboard_margin","main_waterway_left_secondary_ahead_right","main_waterway_right_secondary_ahead_left","opening_to_left","opening_to_right"]
+		},
+		{
+			"key" : "seamark:notice:2:system",
+			"values" : [ "bniwr","ppwbc"]
+		},
+		{
+			"key" : "seamark:notice:category",
+			"values" : [ "anchoring_permitted","berthing_permitted","channel_distance_left","channel_distance_right","closed_area","cross_river_to_port","cross_river_to_starboard","entry_permitted","ferry_independent","ferry_non_independent","high_speeds_permitted","isolated_danger","keep_to_mid-river","keep_to_port_margin","keep_to_starboard_margin","launching_beaching_permitted","limited_depth","limited_headroom","limited_width","main_waterway_left_secondary_ahead","main_waterway_left_secondary_ahead_right","main_waterway_left_secondary_right","main_waterway_right_secondary_ahead","main_waterway_right_secondary_ahead_left","main_waterway_right_secondary_left","mooring_permitted","navigation_restrictions","no_anchoring","no_berthing","no_berthing_lateral_limit","no_convoy_overtaking","no_convoy_passing","no_entry","no_high_speeds","no_launching_beaching","no_mooring","no_motor_craft","no_overtaking","no_passage_left","no_passage_right","no_passing","no_sailboards","no_sailing_craft","no_sport_craft","no_turning","no_unpowered_craft","no_wash","no_waterbikes","no_waterskiing","opening_to_left","opening_to_right","overhead_cable","radio_information","sailboards_permitted","sailing_craft_permitted","secondary_waterway_crossing","secondary_waterway_left","secondary_waterway_right","sport_craft_permitted","turning_area","unpowered_craft_permitted","vehicle_loading_berth","waterbikes_permitted","weir"]
+		},
+		{
+			"key" : "seamark:notice:function",
+			"values" : [ "information","prohibition","recommendation","regulation","restriction"]
+		},
+		{
+			"key" : "seamark:notice:system",
+			"values" : [ "bniwr","cevni","ppwbc","riwr"]
+		},
+		{
+			"key" : "seamark:obstruction:category",
+			"values" : [ "fish_haven","foul_ground"]
+		},
+		{
+			"key" : "seamark:platform:category",
+			"values" : [ "fpso","island","observation","production"]
+		},
+		{
+			"key" : "seamark:platform:status",
+			"values" : [ "not_in_use"]
+		},
+		{
+			"key" : "seamark:production_area",
+			"values" : [ "mine"]
+		},
+		{
+			"key" : "seamark:production_area:category",
+			"values" : [ "quarry","wave_energy","wind_farm"]
+		},
+		{
+			"key" : "seamark:production_area:restriction",
+			"values" : [ "restricted_entry"]
+		},
+		{
+			"key" : "seamark:radar_reflector",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "seamark:radar_station:category",
+			"values" : [ "coast","surveillance"]
+		},
+		{
+			"key" : "seamark:radar_transponder:category",
+			"values" : [ "ramark"]
+		},
+		{
+			"key" : "seamark:radio_station:category",
+			"values" : [ "dgps"]
+		},
+		{
+			"key" : "seamark:restricted_area:category",
+			"values" : [ "degausing_range","dredging","military","minefield","safety_zone"]
+		},
+		{
+			"key" : "seamark:restricted_area:restriction",
+			"values" : [ "historic_wreck","no_anchoring","no_entry","no_fishing","restricted_entry","restricted_speed"]
+		},
+		{
+			"key" : "seamark:rock:water_level",
+			"values" : [ "awash","covers","submerged"]
+		},
+		{
+			"key" : "seamark:shoreline_contruction:category",
+			"values" : [ "training_wall"]
+		},
+		{
+			"key" : "seamark:small_craft_facility:category",
+			"values" : [ "visitor_berth"]
+		},
+		{
+			"key" : "seamark:tank:category",
+			"values" : [ "silo","tank","water_tower"]
+		},
+		{
+			"key" : "seamark:topamrk:shape",
+			"values" : [ "2 cones point together"]
+		},
+		{
+			"key" : "seamark:topmark:colour",
+			"values" : [ "black","green","green;white","red","red;green","red;white","white;green;white","white;red;white","yellow","yellow;black;yellow"]
+		},
+		{
+			"key" : "seamark:topmark:colour_patern",
+			"values" : [ ""]
+		},
+		{
+			"key" : "seamark:topmark:colour_pattern",
+			"values" : [ "","border","horizontal","vertical"]
+		},
+		{
+			"key" : "seamark:topmark:shape",
+			"values" : [ "2 cones base together","2 cones down","2 cones point together","2 cones up","2 spheres","cone point up","cone, point down","cone, point up","cross","cylinder","rhombus","sphere","square","triangle, point down","triangle, point up","x-shape"]
+		},
+		{
+			"key" : "seamark:type",
+			"values" : [ "anchor_berth","anchorage","beacon_cardinal","beacon_isolated_danger","beacon_lateral","beacon_safe_water","beacon_special_purpose","berth","bridge","buidling","building","buoy_cardinal","buoy_installation","buoy_isolated_danger","buoy_lateral","buoy_safe_water","buoy_special_purpose","cable_area","cable_overhead","cable_submarine","calling-in_point","coastguard_station","control_point","conveyor","crane","distance_mark","dredged_area","dumping_ground","fairway","ferry_route","fishing_facility","fortified_structure","gate","gridiron","harbour","harbour_basin","hulk","inshore_traffic_zone","landmark","light_float","light_vessel","marine_farm","military_area","militay_area","mooring","navigation_line","notice","obstruction","oil_barrier","pile","pilot_boarding","pipeline_overhead","pipeline_submarine","platform","precautionary_area","production_area","pylon","radar_line","radar_range","radar_station","radio_station","recommended_track","recommended_traffic_lane","rescue_station","restricted_area","rock","seabed_area","seaplane_landing_area","separation_boundary","separation_crossing","separation_lane","separation_line","separation_roundabout","separation_zone","shoreline_construction","shoreline_contruction","signal_station_traffic","signal_station_warning","small_craft_facility","swept_area","tank","wreck"]
+		},
+		{
+			"key" : "seamark:wreck:category",
+			"values" : [ "dangerous","distributed_remains ","hull_showing ","mast_showing","non-dangerous"]
+		},
+		{
+			"key" : "seasonal",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "seats",
+			"values" : [ "10","2","3","4","5","6","7","8","9"]
+		},
+		{
+			"key" : "second_hand",
+			"values" : [ "no","only","yes"]
+		},
+		{
+			"key" : "segregated",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "service",
+			"values" : [ "alley","crossover","drive-through","driveway","emergency_access","parking_aisle","siding","spur","yard"]
+		},
+		{
+			"key" : "service:bicycle:cleaning",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "service:bicycle:diy",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "service:bicycle:pump",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "service:bicycle:rental",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "service:bicycle:repair",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "service:bicycle:retail",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "service:bicycle:second_hand",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "service_times",
+			"values" : [ "18:00","Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00","Sa 10:00+","Sa 18:00; Su 10:45","Sa,Su,PH 09:00","Su 09:30,11:00","sunset,sunrise","week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00"]
+		},
+		{
+			"key" : "services",
+			"values" : [ ]
+		},
+		{
+			"key" : "share_taxi",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "shelter",
+			"values" : [ "limited","no","only","true","unknown","yes"]
+		},
+		{
+			"key" : "shelter_type",
+			"values" : [ "basic_hut","lean_to","picnic_shelter","public_transport","weather_shelter","wildlife_hide"]
+		},
+		{
+			"key" : "shop",
+			"values" : [ "adult","alcohol","anime","antiques","art","baby_goods","bag","bakery","bathroom_furnishing","beauty","bed","beverages","bicycle","book","bookmaker","books","boutique","butcher","candles","car","car_dealer","car_parts","car_repair","carpet","charity","cheese","chemist","chocolate","clothes","coffee","computer","confectionery","convenience","copyshop","cosmetics","craft","curtain","cycle_repair","dairy","deli","department_store","doityourself","dry_cleaning","e-cigarette","electrical","electronics","energy","erotic","fabric","farm","fashion","fishing","fishmonger","florist","frame","funeral_directors","funerals_directors","furnace","furniture","games","garden_centre","gas","general","gift","glaziery","greengrocer","hairdresser","hardware","hearing_aids","herbalist","hifi","houseware","hunting","interior_decoration","jewelry","kiosk","kitchen","lamps","laundry","leather","locksmith","lottery","mall","massage","medical_supply","mobile_phone","model","money_lender","motorcycle","music","musical_instrument","newsagent","no","nutrition_supplements","optician","organic","outdoor","paint","pastry","pawnbroker","perfumery","pet","photo","photo_studio","pyrotechnics","radiotechnics","religion","scuba_diving","seafood","second_hand","sex","shoes","shopping_centre","sports","stationery","storage_rental","supermarket","swimming_pool","tailor","tattoo","tea","ticket","tobacco","toys","trade","travel_agency","trophy","tyres","vacant","vacuum_cleaner","variety_store","video","video_games","watches","water_sports","weapons","window_blind","wine","yes"]
+		},
+		{
+			"key" : "short_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "shoulder",
+			"values" : [ ]
+		},
+		{
+			"key" : "shoulder:left",
+			"values" : [ ]
+		},
+		{
+			"key" : "shoulder:right",
+			"values" : [ ]
+		},
+		{
+			"key" : "sidewalk",
+			"values" : [ "both","no"]
+		},
+		{
+			"key" : "signal",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "site",
+			"values" : [ "parking"]
+		},
+		{
+			"key" : "site_type",
+			"values" : [ "fortification","megalith","tumulus"]
+		},
+		{
+			"key" : "ski",
+			"values" : [ "designated","no","official","permissive","private","yes"]
+		},
+		{
+			"key" : "smoking",
+			"values" : [ "dedicated","isolated","no","separated","yes"]
+		},
+		{
+			"key" : "smoking_hours",
+			"values" : [ ]
+		},
+		{
+			"key" : "smoothness",
+			"values" : [ "bad","excellent","good","intermediate"]
+		},
+		{
+			"key" : "snowmobile",
+			"values" : [ "delivery","designated","destination","no","official","permissive","private","yes"]
+		},
+		{
+			"key" : "social_facility",
+			"values" : [ "ambulatory_care","assisted_living","food_bank","group_home","healthcare","outreach","shelter","workshop"]
+		},
+		{
+			"key" : "social_facility:for",
+			"values" : [ "homeless","senior"]
+		},
+		{
+			"key" : "source",
+			"values" : [ "Bing","CLC2006","EEA-urbanatlas2006","GRAFCAN OrtoExpress Urbana 2009","IRS","ITACyL","MLIT Japan","OrbView-3","Ortofoto 1:10000, 2007.-2008. gads, © Latvijas ?eotelpisk?s inform?cijas a?ent?ra","PNOA","PSRS 10k","Piekrastes ortofoto, 2007, © Latvijas vides aizsardz?bas fonds","RABA-KGZ","bing","fugro","geoimage.at","ideib.cat","kapor2","survey"]
+		},
+		{
+			"key" : "source:access",
+			"values" : [ "PL:sign_B-1"]
+		},
+		{
+			"key" : "source:date",
+			"values" : [ "2015-01-13","2015-03-31"]
+		},
+		{
+			"key" : "source:ja",
+			"values" : [ "?????????????????????"]
+		},
+		{
+			"key" : "source:maxgcweight",
+			"values" : [ "","PL:sign_B-18"]
+		},
+		{
+			"key" : "source:maxgcweight:url",
+			"values" : [ ""]
+		},
+		{
+			"key" : "source:maxgcweightrating:hgv",
+			"values" : [ "PL:sign_B-5-note"]
+		},
+		{
+			"key" : "source:maxgvweightrating:hgv",
+			"values" : [ "PL:sign_B-5"]
+		},
+		{
+			"key" : "source:maxspeed",
+			"values" : [ "","BE:motorway","PL:living_street","PL:motorway","PL:rural","PL:trunk","PL:urban","sign","zone","zone30","zone50","zone70"]
+		},
+		{
+			"key" : "source:maxspeed:backward",
+			"values" : [ "","PL:rural","PL:trunk","PL:urban","sign"]
+		},
+		{
+			"key" : "source:maxspeed:forward",
+			"values" : [ "","PL:rural","PL:trunk","PL:urban","sign"]
+		},
+		{
+			"key" : "source_ref",
+			"values" : [ "GPS with SiRF Star III"]
+		},
+		{
+			"key" : "spaces",
+			"values" : [ ]
+		},
+		{
+			"key" : "species",
+			"values" : [ "Abies","Acerifolia","Alba","Aucuparia","Avellana","Baccata","Betulus","Biloba","Campestre","Caprea","Cordata","Decidua","Excelsior","Glutinosa","Hippocastanum","Laevis","Menziesii","Mugo","Nigra","Oxyacantha","Pendula","Petraea","Platanoides","Platyphyllos","Pseudoacacia","Pseudoplatanus","Pungens","Regia","Robur","Strobus","Sylvatica","Sylvestris","alba"]
+		},
+		{
+			"key" : "sport",
+			"values" : [ "10pin","9pin","aikido","american_football","archery","athletics","australian_football","badminton","bandy","base","baseball","basketball","beachvolleyball","billiards","bm","bmx","bobsleigh","boules","bowling","bowls","boxing","canadian_football","canoe","canoeing","chess","cliff_diving","climbing","climbing_adventure","cockfighting","cricket","cricket_nets","croquet","curling","cycling","darts","diving","dog_racing","equestrian","fencing","field_hockey","fishing","football","free_flying","gaelic_games","golf","gymnastics","handball","hapkido","hockey","horse_racing","horseshoes","ice_hockey","ice_skating","ice_stock","judo","karting","kitesurfing","korfball","kurfball","model_aerodrome","motocross","motor","multi","netball","obstacle_course","orienteering","paddle","paddle_tennis","paintball","paragliding","pelota","racquet","rc_car","roller_skating","rowing","rugby_league","rugby_union","running","safety_training","sailing","scuba_diving","shooting","skateboard","skating","skiing","soccer","squash","surfing","swimming","swimming_pool","table_soccer","table_tennis","taekwondo","tennis","toboggan","volleyball","water_ski","water_sports","weightlifting","windsurfing","wrestling"]
+		},
+		{
+			"key" : "sports",
+			"values" : [ "athletics"]
+		},
+		{
+			"key" : "stars",
+			"values" : [ "1","2","3","4","5","6","7"]
+		},
+		{
+			"key" : "start_date",
+			"values" : [ ]
+		},
+		{
+			"key" : "state",
+			"values" : [ "proposed"]
+		},
+		{
+			"key" : "status",
+			"values" : [ ]
+		},
+		{
+			"key" : "stay",
+			"values" : [ "0","30+","30-180","30-60"]
+		},
+		{
+			"key" : "step.condition",
+			"values" : [ "even","rough","uneven"]
+		},
+		{
+			"key" : "step.height",
+			"values" : [ "flat","high"]
+		},
+		{
+			"key" : "step.length",
+			"values" : [ "long","short"]
+		},
+		{
+			"key" : "step_count",
+			"values" : [ ]
+		},
+		{
+			"key" : "stile",
+			"values" : [ "ladder","squeezer","stepover"]
+		},
+		{
+			"key" : "stone_type",
+			"values" : [ "coat_of_arms","conciliation_cross"]
+		},
+		{
+			"key" : "structure",
+			"values" : [ "lattice","solid ","tubular"]
+		},
+		{
+			"key" : "substation",
+			"values" : [ "compensation","converter","distribution","industrial","minor_distribution","traction","transition","transmission"]
+		},
+		{
+			"key" : "subway",
+			"values" : [ "limited","no","only","true","yes"]
+		},
+		{
+			"key" : "summit:cross",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "supervised",
+			"values" : [ "interval","no","yes"]
+		},
+		{
+			"key" : "support",
+			"values" : [ "billboard","ground","pole","wall_mounted"]
+		},
+		{
+			"key" : "surface",
+			"values" : [ "asphalt","clay","cobblestone","cobblestone:flattened","compacted","compacted_gravel","concrete","concrete:lanes","concrete:plates","dirt","earth","fine_gravel","grass","grass_paver","gravel","ground","metal","mud","paved","paving_stones","paving_stones:20","paving_stones:30","pebblestone","sand","sett","tartan","unpaved","wood"]
+		},
+		{
+			"key" : "surveillance",
+			"values" : [ "indoor","outdoor","public"]
+		},
+		{
+			"key" : "surveillance:type",
+			"values" : [ "camera"]
+		},
+		{
+			"key" : "surveillance:zone",
+			"values" : [ "bank","building","parking","shop","town","traffic"]
+		},
+		{
+			"key" : "survey:date",
+			"values" : [ ]
+		},
+		{
+			"key" : "swing_gate:type",
+			"values" : [ "double","single"]
+		},
+		{
+			"key" : "symbol",
+			"values" : [ ]
+		},
+		{
+			"key" : "tactile_paving",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "tank",
+			"values" : [ ]
+		},
+		{
+			"key" : "taxon",
+			"values" : [ "Acer Campestre","Acer Platanoides","Acer Pseudoplatanus","Aesculus Hippocastanum","Alnus Glutinosa","Betula Pendula","Carpinus Betulus","Corylus Avellana","Crataegus Oxyacantha","Fagus Sylvatica","Fraxinus Excelsior","Ginkgo Biloba","Juglans Regia","Larix Decidua","Picea Abies","Picea pungens","Pinus Mugo","Pinus Strobus","Pinus Sylvestris","Platanus Acerifolia","Populus Nigra","Populus alba","Pseudotsuga Menziesii","Quercus Petraea","Quercus Robur","Robinia Pseudoacacia","Salix Alba","Salix Caprea","Sambucus Nigra","Sorbus Aucuparia","Taxus Baccata","Tilia Cordata","Tilia Platyphyllos","Ulmus Laevis"]
+		},
+		{
+			"key" : "taxon:cs",
+			"values" : [ "Bez ?erný","Borovice Kle?","Borovice Lesní","Borovice Vejmutovka","Buk Lesní","B?íza B?lokorá","Douglaska Tisolistá","Dub Letní","Dub Zimní","Habr Obecný","Hloh Obecný","Jasan Ztepilý","Javor Babyka","Javor Klen","Javor Mlé?","Je?áb Pta?í","Jilm Vaz","Jinan Dvoulalo?ný","Jírovec Ma?al","Lípa Malolistá","Lípa Velkolistá","Líska Obecná","Mod?ín opadavý","Ol?e Lepkavá","O?e?ák Královský","Platan Javorolistý","Smrk Ztepilý","Smrk pichlavý","Tis ?ervený","Topol bílý","Topol ?erný","Trnovník Akát","Vrba Bílá","Vrba Jíva"]
+		},
+		{
+			"key" : "telescope:type",
+			"values" : [ "optical","radio"]
+		},
+		{
+			"key" : "temporary",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "tents",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "thermometer",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "tidal",
+			"values" : [ ]
+		},
+		{
+			"key" : "tiger:county",
+			"values" : [ ]
+		},
+		{
+			"key" : "tiger:reviewed",
+			"values" : [ "no"]
+		},
+		{
+			"key" : "tiger:zip_left",
+			"values" : [ ]
+		},
+		{
+			"key" : "tiger:zip_right",
+			"values" : [ ]
+		},
+		{
+			"key" : "time",
+			"values" : [ ]
+		},
+		{
+			"key" : "to",
+			"values" : [ ]
+		},
+		{
+			"key" : "todo",
+			"values" : [ ]
+		},
+		{
+			"key" : "toilets",
+			"values" : [ "limited","no","only","true","yes"]
+		},
+		{
+			"key" : "toilets:disposal",
+			"values" : [ "bucket","chemical","flush","pitlatrine"]
+		},
+		{
+			"key" : "toilets:position",
+			"values" : [ "seated","seated;urinal","squat","urinal"]
+		},
+		{
+			"key" : "toilets:wheelchair",
+			"values" : [ ]
+		},
+		{
+			"key" : "toll",
+			"values" : [ "0","1","false","interval","no","snowmobile","true","yes"]
+		},
+		{
+			"key" : "toll:N3",
+			"values" : [ ]
+		},
+		{
+			"key" : "toll:automatic",
+			"values" : [ "Via T"]
+		},
+		{
+			"key" : "tourism",
+			"values" : [ "alpine_hut","apartment","aquarium","artwork","attraction","camp_site","caravan_site","chalet","gallery","guest_house","hostel","hotel","information","motel","museum","picnic_site","theme_park","view_point","viewpoint","wilderness_hut","yes","zoo"]
+		},
+		{
+			"key" : "tourist_bus",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "tower:type",
+			"values" : [ "anchor","bell_tower","branch","comm_tower","communication","crossing","defensive","lighting","observation","observation_tower","suspension","termination","transition","transposing","watchtower"]
+		},
+		{
+			"key" : "tracks",
+			"values" : [ "1","2","3","4"]
+		},
+		{
+			"key" : "tracktype",
+			"values" : [ "grade1","grade2","grade3","grade4","grade5"]
+		},
+		{
+			"key" : "traction",
+			"values" : [ "cable","rack"]
+		},
+		{
+			"key" : "traffic_calming",
+			"values" : [ "bump","chicane","choker","cushion","hump","island","rumble_strip","table","yes"]
+		},
+		{
+			"key" : "traffic_sign",
+			"values" : [ "CAT:radar","ES:p1","ES:p10a","ES:p10b","ES:p10c","ES:p11","ES:p11a","ES:p12","ES:p13a","ES:p13b","ES:p14a","ES:p14b","ES:p15","ES:p15a","ES:p15b","ES:p16a","ES:p17","ES:p17a","ES:p17b","ES:p19","ES:p1a","ES:p1b","ES:p1c","ES:p1d","ES:p2","ES:p20","ES:p21","ES:p22","ES:p23","ES:p24","ES:p25","ES:p26","ES:p27","ES:p287","ES:p29","ES:p3","ES:p31","ES:p33","ES:p34","ES:p4","ES:p5","ES:p50","ES:p6","ES:p7","ES:p8","ES:p9a","ES:p9b","ES:p9c","ES:panel:dir:left","ES:panel:dir:left:2","ES:panel:dir:left:3","ES:panel:dir:right","ES:panel:dir:right:2","ES:panel:dir:right:3","ES:r100","ES:r101","ES:r102","ES:r103","ES:r104","ES:r105","ES:r106","ES:r107","ES:r108","ES:r109","ES:r110","ES:r111","ES:r113","ES:r114","ES:r115","ES:r116","ES:r117","ES:r200","ES:r200a","ES:r201","ES:r202","ES:r203","ES:r204","ES:r205","ES:r3","ES:r300","ES:r302","ES:r303","ES:r304","ES:r307","ES:r308","ES:r310","ES:r4","ES:r400a","ES:r400b","ES:r400c","ES:r400d","ES:r400e","ES:r401a","ES:r401b","ES:r402","ES:r404","ES:r405","ES:r406","ES:r407","ES:r408","ES:r409","ES:r410","ES:r412","ES:r413","ES:r414","ES:r415","ES:r416","ES:r417","ES:r418","ES:r5","ES:r503","ES:r504","ES:r505","ES:r6","ES:road:beacon:big","ES:road:beacon:little","ES:s1","ES:s10","ES:s102","ES:s103","ES:s104","ES:s105","ES:s106","ES:s107","ES:s108","ES:s109","ES:s11","ES:s110","ES:s111","ES:s112","ES:s113","ES:s114","ES:s115","ES:s116","ES:s117","ES:s118","ES:s119","ES:s11a","ES:s11b","ES:s12","ES:s120","ES:s121","ES:s122","ES:s123","ES:s13","ES:s14a","ES:s14b","ES:s15a","ES:s15b","ES:s15c","ES:s15d","ES:s16","ES:s17","ES:s18","ES:s1a","ES:s2","ES:s20","ES:s21","ES:s22","ES:s23","ES:s24","ES:s25","ES:s26a","ES:s27","ES:s28","ES:s29","ES:s2a","ES:s31","ES:s32","ES:s33","ES:s34","ES:s34a","ES:s5","ES:s50a","ES:s50b","ES:s50c","ES:s50d","ES:s50e","ES:s52","ES:s52a","ES:s52b","ES:s53","ES:s53b","ES:s572","ES:s6","ES:s60a","ES:s60b","ES:s61a","ES:s61b","ES:s62a","ES:s62b","ES:s63","ES:s64a","ES:s64b","ES:s8","city_limit","maxspeed","maxspeed;overtaking","minspeed","no","overtaking","yes"]
+		},
+		{
+			"key" : "traffic_signals",
+			"values" : [ ]
+		},
+		{
+			"key" : "traffic_signals:direction",
+			"values" : [ "backward","forward"]
+		},
+		{
+			"key" : "trail_visibility",
+			"values" : [ "bad","excellent","good","horrible","intermediate","no"]
+		},
+		{
+			"key" : "train",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "tram",
+			"values" : [ "limited","no","only","true","yes"]
+		},
+		{
+			"key" : "transformer",
+			"values" : [ "auto","converter","distribution","generator","phase_angle_regulator","traction","yes"]
+		},
+		{
+			"key" : "triple_tower",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "trolley_wire",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "trolleybus",
+			"values" : [ "no","yes"]
+		},
+		{
+			"key" : "tunnel",
+			"values" : [ "0","1","avalanche_protector","building_passage","culvert","false","no","true","yes"]
+		},
+		{
+			"key" : "tunnel:name",
+			"values" : [ ]
+		},
+		{
+			"key" : "turn",
+			"values" : [ ]
+		},
+		{
+			"key" : "turn:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "turn:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "turn:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "turn:lanes",
+			"values" : [ "none|none|merge_to_left","none|none|slight_right"]
+		},
+		{
+			"key" : "turn:lanes:backward",
+			"values" : [ "","left|none"]
+		},
+		{
+			"key" : "turn:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "turn:lanes:forward",
+			"values" : [ "","left|none","merge_to_right|through","slight_left|slight_left|slight_right|slight_right","slight_left|through","slight_left|through|through","slight_left|through|through|through","through|merge_to_left","through|slight_right","through|through","through|through|merge_to_left","through|through|slight_right","through|through|through","through|through|through|slight_right"]
+		},
+		{
+			"key" : "type",
+			"values" : [ "TMC","associatedStreet","audio","boundary","bridge","broad_leaved","conifer","destination_sign","disc_golf_course","enforcement","gas","golf_course","heat","multipolygon","network","oil","palm","public_transport","restriction","route","route_master","sewage","site","street","superroute","tmc","tunnel","video","water","waterway"]
+		},
+		{
+			"key" : "uic_name",
+			"values" : [ ]
+		},
+		{
+			"key" : "uic_ref",
+			"values" : [ ]
+		},
+		{
+			"key" : "url",
+			"values" : [ ]
+		},
+		{
+			"key" : "usage",
+			"values" : [ "branch","freight","industrial","main","military","tourism"]
+		},
+		{
+			"key" : "vehicle",
+			"values" : [ "agricultural","delivery","destination","forestry","no","permissive","private","yes"]
+		},
+		{
+			"key" : "vending",
+			"values" : [ "SIM-cards","animal_food","bicycle_tube","books","bread","chewing_gum","chewing_gums","cigarette","cigarettes","coffee","condoms","drink","drinks","excrement_bags","fishing_bait","food","ice_cream","milk","news_papers","newspapers","parcel_mail_in","parcel_pickup","parking","parking_tickets","photo_booth","photos","public_transport_plans","public_transport_tickets","sIM-cards","snack","snacks","stamps","sweets","tampons","telephone_vouchers","tickets","toll","toys","vouchers","water"]
+		},
+		{
+			"key" : "vfrreportingpoint",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "via",
+			"values" : [ ]
+		},
+		{
+			"key" : "visibility",
+			"values" : [ "area","house","street"]
+		},
+		{
+			"key" : "volcano:status",
+			"values" : [ "active","dormant","extinct"]
+		},
+		{
+			"key" : "volcano:type",
+			"values" : [ "scoria","shield","stratovolcano"]
+		},
+		{
+			"key" : "voltage",
+			"values" : [ "100000","110","110000","110000;20000","115000","1150000","120000","132000","138000","1500","15000","150000","154000","161000","20000","200000","220","220000","225000","230000","238000","25000","275000","3000","30000","300000","315000","33000","330000","345000","35000","350000","380000","400","400000","420000","45000","450000","49000","500000","55000","600","60000","63000","650","65000","66000","69000","735000","750","750000","750000;200000","765000","90000","high","low","medium"]
+		},
+		{
+			"key" : "wall",
+			"values" : [ "castle_wall"]
+		},
+		{
+			"key" : "water",
+			"values" : [ "canal","lagoon","lake","oxbow","pond","reservoir","river"]
+		},
+		{
+			"key" : "waterway",
+			"values" : [ "boatyard","breakwater","canal","dam","ditch","dock","drain","drystream","ferry_way","fuel","lock_gate","marina","mooring","pier","river","riverbank","sanitary_dump_station","slipway","spring","stream","turning_point","wadi","waste_disposal","water","water_point","waterfall","weir"]
+		},
+		{
+			"key" : "website",
+			"values" : [ ]
+		},
+		{
+			"key" : "wetland",
+			"values" : [ "bog","mangrove","marsh","reedbed","saltmarsh","swamp","tidalflat"]
+		},
+		{
+			"key" : "wheelchair",
+			"values" : [ "limited","no","official","only","true","unknown","yes"]
+		},
+		{
+			"key" : "whitewater",
+			"values" : [ "egress","hazard","put_in","put_in;egress","rapid"]
+		},
+		{
+			"key" : "width",
+			"values" : [ "0.5 m","2.5 m"]
+		},
+		{
+			"key" : "width:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "width:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "width:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "width:lanes",
+			"values" : [ ]
+		},
+		{
+			"key" : "width:lanes:backward",
+			"values" : [ ]
+		},
+		{
+			"key" : "width:lanes:both_ways",
+			"values" : [ ]
+		},
+		{
+			"key" : "width:lanes:forward",
+			"values" : [ ]
+		},
+		{
+			"key" : "wikidata",
+			"values" : [ ]
+		},
+		{
+			"key" : "wikimedia_commons",
+			"values" : [ ]
+		},
+		{
+			"key" : "wikipedia",
+			"values" : [ ]
+		},
+		{
+			"key" : "winter_road",
+			"values" : [ "yes"]
+		},
+		{
+			"key" : "wires",
+			"values" : [ "double","eightfold","fivefold","quad","single","sixfold","triple"]
+		},
+		{
+			"key" : "wood",
+			"values" : [ ]
+		},
+		{
+			"key" : "zone:traffic",
+			"values" : [ "BE:rural","BE:urban"]
+		}
+	]
+}

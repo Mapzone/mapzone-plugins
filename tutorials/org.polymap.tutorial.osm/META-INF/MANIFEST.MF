@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OSM Importer
+Bundle-SymbolicName: org.polymap.tutorial.osm;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: polymap.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.polymap.core;bundle-version="4.0.0",
+ org.polymap.core.data;bundle-version="4.0.1",
+ org.eclipse.rap.jface,
+ org.polymap.rhei.batik,
+ org.polymap.p4;bundle-version="1.0.1",
+ org.polymap.p4.data.importer;bundle-version="1.0.0"
+Bundle-ClassPath: lib/commons-compress-1.9.jar,
+ lib/dynsax-0.0.1.jar,
+ lib/osm4j-core-0.0.8.jar,
+ lib/osm4j-xml-0.0.2.jar,
+ lib/protobuf-java-2.4.1.jar,
+ lib/trove4j-3.0.3.jar,
+ .
