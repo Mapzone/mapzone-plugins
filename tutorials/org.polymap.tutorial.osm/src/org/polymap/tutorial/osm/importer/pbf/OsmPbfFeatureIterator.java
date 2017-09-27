@@ -12,7 +12,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
  */
-package org.polymap.tutorial.osm.importer;
+package org.polymap.tutorial.osm.importer.pbf;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +38,12 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
+import org.polymap.tutorial.osm.importer.Fileformat;
+import org.polymap.tutorial.osm.importer.Osmformat;
+import org.polymap.tutorial.osm.importer.Fileformat.Blob;
+import org.polymap.tutorial.osm.importer.Fileformat.BlobHeader;
+import org.polymap.tutorial.osm.importer.Osmformat.DenseNodes;
+import org.polymap.tutorial.osm.importer.Osmformat.PrimitiveBlock;
 import org.polymap.tutorial.osm.importer.Osmformat.PrimitiveGroup;
 import org.polymap.tutorial.osm.importer.Osmformat.StringTable;
 

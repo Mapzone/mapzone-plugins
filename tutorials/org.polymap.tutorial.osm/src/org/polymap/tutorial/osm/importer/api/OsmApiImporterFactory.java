@@ -12,17 +12,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  */
-package org.polymap.tutorial.osm.importer;
-
-import java.util.List;
-import java.util.Set;
-
-import java.io.File;
+package org.polymap.tutorial.osm.importer.api;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.google.common.collect.Sets;
 
 import org.polymap.p4.data.importer.ContextIn;
 import org.polymap.p4.data.importer.ImporterFactory;
@@ -32,24 +25,20 @@ import org.polymap.p4.data.importer.ImporterFactory;
  *
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  */
-public class OsmPbfFileImporterFactory
+public class OsmApiImporterFactory
         implements ImporterFactory {
 
-    private static Log log = LogFactory.getLog( OsmPbfFileImporterFactory.class );
+    private static Log log = LogFactory.getLog( OsmApiImporterFactory.class );
     
-    public final static Set<String> supportedTypes = Sets.newHashSet(".pbf"); 
-    
-    @ContextIn
-    protected File                  file;
     
     @ContextIn
-    protected List<File>            files;
+    protected Object                any;
     
 
     @Override
     public void createImporters( ImporterBuilder builder ) throws Exception {
-        if (file != null && file.getName().toLowerCase().endsWith( ".pbf" )) {
-            builder.newImporter( new OsmPbfFileImporter(), file );
+        if (any == null) {
+            builder.newImporter( new OsmApiImporter() );
         }
     }
 }

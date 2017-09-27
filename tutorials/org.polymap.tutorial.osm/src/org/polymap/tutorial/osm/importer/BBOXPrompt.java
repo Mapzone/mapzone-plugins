@@ -1,6 +1,6 @@
 /*
- * polymap.org Copyright (C) 2015 individual contributors as indicated by the
- * 
+ * polymap.org 
+ * Copyright (C) 2015-2017 individual contributors as indicated by the
  * @authors tag. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
@@ -21,9 +21,6 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.google.common.base.Joiner;
 
 import org.polymap.p4.data.importer.ImporterPrompt;
@@ -31,12 +28,11 @@ import org.polymap.p4.data.importer.ImporterPrompt.Severity;
 import org.polymap.p4.data.importer.ImporterSite;
 
 /**
+ * 
  * @author Joerg Reichert <joerg@mapzone.io>
- *
+ * @author Falko Bräutigam <falko@mapzone.io>
  */
 public class BBOXPrompt {
-
-    private static Log           log = LogFactory.getLog( TagFilterPrompt.class );
 
     private ImporterSite         site;
 
@@ -50,14 +46,15 @@ public class BBOXPrompt {
 
         selection = getDefaultBBOX( crs );
 
-        prompt = site.newPrompt( "bboxFilter" ).summary.put( "BBOX selector" ).description
-                .put( "Narrow down feature selection by bounding box" ).value
-                .put( getBBOXStr( selection ) ).severity
-                .put( Severity.REQUIRED ).ok.put( false ).
-                extendedUI.put( new BBOXPromptUIBuilder() {
+        prompt = site.newPrompt( "bboxFilter" )
+                .summary.put( "BBOX selector" )
+                .description.put( "Narrow down feature selection by bounding box" )
+                .value.put( getBBOXStr( selection ) )
+                .severity.put( Severity.VERIFY )
+                .ok.put( false )
+                .extendedUI.put( new BBOXPromptUIBuilder() {
 
                     private ReferencedEnvelope bbox = null;
-
 
                     @Override
                     protected ReferencedEnvelope getBBOX() {
@@ -67,24 +64,20 @@ public class BBOXPrompt {
                         return bbox;
                     }
 
-
                     @Override
                     protected void setBBOX( ReferencedEnvelope bbox ) {
                         this.bbox = bbox;
                     }
-
 
                     @Override
                     protected String getBBOXStr() {
                         return BBOXPrompt.this.getBBOXStr( this.bbox );
                     }
 
-
                     @Override
                     protected String getCRS() {
                         return "EPSG:4326";
                     }
-
 
                     @Override
                     public void submit( ImporterPrompt ip ) {
@@ -110,7 +103,7 @@ public class BBOXPrompt {
 
 
     private static ReferencedEnvelope getDefaultBBOX( CoordinateReferenceSystem crs ) {
-        // Leipzig
+        // FIXME Leipzig
         double minLon = 12.263489;
         double maxLon = 12.453003;
         double minLat = 51.28597;

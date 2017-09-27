@@ -4,13 +4,13 @@
    <extension
          point="org.polymap.p4.data.importer.importers">
       <importer
-            class="org.polymap.tutorial.osm.importer.OsmApiImporterFactory">
+            class="org.polymap.tutorial.osm.importer.api.OsmApiImporterFactory">
       </importer>
       <importer
-            class="org.polymap.tutorial.osm.importer.OsmPbfFileImporterFactory">
+            class="org.polymap.tutorial.osm.importer.pbf.OsmPbfFileImporterFactory">
       </importer>
       <importer
-            class="org.polymap.tutorial.osm.importer.OsmXmlFileImporterFactory">
+            class="org.polymap.tutorial.osm.importer.xml.OsmXmlFileImporterFactory">
       </importer>
    </extension>
 

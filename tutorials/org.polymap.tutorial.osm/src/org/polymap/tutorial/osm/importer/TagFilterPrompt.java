@@ -1,5 +1,6 @@
 /*
- * polymap.org Copyright (C) 2015, Falko Bräutigam. All rights reserved.
+ * polymap.org 
+ * Copyright (C) 2015-2017, Falko Bräutigam. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
  * the GNU Lesser General Public License as published by the Free Software
@@ -13,6 +14,8 @@
 package org.polymap.tutorial.osm.importer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -39,9 +42,9 @@ import org.polymap.p4.data.importer.ImporterSite;
  */
 public class TagFilterPrompt {
 
-    private static Log                       log     = LogFactory.getLog( TagFilterPrompt.class );
+    private static final Log log = LogFactory.getLog( TagFilterPrompt.class );
 
-    private static List<Pair<String,String>> DEFAULT = new ArrayList<Pair<String,String>>();
+    private static final List<Pair<String,String>> DEFAULT = Arrays.asList( Pair.of( "name", "*" ) );
 
     private ImporterSite                     site;
 
@@ -49,33 +52,29 @@ public class TagFilterPrompt {
 
     private final ImporterPrompt             prompt;
 
-    static {
-        DEFAULT.add( Pair.of( "name", "*" ) );
-    }
-
 
     public TagFilterPrompt( ImporterSite site ) {
         this.site = site;
         selection = new ArrayList<Pair<String,String>>();
         selection.addAll( DEFAULT );
 
-        prompt = site.newPrompt( "tagFilter" ).summary.put( "Tag filter" ).description
-                .put( "Filters features by their tags" ).value
-                .put( getReadable() ).severity
-                .put( Severity.REQUIRED ).ok.put( false ).
-                extendedUI.put( new TagFilterPromptUIBuilder() {
+        prompt = site.newPrompt( "tagFilter" )
+                .summary.put( "Tag filter" )
+                .description.put( "Filters features by their tags" )
+                .value.put( getReadable() )
+                .severity.put( Severity.VERIFY )
+                .ok.put( false )
+                .extendedUI.put( new TagFilterPromptUIBuilder() {
 
-                    private java.util.Collection<String>        keys = null;
+                    private Collection<String>        keys;
 
-                    private SortedMap<String,SortedSet<String>> tags = null;
-
+                    private SortedMap<String,SortedSet<String>> tags;
 
                     @Override
                     public void submit( ImporterPrompt ip ) {
                         ip.value.put( getReadable() );
                         ip.ok.set( true );
                     }
-
 
                     @Override
                     protected SortedMap<String,SortedSet<String>> listItems() {
@@ -94,12 +93,10 @@ public class TagFilterPrompt {
                         return tags;
                     }
 
-
                     @Override
                     protected List<Pair<String,String>> initiallySelectedItems() {
                         return selection;
                     }
-
 
                     @Override
                     protected void handleSelection( Pair<String,String> selected ) {
@@ -107,13 +104,12 @@ public class TagFilterPrompt {
                         assert selection != null;
                     }
 
-
                     @Override
                     protected void handleUnselection( Pair<String,String> selected ) {
                         selection.remove( selected );
                         assert selection != null;
                     }
-                } );
+                });
     }
 
 

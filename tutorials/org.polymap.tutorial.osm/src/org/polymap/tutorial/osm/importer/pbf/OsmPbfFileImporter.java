@@ -12,7 +12,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
  */
-package org.polymap.tutorial.osm.importer;
+package org.polymap.tutorial.osm.importer.pbf;
 
 import static org.polymap.rhei.batik.app.SvgImageRegistryHelper.NORMAL24;
 
@@ -37,6 +37,9 @@ import org.polymap.p4.data.importer.ContextOut;
 import org.polymap.p4.data.importer.Importer;
 import org.polymap.p4.data.importer.ImporterSite;
 import org.polymap.p4.data.importer.prompts.CharsetPrompt;
+import org.polymap.tutorial.osm.importer.FeatureLazyContentProvider;
+import org.polymap.tutorial.osm.importer.OsmFeatureTableViewer;
+import org.polymap.tutorial.osm.importer.TagFilterPrompt;
 
 /**
  * @author Joerg Reichert <joerg@mapzone.io>

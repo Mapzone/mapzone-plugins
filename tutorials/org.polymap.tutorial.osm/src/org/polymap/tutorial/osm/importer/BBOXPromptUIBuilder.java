@@ -1,6 +1,6 @@
 /*
- * polymap.org Copyright (C) 2015 individual contributors as indicated by the
- * 
+ * polymap.org 
+ * Copyright (C) 2015-2017 individual contributors as indicated by the
  * @authors tag. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
@@ -48,13 +48,14 @@ import org.polymap.rap.openlayers.types.Projection.Units;
 import org.polymap.rap.openlayers.view.View;
 
 /**
+ * 
  * @author Joerg Reichert <joerg@mapzone.io>
- *
+ * @author Falko Bräutigam <falko@mapzone.io>
  */
 public abstract class BBOXPromptUIBuilder
         implements PromptUIBuilder {
 
-    private static double EQUATOR_LENGTH = 40075016.68557849;
+    private static final double EQUATOR_LENGTH = 40075016.68557849;
 
     private Label         label;
 
