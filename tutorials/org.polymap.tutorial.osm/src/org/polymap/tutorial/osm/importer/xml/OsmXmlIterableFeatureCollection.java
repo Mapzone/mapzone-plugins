@@ -1,6 +1,6 @@
 /*
- * polymap.org Copyright (C) 2015 individual contributors as indicated by the
- * 
+ * polymap.org 
+ * Copyright (C) 2015 individual contributors as indicated by the
  * @authors tag. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
@@ -42,27 +42,27 @@ import com.vividsolutions.jts.geom.Point;
 public class OsmXmlIterableFeatureCollection
         extends AbstractFeatureCollection {
 
-    private ReferencedEnvelope              env                 = null;
+    private ReferencedEnvelope              env;
 
-    private Double                          minLon              = -1d;
+    private Double                          minLon = -1d;
 
-    private Double                          maxLon              = -1d;
+    private Double                          maxLon = -1d;
 
-    private Double                          minLat              = -1d;
+    private Double                          minLat = -1d;
 
-    private Double                          maxLat              = -1d;
+    private Double                          maxLat = -1d;
 
     private final List<Pair<String,String>> filters;
 
     private final URL                       url;
 
-    private Exception                       exception           = null;
+    private Exception                       exception;
 
     private List<OsmXmlFeatureIterator>     osmFeatureIterators = new ArrayList<OsmXmlFeatureIterator>();
 
     private int                             size;
 
-    private int                             limit               = -1;
+    private int                             limit = -1;
 
 
     public OsmXmlIterableFeatureCollection( String typeName, File file, List<Pair<String,String>> filters )

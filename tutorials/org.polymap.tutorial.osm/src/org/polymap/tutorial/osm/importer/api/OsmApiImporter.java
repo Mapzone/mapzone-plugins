@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
@@ -68,17 +69,17 @@ public class OsmApiImporter
     public static final int         ELEMENT_IMPORT_LIMIT  = 50000;
 
     @ContextOut
-    protected OsmXmlIterableFeatureCollection features;
+    protected FeatureCollection     features;
 
-    protected ImporterSite                    site;
+    protected ImporterSite          site;
 
-    private Exception                         exception;
+    private Exception               exception;
 
-    private BBOXPrompt                        bboxPrompt;
+    private BBOXPrompt              bboxPrompt;
 
-    private TagFilterPrompt                   tagPrompt;
+    private TagFilterPrompt         tagPrompt;
 
-    private int                               totalCount = -1;
+    private int                     totalCount = -1;
 
 
     @Override
@@ -86,6 +87,16 @@ public class OsmApiImporter
         return site;
     }
 
+    
+    /**
+     * XXX Due to limitations of the importer engine the {@link ContextOut}
+     * {@link #features} member has to have {@link FeatureCollection} type in order
+     * to get recognized.
+     */
+    public OsmXmlIterableFeatureCollection features() {
+        return (OsmXmlIterableFeatureCollection)features;    
+    }
+    
 
     @Override
     public void init( ImporterSite aSite, IProgressMonitor monitor ) throws Exception {
@@ -93,7 +104,7 @@ public class OsmApiImporter
 
         site.icon.set( P4Plugin.images().svgImage( "file-multiple.svg", NORMAL24 ) );
         site.summary.set( "OpenStreetMap" );
-        site.description.set( "Importing OpenStreetMap data via API." );
+        site.description.set( "OpenStreetMap data via Overpass API" );
         site.terminal.set( true );
     }
 
@@ -134,11 +145,11 @@ public class OsmApiImporter
                 // TODO make encoding configurable?
                 URL url = new URL( BASE_URL + URLEncoder.encode( filterStr + "out " + fetchCount + ";", "UTF-8" ) );
                 features = new OsmXmlIterableFeatureCollection( "org.polymap.tutorial.osm.importer", url, tagFilters );
-                if (features.iterator().hasNext() && features.getException() == null) {
+                if (features().iterator().hasNext() && features().getException() == null) {
                     site.ok.set( true );
                 }
                 else {
-                    exception = features.getException();
+                    exception = features().getException();
                     site.ok.set( false );
                 }
             }
@@ -201,7 +212,7 @@ public class OsmApiImporter
                 if (totalCount > ELEMENT_PREVIEW_LIMIT) {
                     toolkit.createFlowText( parent, "\nShowing " + ELEMENT_PREVIEW_LIMIT + " items of totally found "
                             + totalCount + " elements." );
-                    features.setLimit( ELEMENT_PREVIEW_LIMIT );
+                    features().setLimit( ELEMENT_PREVIEW_LIMIT );
                 }
                 table.setContentProvider( new FeatureLazyContentProvider( features ) );
                 table.setInput( features );
@@ -219,7 +230,7 @@ public class OsmApiImporter
         // create all params for contextOut
         // all is done in verify
         if (totalCount > ELEMENT_IMPORT_LIMIT) {
-            features.setLimit( ELEMENT_IMPORT_LIMIT );
+            features().setLimit( ELEMENT_IMPORT_LIMIT );
         }
     }
 }
