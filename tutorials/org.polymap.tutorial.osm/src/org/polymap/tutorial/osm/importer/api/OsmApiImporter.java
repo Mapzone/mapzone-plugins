@@ -48,6 +48,7 @@ import org.polymap.rhei.batik.toolkit.IPanelToolkit;
 import org.polymap.p4.P4Plugin;
 import org.polymap.p4.data.importer.ContextOut;
 import org.polymap.p4.data.importer.Importer;
+import org.polymap.p4.data.importer.ImporterPrompt.Severity;
 import org.polymap.p4.data.importer.ImporterSite;
 import org.polymap.tutorial.osm.importer.BBOXPrompt;
 import org.polymap.tutorial.osm.importer.FeatureLazyContentProvider;
@@ -114,8 +115,8 @@ public class OsmApiImporter
     public void createPrompts( IProgressMonitor monitor ) throws Exception {
         // TODO get from CRS Prompt (not yet merged to master)
         CoordinateReferenceSystem crs = CRS.decode( "EPSG:4326" );
-        bboxPrompt = new BBOXPrompt( site, crs );
-        tagPrompt = new TagFilterPrompt( site );
+        bboxPrompt = new BBOXPrompt( site, crs, Severity.INFO );
+        tagPrompt = new TagFilterPrompt( site, Severity.INFO );
     }
 
 

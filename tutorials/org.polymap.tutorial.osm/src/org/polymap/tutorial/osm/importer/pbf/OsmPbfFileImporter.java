@@ -36,6 +36,7 @@ import org.polymap.p4.P4Plugin;
 import org.polymap.p4.data.importer.ContextIn;
 import org.polymap.p4.data.importer.ContextOut;
 import org.polymap.p4.data.importer.Importer;
+import org.polymap.p4.data.importer.ImporterPrompt.Severity;
 import org.polymap.p4.data.importer.ImporterSite;
 import org.polymap.tutorial.osm.importer.FeatureLazyContentProvider;
 import org.polymap.tutorial.osm.importer.OsmFeatureTableViewer;
@@ -86,7 +87,7 @@ public class OsmPbfFileImporter
 
     @Override
     public void createPrompts( IProgressMonitor monitor ) throws Exception {
-        tagPrompt = new TagFilterPrompt( site );
+        tagPrompt = new TagFilterPrompt( site, Severity.REQUIRED );
     }
 
 

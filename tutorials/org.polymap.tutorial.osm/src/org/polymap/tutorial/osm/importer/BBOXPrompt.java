@@ -41,7 +41,14 @@ public class BBOXPrompt {
     private final ImporterPrompt prompt;
 
 
-    public BBOXPrompt( ImporterSite site, CoordinateReferenceSystem crs ) {
+    /**
+     * 
+     * 
+     * @param site
+     * @param crs
+     * @param severity {@link Severity#INFO} : collapsed importer on startup
+     */
+    public BBOXPrompt( ImporterSite site, CoordinateReferenceSystem crs, Severity severity ) {
         this.site = site;
 
         selection = getDefaultBBOX( crs );
@@ -50,8 +57,8 @@ public class BBOXPrompt {
                 .summary.put( "BBOX selector" )
                 .description.put( "Narrow down feature selection by bounding box" )
                 .value.put( getBBOXStr( selection ) )
-                .severity.put( Severity.VERIFY )
-                .ok.put( false )
+                .severity.put( severity )
+                //.ok.put( false )
                 .extendedUI.put( new BBOXPromptUIBuilder() {
 
                     private ReferencedEnvelope bbox = null;
@@ -81,10 +88,11 @@ public class BBOXPrompt {
 
                     @Override
                     public void submit( ImporterPrompt ip ) {
+                        prompt.severity.set( Severity.REQUIRED );
                         BBOXPrompt.this.selection = bbox;
                         ip.ok.set( true );
                     }
-                } );
+                });
     }
 
 

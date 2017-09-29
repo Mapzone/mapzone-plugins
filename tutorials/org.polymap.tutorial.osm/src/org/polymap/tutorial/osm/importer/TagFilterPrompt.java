@@ -53,7 +53,13 @@ public class TagFilterPrompt {
     private final ImporterPrompt             prompt;
 
 
-    public TagFilterPrompt( ImporterSite site ) {
+    /**
+     * 
+     * 
+     * @param site
+     * @param severity {@link Severity#INFO} : collapsed importer on startup
+     */
+    public TagFilterPrompt( ImporterSite site, Severity severity ) {
         this.site = site;
         selection = new ArrayList<Pair<String,String>>();
         selection.addAll( DEFAULT );
@@ -62,8 +68,8 @@ public class TagFilterPrompt {
                 .summary.put( "Tag filter" )
                 .description.put( "Filters features by their tags" )
                 .value.put( getReadable() )
-                .severity.put( Severity.VERIFY )
-                .ok.put( false )
+                .severity.put( severity )
+                //.ok.put( false )
                 .extendedUI.put( new TagFilterPromptUIBuilder() {
 
                     private Collection<String>        keys;
@@ -72,8 +78,9 @@ public class TagFilterPrompt {
 
                     @Override
                     public void submit( ImporterPrompt ip ) {
-                        ip.value.put( getReadable() );
-                        ip.ok.set( true );
+                        prompt.severity.put( Severity.REQUIRED );
+                        prompt.value.put( getReadable() );
+                        prompt.ok.set( true );
                     }
 
                     @Override
