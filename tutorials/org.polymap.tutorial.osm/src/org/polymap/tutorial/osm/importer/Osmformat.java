@@ -3,6 +3,7 @@
 
 package org.polymap.tutorial.osm.importer;
 
+@SuppressWarnings( "unused" )
 public final class Osmformat {
   private Osmformat() {}
   public static void registerAllExtensions(
@@ -3290,7 +3291,7 @@ public final class Osmformat {
         return result;
       }
       
-      public org.polymap.tutorial.osm.importer.Osmformat.StringTable buildPartial() {
+    public org.polymap.tutorial.osm.importer.Osmformat.StringTable buildPartial() {
         org.polymap.tutorial.osm.importer.Osmformat.StringTable result = new org.polymap.tutorial.osm.importer.Osmformat.StringTable(this);
         int from_bitField0_ = bitField0_;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {

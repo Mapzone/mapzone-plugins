@@ -149,7 +149,7 @@ public class FeatureLazyContentProvider2
      * viewers.Viewer, java.lang.Object, java.lang.Object)
      */
     @Override
-    public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
+    public void inputChanged( @SuppressWarnings( "hiding" ) Viewer viewer, Object oldInput, Object newInput ) {
         this.viewer = (FeatureTableViewer)viewer;
         if(featureIterator != null) {
             featureIterator.close();
