@@ -40,16 +40,12 @@ import com.vividsolutions.jts.geom.Point;
 
 import org.polymap.tutorial.osm.importer.Fileformat;
 import org.polymap.tutorial.osm.importer.Osmformat;
-import org.polymap.tutorial.osm.importer.Fileformat.Blob;
-import org.polymap.tutorial.osm.importer.Fileformat.BlobHeader;
-import org.polymap.tutorial.osm.importer.Osmformat.DenseNodes;
-import org.polymap.tutorial.osm.importer.Osmformat.PrimitiveBlock;
 import org.polymap.tutorial.osm.importer.Osmformat.PrimitiveGroup;
 import org.polymap.tutorial.osm.importer.Osmformat.StringTable;
 
 /**
  * This class uses {@link org.polymap.tutorial.osm.importer.Fileformat} and
- * {@link org.polymap.tutorial.osm.importer.Osmformat}, who where generated out of
+ * {@link org.polymap.tutorial.osm.importer.Osmformat}, which were generated out of
  * fileformat.proto resp. osmformat.proto (also in this package) by using Google
  * ProtoBuffers Compiler (protoc) in version 2.4.1 that have to be installed and
  * executed separately (but only if the <a

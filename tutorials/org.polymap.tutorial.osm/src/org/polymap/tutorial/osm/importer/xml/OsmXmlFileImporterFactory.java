@@ -33,9 +33,9 @@ import com.google.common.collect.Sets;
 public class OsmXmlFileImporterFactory
         implements ImporterFactory {
 
-    private static Log log = LogFactory.getLog( OsmXmlFileImporterFactory.class );
+    private static final Log log = LogFactory.getLog( OsmXmlFileImporterFactory.class );
     
-    public final static Set<String> supportedTypes = Sets.newHashSet(".org.polymap.tutorial.osm.importer", ".xml"); 
+    public final static Set<String> supportedTypes = Sets.newHashSet(".osm", ".xml"); 
     
     @ContextIn
     protected File                  file;
@@ -52,7 +52,7 @@ public class OsmXmlFileImporterFactory
     }
 
 
-    private boolean isSupported(File f) {
+    private boolean isSupported( File f ) {
         if (f == null) {
             return false;
         }

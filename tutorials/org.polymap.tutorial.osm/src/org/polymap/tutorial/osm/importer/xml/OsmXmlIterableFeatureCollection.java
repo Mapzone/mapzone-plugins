@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+
+import org.geotools.feature.NameImpl;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.collection.AbstractFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -36,8 +38,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import com.vividsolutions.jts.geom.Point;
 
 /**
+ * 
  * @author Joerg Reichert <joerg@mapzone.io>
- *
  */
 public class OsmXmlIterableFeatureCollection
         extends AbstractFeatureCollection {
@@ -67,7 +69,7 @@ public class OsmXmlIterableFeatureCollection
 
     public OsmXmlIterableFeatureCollection( String typeName, File file, List<Pair<String,String>> filters )
             throws FileNotFoundException, MalformedURLException {
-        super( getMemberType( typeName, getKeys( filters ) ) );
+        super( schema( typeName, getKeys( filters ) ) );
         this.url = file.toURI().toURL();
         this.filters = filters;
     }
@@ -79,17 +81,16 @@ public class OsmXmlIterableFeatureCollection
 
 
     public OsmXmlIterableFeatureCollection( String typeName, URL url, List<Pair<String,String>> filters )
-            throws SchemaException, IOException
-    {
-        super( getMemberType( typeName, getKeys( filters ) ) );
+            throws SchemaException, IOException {
+        super( schema( typeName, getKeys( filters ) ) );
         this.url = url;
         this.filters = filters;
     }
 
 
-    private static SimpleFeatureType getMemberType( String typeName, List<String> keys ) {
+    protected static SimpleFeatureType schema( String typeName, List<String> keys ) {
         final SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
-        featureTypeBuilder.setName( typeName );
+        featureTypeBuilder.setName( new NameImpl( null, typeName ) );
         featureTypeBuilder.setCRS( DefaultGeographicCRS.WGS84 );
         featureTypeBuilder.setDefaultGeometry( "theGeom" );
         featureTypeBuilder.add( "theGeom", Point.class );
@@ -98,11 +99,6 @@ public class OsmXmlIterableFeatureCollection
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.geotools.feature.collection.AbstractFeatureCollection#openIterator()
-     */
     @Override
     protected Iterator<SimpleFeature> openIterator() {
         try {
@@ -117,11 +113,6 @@ public class OsmXmlIterableFeatureCollection
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.geotools.feature.collection.AbstractFeatureCollection#size()
-     */
     @Override
     public int size() {
         if (size == -1) {
@@ -137,11 +128,6 @@ public class OsmXmlIterableFeatureCollection
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.geotools.feature.collection.AbstractFeatureCollection#getBounds()
-     */
     @Override
     public ReferencedEnvelope getBounds() {
         if (env == null) {

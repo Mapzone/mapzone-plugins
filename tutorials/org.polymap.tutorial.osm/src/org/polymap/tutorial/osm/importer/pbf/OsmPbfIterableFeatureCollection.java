@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+
+import org.geotools.feature.NameImpl;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.collection.AbstractFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -67,7 +69,7 @@ public class OsmPbfIterableFeatureCollection
 
     public OsmPbfIterableFeatureCollection( String typeName, File file, List<Pair<String,String>> filters )
             throws FileNotFoundException, MalformedURLException {
-        super( getMemberType( typeName, getKeys( filters ) ) );
+        super( schema( typeName, getKeys( filters ) ) );
         this.url = file.toURI().toURL();
         this.filters = filters;
     }
@@ -81,15 +83,15 @@ public class OsmPbfIterableFeatureCollection
     public OsmPbfIterableFeatureCollection( String typeName, URL url, List<Pair<String,String>> filters )
             throws SchemaException, IOException
     {
-        super( getMemberType( typeName, getKeys( filters ) ) );
+        super( schema( typeName, getKeys( filters ) ) );
         this.url = url;
         this.filters = new ArrayList<Pair<String,String>>();
     }
 
 
-    private static SimpleFeatureType getMemberType( String typeName, List<String> keys ) {
+    protected static SimpleFeatureType schema( String typeName, List<String> keys ) {
         final SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
-        featureTypeBuilder.setName( typeName );
+        featureTypeBuilder.setName( new NameImpl( null, typeName ) );
         featureTypeBuilder.setCRS( DefaultGeographicCRS.WGS84 );
         featureTypeBuilder.setDefaultGeometry( "theGeom" );
         featureTypeBuilder.add( "theGeom", Point.class );

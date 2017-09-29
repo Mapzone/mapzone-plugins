@@ -14,9 +14,6 @@
  */
 package org.polymap.tutorial.osm.importer.api;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.polymap.p4.data.importer.ContextIn;
 import org.polymap.p4.data.importer.ImporterFactory;
 
@@ -28,9 +25,6 @@ import org.polymap.p4.data.importer.ImporterFactory;
 public class OsmApiImporterFactory
         implements ImporterFactory {
 
-    private static Log log = LogFactory.getLog( OsmApiImporterFactory.class );
-    
-    
     @ContextIn
     protected Object                any;
     

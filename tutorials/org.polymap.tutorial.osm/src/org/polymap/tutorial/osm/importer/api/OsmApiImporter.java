@@ -35,6 +35,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Joiner;
@@ -144,7 +145,8 @@ public class OsmApiImporter
                 int fetchCount = totalCount > ELEMENT_PREVIEW_LIMIT ? ELEMENT_PREVIEW_LIMIT : totalCount;
                 // TODO make encoding configurable?
                 URL url = new URL( BASE_URL + URLEncoder.encode( filterStr + "out " + fetchCount + ";", "UTF-8" ) );
-                features = new OsmXmlIterableFeatureCollection( "org.polymap.tutorial.osm.importer", url, tagFilters );
+                String schemaName = "osm-import-" + RandomStringUtils.randomNumeric( 4 );
+                features = new OsmXmlIterableFeatureCollection( schemaName, url, tagFilters );
                 if (features().iterator().hasNext() && features().getException() == null) {
                     site.ok.set( true );
                 }
@@ -218,10 +220,10 @@ public class OsmApiImporter
                 table.setInput( features );
             }
         }
-        else {
-            toolkit.createFlowText( parent,
-                    "\nOSM Importer is currently deactivated" );
-        }
+//        else {
+//            toolkit.createFlowText( parent,
+//                    "\nOSM Importer is currently deactivated" );
+//        }
     }
 
 

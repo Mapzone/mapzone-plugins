@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import org.eclipse.swt.widgets.Composite;
@@ -36,21 +37,20 @@ import org.polymap.p4.data.importer.ContextIn;
 import org.polymap.p4.data.importer.ContextOut;
 import org.polymap.p4.data.importer.Importer;
 import org.polymap.p4.data.importer.ImporterSite;
-import org.polymap.p4.data.importer.prompts.CharsetPrompt;
 import org.polymap.tutorial.osm.importer.FeatureLazyContentProvider;
 import org.polymap.tutorial.osm.importer.OsmFeatureTableViewer;
 import org.polymap.tutorial.osm.importer.TagFilterPrompt;
 
 /**
+ * 
  * @author Joerg Reichert <joerg@mapzone.io>
- *
  */
 public class OsmPbfFileImporter
         implements Importer {
 
-    private static int                        ELEMENT_PREVIEW_LIMIT = 100;
+    private static final int                  ELEMENT_PREVIEW_LIMIT = 100;
 
-    private static int                        ELEMENT_IMPORT_LIMIT  = 50000;
+    private static final int                  ELEMENT_IMPORT_LIMIT  = 50000;
 
     @ContextIn
     protected File                            file;
@@ -62,31 +62,17 @@ public class OsmPbfFileImporter
 
     private Exception                         exception;
 
-    private CharsetPrompt                     charsetPrompt;
-
     private TagFilterPrompt                   tagPrompt;
 
-    private int                               totalCount            = -1;
+    private int                               totalCount = -1;
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.polymap.p4.data.importer.Importer#site()
-     */
     @Override
     public ImporterSite site() {
         return site;
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.polymap.p4.data.importer.Importer#init(org.polymap.p4.data.importer.ImporterSite
-     * , org.eclipse.core.runtime.IProgressMonitor)
-     */
     @Override
     public void init( ImporterSite aSite, IProgressMonitor monitor ) throws Exception {
         this.site = aSite;
@@ -98,31 +84,19 @@ public class OsmPbfFileImporter
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.polymap.p4.data.importer.Importer#createPrompts(org.eclipse.core.runtime
-     * .IProgressMonitor)
-     */
     @Override
     public void createPrompts( IProgressMonitor monitor ) throws Exception {
         tagPrompt = new TagFilterPrompt( site );
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.polymap.p4.data.importer.Importer#verify(org.eclipse.core.runtime.
-     * IProgressMonitor)
-     */
     @Override
     public void verify( IProgressMonitor monitor ) {
-        if (tagPrompt.isOk()) {
+//        if (tagPrompt.isOk()) {
             try {
                 List<Pair<String,String>> tagFilters = tagPrompt.selection();
-                features = new OsmPbfIterableFeatureCollection( "org.polymap.tutorial.osm.importer", file, tagFilters );
+                String schemaName = "osm-import-" + RandomStringUtils.randomNumeric( 4 );
+                features = new OsmPbfIterableFeatureCollection( schemaName, file, tagFilters );
                 totalCount = features.size();
                 if (totalCount > ELEMENT_IMPORT_LIMIT) {
                     throw new IndexOutOfBoundsException( "Your query results in more than " + ELEMENT_IMPORT_LIMIT
@@ -140,17 +114,10 @@ public class OsmPbfFileImporter
                 site.ok.set( false );
                 exception = e;
             }
-        }
+//        }
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.polymap.p4.data.importer.Importer#createResultViewer(org.eclipse.swt.widgets
-     * .Composite, org.polymap.rhei.batik.toolkit.IPanelToolkit)
-     */
     @Override
     public void createResultViewer( Composite parent, IPanelToolkit toolkit ) {
         if (tagPrompt.isOk()) {
@@ -170,19 +137,13 @@ public class OsmPbfFileImporter
                 table.setInput( features );
             }
         }
-        else {
-            toolkit.createFlowText( parent,
-                    "\nOSM Importer is currently deactivated" );
-        }
+//        else {
+//            toolkit.createFlowText( parent,
+//                    "\nOSM Importer is currently deactivated" );
+//        }
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.polymap.p4.data.importer.Importer#execute(org.eclipse.core.runtime.
-     * IProgressMonitor)
-     */
     @Override
     public void execute( IProgressMonitor monitor ) throws Exception {
         // create all params for contextOut
