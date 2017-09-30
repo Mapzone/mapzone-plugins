@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.SchemaException;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -117,7 +118,7 @@ public class OsmXmlFileImporter
                     site.ok.set( false );
                 }
             }
-            catch (IOException | IndexOutOfBoundsException e) {
+            catch (IOException | IndexOutOfBoundsException | SchemaException e) {
                 site.ok.set( false );
                 exception = e;
             }

@@ -14,17 +14,16 @@
  */
 package org.polymap.tutorial.osm.importer.xml;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.SchemaException;
@@ -35,6 +34,8 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.vividsolutions.jts.geom.Point;
 
 /**
@@ -43,6 +44,23 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class OsmXmlIterableFeatureCollection
         extends AbstractFeatureCollection {
+
+    public static List<String> getKeys( List<Pair<String,String>> filters ) {
+        return filters.stream().map( tag -> tag.getKey() ).collect( Collectors.toList() );
+    }
+
+
+    public static SimpleFeatureType schema( String typeName, List<String> keys ) {
+        final SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
+        featureTypeBuilder.setName( new NameImpl( null, typeName ) );
+        featureTypeBuilder.setCRS( DefaultGeographicCRS.WGS84 );
+        featureTypeBuilder.setDefaultGeometry( "theGeom" );
+        featureTypeBuilder.add( "theGeom", Point.class );
+        keys.forEach( key -> featureTypeBuilder.add( key, String.class ) );
+        return featureTypeBuilder.buildFeatureType();
+    }
+
+    // instance *******************************************
 
     private ReferencedEnvelope              env;
 
@@ -54,7 +72,7 @@ public class OsmXmlIterableFeatureCollection
 
     private Double                          maxLat = -1d;
 
-    private final List<Pair<String,String>> filters;
+    private final Map<String,String>        filters = new HashMap();
 
     private final URL                       url;
 
@@ -68,15 +86,8 @@ public class OsmXmlIterableFeatureCollection
 
 
     public OsmXmlIterableFeatureCollection( String typeName, File file, List<Pair<String,String>> filters )
-            throws FileNotFoundException, MalformedURLException {
-        super( schema( typeName, getKeys( filters ) ) );
-        this.url = file.toURI().toURL();
-        this.filters = filters;
-    }
-
-
-    static List<String> getKeys( List<Pair<String,String>> filters ) {
-        return filters.stream().map( tag -> tag.getKey() ).collect( Collectors.toList() );
+            throws SchemaException, IOException {
+        this( typeName, file.toURI().toURL(), filters );
     }
 
 
@@ -84,18 +95,12 @@ public class OsmXmlIterableFeatureCollection
             throws SchemaException, IOException {
         super( schema( typeName, getKeys( filters ) ) );
         this.url = url;
-        this.filters = filters;
-    }
 
-
-    protected static SimpleFeatureType schema( String typeName, List<String> keys ) {
-        final SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
-        featureTypeBuilder.setName( new NameImpl( null, typeName ) );
-        featureTypeBuilder.setCRS( DefaultGeographicCRS.WGS84 );
-        featureTypeBuilder.setDefaultGeometry( "theGeom" );
-        featureTypeBuilder.add( "theGeom", Point.class );
-        keys.forEach( key -> featureTypeBuilder.add( key, String.class ) );
-        return featureTypeBuilder.buildFeatureType();
+        for (Pair<String,String> filter : filters) {
+            if (this.filters.put( filter.getKey(), filter.getValue() ) != null) {
+                throw new RuntimeException( "TagFilter already exists: " + filter );
+            }
+        }
     }
 
 
@@ -178,7 +183,7 @@ public class OsmXmlIterableFeatureCollection
     }
 
 
-    public List<Pair<String,String>> getFilters() {
+    public Map<String,String> getFilters() {
         return filters;
     }
 

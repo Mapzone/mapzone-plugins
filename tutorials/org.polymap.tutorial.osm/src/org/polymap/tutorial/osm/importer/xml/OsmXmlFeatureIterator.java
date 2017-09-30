@@ -1,6 +1,6 @@
 /*
- * polymap.org Copyright (C) 2015 individual contributors as indicated by the
- * 
+ * polymap.org 
+ * Copyright (C) 2015-2017 individual contributors as indicated by the
  * @authors tag. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
@@ -15,7 +15,6 @@
 package org.polymap.tutorial.osm.importer.xml;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import java.io.IOException;
@@ -23,8 +22,6 @@ import java.io.InputStream;
 
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -36,10 +33,14 @@ import de.topobyte.osm4j.core.model.iface.OsmNode;
 import de.topobyte.osm4j.core.model.util.OsmModelUtil;
 import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
 
+/**
+ * 
+ * @author Joerg Reichert <joerg@mapzone.io>
+ */
 class OsmXmlFeatureIterator
         implements Iterator<SimpleFeature> {
 
-    private final OsmXmlIterableFeatureCollection iterableFeatureCollection;
+    private final OsmXmlIterableFeatureCollection fc;
 
     private final SimpleFeatureBuilder            featureBuilder;
 
@@ -49,22 +50,19 @@ class OsmXmlFeatureIterator
 
     private final int                             limit;
 
-    private int                                   index       = 0;
+    private int                                   index;
 
-    private OsmNode                               currentNode = null;
+    private OsmNode                               currentNode;
 
-    final List<String>                            keys;
-
-    private int                                   size        = -1;
+    private int                                   size = -1;
 
 
-    public OsmXmlFeatureIterator( OsmXmlIterableFeatureCollection iterableFeatureCollection, int limit )
+    public OsmXmlFeatureIterator( OsmXmlIterableFeatureCollection fc, int limit )
             throws IOException {
-        this.iterableFeatureCollection = iterableFeatureCollection;
+        this.fc = fc;
         this.limit = limit;
-        featureBuilder = new SimpleFeatureBuilder( iterableFeatureCollection.getSchema() );
-        keys = OsmXmlIterableFeatureCollection.getKeys( this.iterableFeatureCollection.getFilters() );
-        input = this.iterableFeatureCollection.getUrl().openStream();
+        featureBuilder = new SimpleFeatureBuilder( fc.getSchema() );
+        input = this.fc.getUrl().openStream();
         iterator = new OsmXmlIterator( input, false );
     }
 
@@ -89,12 +87,11 @@ class OsmXmlFeatureIterator
             if (container.getType() == EntityType.Node) {
                 node = (OsmNode)container.getEntity();
                 Map<String,String> tags = OsmModelUtil.getTagsAsMap( node );
-                boolean matches = this.iterableFeatureCollection.getFilters().size() > 0;
-                for (Pair<String,String> filter : this.iterableFeatureCollection.getFilters()) {
+                boolean matches = fc.getFilters().size() > 0;
+                for (Map.Entry<String,String> filter : fc.getFilters().entrySet()) {
                     if (!(filter.getKey() == "*"
-                    || (tags.containsKey( filter.getKey() ) && (filter.getValue() == "*") || (filter
-                            .getValue() != null && filter.getValue().equals(
-                            (tags.get( filter.getKey() )) ))))) {
+                            || (tags.containsKey( filter.getKey() ) && (filter.getValue() == "*") 
+                            || (filter.getValue() != null && filter.getValue().equals( (tags.get( filter.getKey() )) ))))) {
                         matches = false;
                         break;
                     }
@@ -121,8 +118,8 @@ class OsmXmlFeatureIterator
         Point point = gf.createPoint( new Coordinate( longitude, latitude ) );
         featureBuilder.add( point );
         Map<String,String> attributes = OsmModelUtil.getTagsAsMap( currentNode );
-        iterableFeatureCollection.updateBBOX( longitude, latitude );
-        for (String key : keys) {
+        fc.updateBBOX( longitude, latitude );
+        for (String key : fc.getFilters().keySet()) {
             featureBuilder.add( attributes.get( key ) );
         }
         currentNode = null;
@@ -139,7 +136,7 @@ class OsmXmlFeatureIterator
             input.close();
         }
         catch (IOException e) {
-            this.iterableFeatureCollection.setException( e );
+            this.fc.setException( e );
         }
     }
 
@@ -152,7 +149,7 @@ class OsmXmlFeatureIterator
                 // (this is the current way) vs.
                 // one (API/file) request and then storing node objects while
                 // counting an reusing them when building feature
-                OsmXmlFeatureIterator osmFeatureIterator = new OsmXmlFeatureIterator( this.iterableFeatureCollection,
+                OsmXmlFeatureIterator osmFeatureIterator = new OsmXmlFeatureIterator( this.fc,
                         -1 );
                 int count = 0;
                 while (osmFeatureIterator.hasNext( true )) {

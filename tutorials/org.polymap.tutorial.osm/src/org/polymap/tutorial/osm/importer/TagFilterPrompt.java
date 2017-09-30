@@ -37,8 +37,8 @@ import org.polymap.p4.data.importer.ImporterSite;
 
 /**
  * 
- *
- * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
+ * @author Joerg Reichert <joerg@mapzone.io>
+ * @author <a href="mailto:falko@mapzone.io">Falko Bräutigam</a>
  */
 public class TagFilterPrompt {
 
