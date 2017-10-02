@@ -41,7 +41,6 @@ import org.json.JSONTokener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.google.common.base.Joiner;
 
 /**
@@ -54,7 +53,7 @@ public class TagInfoAPI
 
     private static final Log log = LogFactory.getLog( TagInfoAPI.class );
 
-    public static final JsonFactory JACKSON = new JsonFactory();
+    //public static final JsonFactory JACKSON = new JsonFactory();
 
     private String                  baseUrl = "https://taginfo.openstreetmap.org/api/4/";
     

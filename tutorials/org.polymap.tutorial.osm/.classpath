@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/jackson-core-2.9.1.jar" sourcepath="lib/sources/jackson-core-2.9.1-sources.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/adt-multicollections-0.0.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/osm4j-core-0.1.0.jar" sourcepath="lib/sources/osm4j-core-0.1.0-sources.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/osm4j-xml-0.1.0.jar" sourcepath="lib/sources/osm4j-xml-0.1.0-sources.zip"/>
