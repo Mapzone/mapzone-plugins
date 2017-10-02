@@ -26,9 +26,6 @@ import org.geotools.util.NullProgressListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureVisitor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.eclipse.jface.viewers.Viewer;
 
 import org.polymap.rhei.table.IFeatureContentProvider;
@@ -41,8 +38,6 @@ import org.polymap.rhei.table.IFeatureTableElement;
  */
 public class FeatureLazyContentProvider
         implements IFeatureContentProvider {
-
-    private static Log log = LogFactory.getLog( FeatureLazyContentProvider.class );
 
     private FeatureCollection           coll;
 

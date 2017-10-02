@@ -25,6 +25,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.swt.widgets.Composite;
 
@@ -41,6 +43,7 @@ import org.polymap.p4.data.importer.ImporterSite;
 import org.polymap.tutorial.osm.importer.FeatureLazyContentProvider;
 import org.polymap.tutorial.osm.importer.OsmFeatureTableViewer;
 import org.polymap.tutorial.osm.importer.TagFilterPrompt;
+import org.polymap.tutorial.osm.importer.taginfo.TagInfoAPI;
 
 /**
  * 
@@ -49,6 +52,8 @@ import org.polymap.tutorial.osm.importer.TagFilterPrompt;
 public class OsmPbfFileImporter
         implements Importer {
 
+    private static final Log log = LogFactory.getLog( OsmPbfFileImporter.class );
+    
     private static final int                  ELEMENT_PREVIEW_LIMIT = 100;
 
     private static final int                  ELEMENT_IMPORT_LIMIT  = 50000;
@@ -87,7 +92,8 @@ public class OsmPbfFileImporter
 
     @Override
     public void createPrompts( IProgressMonitor monitor ) throws Exception {
-        tagPrompt = new TagFilterPrompt( site, Severity.REQUIRED );
+        log.warn( "XXX TagInfoPBF is not yet ready -> using TagInfoAPI" );
+        tagPrompt = new TagFilterPrompt( site, Severity.REQUIRED, new TagInfoAPI() );
     }
 
 
@@ -95,7 +101,7 @@ public class OsmPbfFileImporter
     public void verify( IProgressMonitor monitor ) {
 //        if (tagPrompt.isOk()) {
             try {
-                List<Pair<String,String>> tagFilters = tagPrompt.selection();
+                List<Pair<String,String>> tagFilters = tagPrompt.result();
                 String schemaName = "osm-import-" + RandomStringUtils.randomNumeric( 4 );
                 features = new OsmPbfIterableFeatureCollection( schemaName, file, tagFilters );
                 totalCount = features.size();

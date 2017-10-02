@@ -1,6 +1,6 @@
 /*
- * polymap.org Copyright (C) 2015 individual contributors as indicated by the
- * 
+ * polymap.org 
+ * Copyright (C) 2015-2017 individual contributors as indicated by the
  * @authors tag. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
@@ -12,7 +12,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
  */
-package org.polymap.tutorial.osm.importer;
+package org.polymap.tutorial.osm.importer.taginfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +30,31 @@ import org.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 
 /**
+ * Gets tag info from tags.json file in classpath.
+ * <p/>
+ * <b>Not yet ported to new TagInfo API!</b>
+ * 
  * @author Joerg Reichert <joerg@mapzone.io>
- *
+ * @author Falko Bräutigam
  */
-public class TagStaticInfo {
+public class TagInfoStatic
+        extends TagInfo {
 
     private static List<String>                        keys = null;
 
     private static SortedMap<String,SortedSet<String>> tags = null;
+
+
+    @Override
+    public ResultSet<String> keys( String query, Sort sort, int maxResults ) throws Exception {
+        throw new RuntimeException( "not yet ported to new TagInfo API" );
+    }
+
+
+    @Override
+    public ResultSet<String> values( String key, Sort sort, int maxResults ) {
+        throw new RuntimeException( "not yet ported to new TagInfo API" );
+    }
 
 
     public static List<String> getStaticKeys() throws IOException {
@@ -52,7 +69,7 @@ public class TagStaticInfo {
         if (tags == null) {
             TreeSet<String> keySet = new TreeSet<String>();
             tags = new TreeMap<String,SortedSet<String>>();
-            String jsonTxt = IOUtils.readLines( TagStaticInfo.class.getResourceAsStream( "tags.json" ) ).stream()
+            String jsonTxt = IOUtils.readLines( TagInfoStatic.class.getResourceAsStream( "tags.json" ) ).stream()
                     .collect( Collectors.joining( "\n" ) );
             JSONObject json = new JSONObject( jsonTxt );
             JSONArray root = json.getJSONArray( "tags" );
@@ -75,4 +92,5 @@ public class TagStaticInfo {
         }
         return tags;
     }
+    
 }

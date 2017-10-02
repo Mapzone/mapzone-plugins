@@ -41,4 +41,5 @@ Bundle-ClassPath: lib/commons-compress-1.9.jar,
  lib/trove4j-object-procedure-1.0.1.jar,
  lib/trove4j-prime-finder-1.0.1.jar,
  lib/trove4j-primitive-hash-1.0.1.jar,
- lib/trove4j-primitive-iterator-1.0.1.jar
+ lib/trove4j-primitive-iterator-1.0.1.jar,
+ lib/jackson-core-2.9.1.jar

@@ -1,6 +1,6 @@
 /*
- * polymap.org Copyright (C) 2015 individual contributors as indicated by the
- * 
+ * polymap.org 
+ * Copyright (C) 2015-2017 individual contributors as indicated by the
  * @authors tag. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
@@ -12,7 +12,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
  */
-package org.polymap.tutorial.osm.importer;
+package org.polymap.tutorial.osm.importer.taginfo;
 
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -29,17 +29,36 @@ import java.text.ParseException;
 
 import com.google.protobuf.ByteString;
 
+import org.polymap.tutorial.osm.importer.Fileformat;
+import org.polymap.tutorial.osm.importer.Osmformat;
+
 /**
+ * Gets tag info from PBF file.
+ * <p/>
+ * <b>Not yet ported to new TagInfo API!</b>
+ * 
  * @author Joerg Reichert <joerg@mapzone.io>
- *
  */
-public class TagPbfInfo {
+public class TagInfoPBF
+        extends TagInfo {
 
     private static final int HEAD_MAX_SIZE = 64 * 1024;
 
     private static final int BODY_MAX_SIZE = 32 * 1024 * 1024;
 
 
+    @Override
+    public ResultSet<String> keys( String query, Sort sort, int maxResults ) throws Exception {
+        throw new RuntimeException( "not yet ported to new TagInfo API" );
+    }
+
+
+    @Override
+    public ResultSet<String> values( String key, Sort sort, int maxResults ) {
+        throw new RuntimeException( "not yet ported to new TagInfo API" );
+    }
+
+    
     public static TreeMap<String,SortedSet<String>> getTagsFromContent( InputStream input ) throws Exception {
         TreeMap<String,SortedSet<String>> allTags = new TreeMap<String,SortedSet<String>>();
         int position = 0;

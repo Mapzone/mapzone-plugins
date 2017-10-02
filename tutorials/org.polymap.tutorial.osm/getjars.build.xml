@@ -73,6 +73,9 @@
             <!-- Protobuf, as used by OSM PBF Importer -->
             <dependency groupId="com.google.protobuf" artifactId="protobuf-java" version="2.4.1"/>
 
+            <!-- Jackson JSON streaming for TagInfo -->
+            <dependency groupId="com.fasterxml.jackson.core" artifactId="jackson-core" version="2.9.1"/>
+
             <!-- 
               All GeoTools jars are loaded by org.polymap.core.data. This is easier to maintain
               until we have a way to load *just* the needed jars in dependent plugins. 

@@ -44,9 +44,9 @@ class OsmXmlFeatureIterator
 
     private final SimpleFeatureBuilder            featureBuilder;
 
-    private final InputStream                     input;
+    private final InputStream                     in;
 
-    private final OsmXmlIterator                  iterator;
+    private final OsmXmlIterator                  osmIt;
 
     private final int                             limit;
 
@@ -62,8 +62,8 @@ class OsmXmlFeatureIterator
         this.fc = fc;
         this.limit = limit;
         featureBuilder = new SimpleFeatureBuilder( fc.getSchema() );
-        input = this.fc.getUrl().openStream();
-        iterator = new OsmXmlIterator( input, false );
+        in = this.fc.getUrl().openStream();
+        osmIt = new OsmXmlIterator( in, false );
     }
 
 
@@ -82,8 +82,8 @@ class OsmXmlFeatureIterator
         }
         EntityContainer container;
         OsmNode node;
-        while (iterator.hasNext()) {
-            container = iterator.next();
+        while (osmIt.hasNext()) {
+            container = osmIt.next();
             if (container.getType() == EntityType.Node) {
                 node = (OsmNode)container.getEntity();
                 Map<String,String> tags = OsmModelUtil.getTagsAsMap( node );
@@ -131,9 +131,9 @@ class OsmXmlFeatureIterator
 
 
     public void complete() {
-        iterator.complete();
+        osmIt.complete();
         try {
-            input.close();
+            in.close();
         }
         catch (IOException e) {
             this.fc.setException( e );
@@ -144,13 +144,12 @@ class OsmXmlFeatureIterator
     public int size() {
         if (size == -1) {
             try {
-                // by this a new input stream is created for the URL
+                // by this a new in stream is created for the URL
                 // trade-off: two (API/file) requests (with stream same content)
                 // (this is the current way) vs.
                 // one (API/file) request and then storing node objects while
                 // counting an reusing them when building feature
-                OsmXmlFeatureIterator osmFeatureIterator = new OsmXmlFeatureIterator( this.fc,
-                        -1 );
+                OsmXmlFeatureIterator osmFeatureIterator = new OsmXmlFeatureIterator( this.fc, -1 );
                 int count = 0;
                 while (osmFeatureIterator.hasNext( true )) {
                     count++;

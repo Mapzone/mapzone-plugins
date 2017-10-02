@@ -16,36 +16,39 @@ package org.polymap.tutorial.osm.importer;
 
 import static org.polymap.core.ui.FormDataFactory.on;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
-import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
 
 import org.polymap.core.ui.FormLayoutFactory;
+import org.polymap.core.ui.StatusDispatcher;
 
 import org.polymap.rhei.batik.toolkit.IPanelToolkit;
 
 import org.polymap.p4.data.importer.ImporterPrompt;
 import org.polymap.p4.data.importer.ImporterPrompt.PromptUIBuilder;
+import org.polymap.tutorial.osm.importer.taginfo.TagInfo;
+import org.polymap.tutorial.osm.importer.taginfo.TagInfo.ResultSet;
+import org.polymap.tutorial.osm.importer.taginfo.TagInfo.Sort;
 
 /**
  * 
@@ -55,120 +58,7 @@ import org.polymap.p4.data.importer.ImporterPrompt.PromptUIBuilder;
 public abstract class TagFilterPromptUIBuilder
         implements PromptUIBuilder {
 
-    private Combo                         keyList, valueList;
-
-    private SimpleContentProposalProvider valueProposalProvider;
-
-
-    @Override
-    public void createContents( ImporterPrompt prompt, Composite parent, IPanelToolkit tk ) {
-        parent.setLayout( FormLayoutFactory.defaults().spacing( 0 ).create() );
-
-        Collection<String> keys = keys();
-        Pair<String,String> initiallySelectedItem = null;
-        if(!keys.isEmpty()) {
-            initiallySelectedItem = Pair.of( keys.iterator().next(), "*" );
-        } else {
-            initiallySelectedItem = Pair.of( "*", "*" );
-        }
-        Collection<String> values = values(initiallySelectedItem.getKey());
-        if (values == null) {
-            values = new TreeSet<String>();
-        }
-        values.add( "*" );
-
-        Composite filterComposite = new Composite( parent, SWT.NONE );
-        filterComposite.setLayout( FormLayoutFactory.defaults().spacing( 0 ).create() );
-        Composite tagComposite = new Composite( filterComposite, SWT.NONE );
-        tagComposite.setLayout( FormLayoutFactory.defaults().spacing( 0 ).create() );
-        Label tagLabel = on( new Label( tagComposite, SWT.NONE ) ).fill().noRight().noBottom().control();
-        tagLabel.setText( "Tag:" );
-        keyList = on( createKeyFilter( tagComposite, keys.toArray( new String[keys.size()] ),
-                initiallySelectedItem.getKey() ) ).top( tagLabel, 5 ).width( 150 ).noRight().control();
-        Label opLabel = on( new Label( filterComposite, SWT.NONE ) ).left( tagComposite, 10 ).noRight().bottom( 90 )
-                .control();
-        opLabel.setText( "=" );
-        Composite valueComposite = on( new Composite( filterComposite, SWT.NONE ) ).left( opLabel, 10 ).control();
-        valueComposite.setLayout( FormLayoutFactory.defaults().spacing( 0 ).create() );
-        Label valueLabel = on( new Label( valueComposite, SWT.NONE ) ).noBottom().control();
-        valueLabel.setText( "Value:" );
-        valueList = on( createValueFilter( valueComposite, values.toArray( new String[values.size()] ),
-                initiallySelectedItem.getValue() ) ).top( valueLabel, 5 ).width( 150 ).right( 100 ).control();
-
-        Composite buttonBar = new Composite( parent, SWT.NONE );
-        buttonBar.setLayout( FormLayoutFactory.defaults().spacing( 0 ).create() );
-
-        org.eclipse.swt.widgets.List selectedFilters = on(
-                new org.eclipse.swt.widgets.List( parent, SWT.V_SCROLL ) )
-                .fill().top( buttonBar, 10 ).width( 250 ).height( 150 ).control();
-        for (Pair<String,String> item : initiallySelectedItems()) {
-            if (!"*".equals( item.getKey() )) {
-                selectedFilters.add( item.getKey() + "=" + item.getValue() );
-            }
-        }
-
-        Button addButton = on( new Button( buttonBar, SWT.NONE ) ).left( 0 ).right( 50 ).control();
-        addButton.setText( "Add" );
-        addButton.addSelectionListener( new SelectionAdapter() {
-
-            public void widgetSelected( SelectionEvent e ) {
-                Pair<String,String> selection = Pair.of( getSelectedItem( keyList ), getSelectedItem( valueList ) );
-                String newItem = selection.getKey() + "=" + selection.getValue();
-                if (!Arrays.asList( selectedFilters.getItems() ).contains( newItem )) {
-                    selectedFilters.add( newItem );
-                    handleSelection( selection );
-                }
-            }
-        } );
-        Button removeButton = on( new Button( buttonBar, SWT.NONE ) ).left( addButton, 10 ).right( 100 ).control();
-        removeButton.setText( "Remove" );
-        removeButton.setEnabled( false );
-        removeButton.addSelectionListener( new SelectionAdapter() {
-
-            public void widgetSelected( SelectionEvent e ) {
-                for (String selectedItem : selectedFilters.getSelection()) {
-                    selectedFilters.remove( selectedItem );
-                    String[] parts = selectedItem.split( "=" );
-                    handleUnselection( Pair.of( parts[0], parts[1] ) );
-                }
-                removeButton.setEnabled( selectedFilters.getSelection() != null );
-            }
-        } );
-        selectedFilters.addSelectionListener( new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected( SelectionEvent e ) {
-                removeButton.setEnabled( true );
-            }
-        } );
-
-        on( filterComposite ).left( 0 ).right( 100 );
-        on( buttonBar ).left( 0 ).right( 100 ).top( filterComposite, 20 );
-
-        parent.pack();
-    }
-
-
-    private Combo createKeyFilter( Composite filterComposite, String[] listItems, String initiallySelectedItem ) {
-
-        ComboViewer comboViewer = new ComboViewer( filterComposite, SWT.DROP_DOWN );
-        Combo keys = comboViewer.getCombo();
-        keys.setItems( listItems );
-        keys.select( Arrays.asList( listItems ).indexOf( initiallySelectedItem ) );
-
-        SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider( keys.getItems() );
-        ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(
-                keys,
-                new ComboContentAdapter(),
-                proposalProvider,
-                getActivationKeystroke(),
-                getAutoactivationChars() );
-        proposalProvider.setFiltering( true );
-        proposalAdapter.setPropagateKeys( true );
-        proposalAdapter.setProposalAcceptanceStyle( ContentProposalAdapter.PROPOSAL_REPLACE );
-        proposalAdapter.addContentProposalListener( prop -> handleKeySelection( prop.getContent() ) );
-        return keys;
-    }
+    private static final Log log = LogFactory.getLog( TagFilterPromptUIBuilder.class );
 
     private static final String LCL  = "abcdefghijklmnopqrstuvwxyz";
 
@@ -176,17 +66,13 @@ public abstract class TagFilterPromptUIBuilder
 
     private static final String NUMS = "0123456789";
 
-
     // this logic is from swt addons project
     static char[] getAutoactivationChars() {
-
         // To enable content proposal on deleting a char
-
         String delete = new String( new char[] { 8 } );
         String allChars = LCL + UCL + NUMS + delete;
         return allChars.toCharArray();
     }
-
 
     static KeyStroke getActivationKeystroke() {
         KeyStroke instance = KeyStroke.getInstance(
@@ -194,75 +80,221 @@ public abstract class TagFilterPromptUIBuilder
         return instance;
     }
 
+    // instance *******************************************
 
-    private Combo createValueFilter( Composite filterComposite, String[] listItems, String initiallySelectedItem ) {
-        ComboViewer comboViewer = new ComboViewer( filterComposite, SWT.DROP_DOWN );
-        Combo values = comboViewer.getCombo();
-        values.setItems( listItems );
-        values.select( Arrays.asList( listItems ).indexOf( initiallySelectedItem ) );
+    private TagInfo             tagInfo;
+    
+    private Text                keyText, valueText;
 
-        valueProposalProvider = new SimpleContentProposalProvider( listItems );
+    private ListViewer          filterList;
+    
+    private List<Pair<String,String>>       filters;
+
+    private SimpleContentProposalProvider   valueProposalProvider;
+
+    /**
+     * 
+     * 
+     * @param tagInfo
+     * @param filters The list to display and manipulate.
+     */
+    protected TagFilterPromptUIBuilder( TagInfo tagInfo, List<Pair<String,String>> filters ) {
+        this.tagInfo = tagInfo;
+        this.filters = filters;
+    }
+
+    
+    @Override
+    public void createContents( ImporterPrompt prompt, Composite parent, IPanelToolkit tk ) {
+        // keyText
+        Label keyLabel = tk.createLabel( parent, "Key" );
+        keyText = createKeyFilter( parent );
+
+        // valueText
+        Label opLabel = tk.createLabel( parent, "=" );
+        Label valueLabel = tk.createLabel( parent, "Value" );
+        valueText = createValueFilter( parent );
+        
+        // addBtn
+        Button addBtn = tk.createButton( parent, "Add", SWT.PUSH );
+        addBtn.setToolTipText( "Add the above key/value pair the list of filters" );
+        addBtn.addSelectionListener( new SelectionAdapter() {
+            @Override public void widgetSelected( SelectionEvent ev ) {
+                Pair<String,String> filter = Pair.of( keyText.getText(), valueText.getText() );
+                filters.add( filter );
+                filterList.refresh();
+            }
+        });
+        
+        // removeBtn
+        Button removeBtn = tk.createButton( parent, "Remove", SWT.PUSH );
+        addBtn.setToolTipText( "Remove the selected filter from the list" );
+        removeBtn.setEnabled( false );
+        removeBtn.addSelectionListener( new SelectionAdapter() {
+            @Override public void widgetSelected( SelectionEvent ev ) {
+                org.polymap.core.ui.SelectionAdapter.on( filterList.getSelection() )
+                        .first( Pair.class ).ifPresent( selected -> {
+                            filters.remove( selected );
+                            filterList.refresh();
+                        });
+                removeBtn.setEnabled( filterList.getSelection() != null );
+            }
+        });
+        
+        // filterList
+        filterList = new ListViewer( parent, SWT.BORDER );
+        filterList.setContentProvider( ArrayContentProvider.getInstance() );
+        filterList.setLabelProvider( new LabelProvider() {
+            @Override public String getText( Object elm ) {
+                Pair<String,String> filter = (Pair<String,String>)elm;
+                return filter.getKey() + " = " + filter.getValue();
+            }
+        });
+        filterList.getList().addSelectionListener( new SelectionAdapter() {
+            @Override public void widgetSelected( SelectionEvent ev ) {
+                removeBtn.setEnabled( true );
+            }
+        });
+        filterList.setInput( filters );
+
+        // layout
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 3 ).create() );
+        on( keyLabel ).top( 0 ).left( 0 );
+        on( keyText ).top( keyLabel, -8 ).left( 0 ).right( 47 );
+        on( opLabel ).top( keyLabel, -3 ).left( keyText );
+        on( valueLabel ).top( 0 ).left( opLabel );
+        on( valueText ).top( keyLabel, -8 ).left( opLabel ).right( 100 );
+        on( addBtn ).top( keyText, 8 ).left( 0 ).right( 50 );
+        on( removeBtn ).top( keyText, 8 ).left( addBtn ).right( 100 );
+        on( filterList.getList() ).fill().top( addBtn ).width( 300 ).height( 150 );
+    }
+
+
+    protected Text createKeyFilter( Composite parent ) {
+        keyText = new Text( parent, SWT.BORDER );
+
+        IContentProposalProvider proposalProvider = new IContentProposalProvider() {
+            @Override public IContentProposal[] getProposals( String text, int pos ) {
+                try {
+                    if (text.length() < 2) {
+                        return new IContentProposal[0];
+                    }
+                    else {
+                        ResultSet<String> rs = tagInfo.keys( text, Sort.count_all, 50 );
+                        //log.info( "Proposal: " + rs.size() );
+                        //log.info( "Proposal: " + rs.stream().collect( Collectors.toList() ) );
+                        return rs.stream().map( s -> new SimpleContentProposal( s ) )
+                                .toArray( IContentProposal[]::new );
+                    }
+                }
+                catch (Exception e) {
+                    StatusDispatcher.handleError( "", e );
+                    return null;
+                }
+            }
+        };
         ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(
-                values,
-                new ComboContentAdapter(),
+                keyText,
+                new TextContentAdapter(),
+                proposalProvider,
+                getActivationKeystroke(),
+                getAutoactivationChars() );
+        proposalAdapter.setPropagateKeys( true );
+        proposalAdapter.setAutoActivationDelay( 1750 );
+        proposalAdapter.setProposalAcceptanceStyle( ContentProposalAdapter.PROPOSAL_REPLACE );
+        proposalAdapter.addContentProposalListener( prop -> onKeySelected( prop.getContent() ) );
+        return keyText;
+    }
+
+    
+    protected Text createValueFilter( Composite parent ) {
+        valueText = new Text( parent, SWT.BORDER );
+
+        valueProposalProvider = new SimpleContentProposalProvider( new String[] {"*"} );
+        ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(
+                valueText,
+                new TextContentAdapter(),
                 valueProposalProvider,
                 getActivationKeystroke(),
                 getAutoactivationChars() );
         valueProposalProvider.setFiltering( true );
         proposalAdapter.setPropagateKeys( true );
         proposalAdapter.setProposalAcceptanceStyle( ContentProposalAdapter.PROPOSAL_REPLACE );
-        return values;
+        return valueText;
     }
 
 
-    protected void handleKeySelection( String selectedItem ) {
-        valueList.removeAll();
-        valueList.add( "*" );
-        for (String value : listItems().get( selectedItem )) {
-            valueList.add( value );
+    protected void onKeySelected( String selectedItem ) {
+//        valueText.removeAll();
+//        valueText.add( "*" );
+//        for (String value : listItems().get( selectedItem )) {
+//            valueText.add( value );
+//        }
+        valueText.setText( "*" );
+//        valueProposalProvider.setProposals( valueText.getItems() );
+    }
+
+
+//    protected List<String> filterSelectableKeys( String text ) {
+//        return listItems().keySet().stream()
+//                .filter( item -> item.toLowerCase().contains( text.toLowerCase() ) )
+//                .collect( Collectors.toList() );
+//    }
+//
+//
+//    protected List<String> filterSelectableValues( String text ) {
+//        return listItems().get( getSelectedItem( keyText ) ).stream()
+//                .filter( item -> item.toLowerCase().contains( text.toLowerCase() ) )
+//                .collect( Collectors.toList() );
+//    }
+
+
+//    private String getSelectedItem( Combo combo ) {
+//        return combo.getItem( combo.getSelectionIndex() );
+//    }
+
+
+//    protected Collection<String> keys() {
+//        return listItems().keySet();
+//    }
+//
+//
+//    protected Collection<String> values( String key ) {
+//        return listItems().get( key );
+//    }
+    
+    
+    /**
+     * 
+     */
+    protected static class SimpleContentProposal
+            implements IContentProposal {
+        
+        private String      content;
+
+        protected SimpleContentProposal( String content ) {
+            this.content = content;
         }
-        valueList.setText( "*" );
-        valueProposalProvider.setProposals( valueList.getItems() );
+
+        @Override
+        public String getContent() {
+            return content;
+        }
+
+        @Override
+        public int getCursorPosition() {
+            return 0;
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+
+        @Override
+        public String getLabel() {
+            return content;
+        }
     }
-
-
-    protected List<String> filterSelectableKeys( String text ) {
-        return listItems().keySet().stream()
-                .filter( item -> item.toLowerCase().contains( text.toLowerCase() ) )
-                .collect( Collectors.toList() );
-    }
-
-
-    protected List<String> filterSelectableValues( String text ) {
-        return listItems().get( getSelectedItem( keyList ) ).stream()
-                .filter( item -> item.toLowerCase().contains( text.toLowerCase() ) )
-                .collect( Collectors.toList() );
-    }
-
-
-    private String getSelectedItem( Combo combo ) {
-        return combo.getItem( combo.getSelectionIndex() );
-    }
-
-
-    protected Collection<String> keys() {
-        return listItems().keySet();
-    }
-
-
-    protected Collection<String> values( String key ) {
-        return listItems().get( key );
-    }
-
-
-    protected abstract SortedMap<String,SortedSet<String>> listItems();
-
-
-    protected abstract List<Pair<String,String>> initiallySelectedItems();
-
-
-    protected abstract void handleSelection( Pair<String,String> selectedItem );
-
-
-    protected abstract void handleUnselection( Pair<String,String> selectedItem );
+    
 }

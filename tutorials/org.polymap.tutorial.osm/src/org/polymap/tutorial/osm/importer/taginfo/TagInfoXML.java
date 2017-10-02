@@ -1,6 +1,6 @@
 /*
- * polymap.org Copyright (C) 2015 individual contributors as indicated by the
- * 
+ * polymap.org 
+ * Copyright (C) 2015-2017 individual contributors as indicated by the
  * @authors tag. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
@@ -12,7 +12,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
  */
-package org.polymap.tutorial.osm.importer;
+package org.polymap.tutorial.osm.importer.taginfo;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,11 +31,27 @@ import de.topobyte.osm4j.core.model.util.OsmModelUtil;
 import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
 
 /**
+ * Gets tag info from OSM XML file.
+ * <p/>
+ * <b>Not yet ported to new TagInfo API!</b>
+ * 
  * @author Joerg Reichert <joerg@mapzone.io>
- *
  */
-public class TagXmlInfo {
+public class TagInfoXML
+        extends TagInfo {
 
+    @Override
+    public ResultSet<String> keys( String query, Sort sort, int maxResults ) throws Exception {
+        throw new RuntimeException( "not yet ported to new TagInfo API" );
+    }
+
+
+    @Override
+    public ResultSet<String> values( String key, Sort sort, int maxResults ) {
+        throw new RuntimeException( "not yet ported to new TagInfo API" );
+    }
+
+    
     public static TreeMap<String,SortedSet<String>> getTagsFromContent( InputStream input ) throws Exception {
         TreeMap<String,SortedSet<String>> allTags = new TreeMap<String,SortedSet<String>>();
         OsmIterator iterator = new OsmXmlIterator( input, false );

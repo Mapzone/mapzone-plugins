@@ -13,27 +13,19 @@
  */
 package org.polymap.tutorial.osm.importer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import java.io.IOException;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 import org.polymap.p4.data.importer.ImporterPrompt;
 import org.polymap.p4.data.importer.ImporterPrompt.Severity;
 import org.polymap.p4.data.importer.ImporterSite;
+import org.polymap.tutorial.osm.importer.taginfo.TagInfo;
 
 /**
  * 
@@ -48,7 +40,7 @@ public class TagFilterPrompt {
 
     private ImporterSite                     site;
 
-    private List<Pair<String,String>>        selection;
+    private List<Pair<String,String>>        result = Lists.newArrayList( DEFAULT );
 
     private final ImporterPrompt             prompt;
 
@@ -59,83 +51,38 @@ public class TagFilterPrompt {
      * @param site
      * @param severity {@link Severity#INFO} : collapsed importer on startup
      */
-    public TagFilterPrompt( ImporterSite site, Severity severity ) {
+    public TagFilterPrompt( ImporterSite site, Severity severity, TagInfo tagInfo ) {
         this.site = site;
-        selection = new ArrayList<Pair<String,String>>();
-        selection.addAll( DEFAULT );
 
         prompt = site.newPrompt( "tagFilter" )
                 .summary.put( "Tag filter" )
                 .description.put( "Filters features by their tags" )
-                .value.put( getReadable() )
+                .value.put( humanReadableResult() )
                 .severity.put( severity )
-                //.ok.put( false )
-                .extendedUI.put( new TagFilterPromptUIBuilder() {
-
-                    private Collection<String>        keys;
-
-                    private SortedMap<String,SortedSet<String>> tags;
-
+                .extendedUI.put( new TagFilterPromptUIBuilder( tagInfo, result ) {
                     @Override
                     public void submit( ImporterPrompt ip ) {
                         prompt.severity.put( Severity.REQUIRED );
-                        prompt.value.put( getReadable() );
+                        prompt.value.put( humanReadableResult() );
                         prompt.ok.set( true );
-                    }
-
-                    @Override
-                    protected SortedMap<String,SortedSet<String>> listItems() {
-                        if (tags == null) {
-                            tags = new TreeMap<String,SortedSet<String>>();
-                            TreeSet<String> star = new TreeSet<String>();
-                            star.add( "*" );
-                            tags.put( "*", star );
-                            try {
-                                tags.putAll( TagStaticInfo.getStaticTags() );
-                            }
-                            catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return tags;
-                    }
-
-                    @Override
-                    protected List<Pair<String,String>> initiallySelectedItems() {
-                        return selection;
-                    }
-
-                    @Override
-                    protected void handleSelection( Pair<String,String> selected ) {
-                        selection.add( selected );
-                        assert selection != null;
-                    }
-
-                    @Override
-                    protected void handleUnselection( Pair<String,String> selected ) {
-                        selection.remove( selected );
-                        assert selection != null;
                     }
                 });
     }
 
 
-    private String getReadable() {
-        String readable = Joiner.on( "," ).join(
-                selection.stream().map( filter -> filter.getKey() + "=" + filter.getValue() )
-                        .collect( Collectors.toList() ) );
-        if (readable.length() > 80) {
-            readable = readable.substring( 0, 80 ) + " ...";
-        }
-        return readable;
+    protected String humanReadableResult() {
+        StringBuilder buf = new StringBuilder( 256 );
+        result.stream().forEach( f -> buf.append( buf.length() > 0 ? ", " : "" )
+                .append( f.getKey() ).append( "=" ).append( f.getValue() ) );
+        return StringUtils.abbreviate( buf.toString(), 80 );
     }
 
 
     /**
      * The selected tags to use as filter.
      */
-    public List<Pair<String,String>> selection() {
-        return selection;
+    public List<Pair<String,String>> result() {
+        return result;
     }
 
 

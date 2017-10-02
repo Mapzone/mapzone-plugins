@@ -16,29 +16,21 @@ package org.polymap.tutorial.osm.importer.api;
 
 import static org.polymap.rhei.batik.app.SvgImageRegistryHelper.NORMAL24;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLEncoder;
 
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.SchemaException;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
-import org.json.JSONObject;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import com.google.common.base.Joiner;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,6 +46,8 @@ import org.polymap.tutorial.osm.importer.BBOXPrompt;
 import org.polymap.tutorial.osm.importer.FeatureLazyContentProvider;
 import org.polymap.tutorial.osm.importer.OsmFeatureTableViewer;
 import org.polymap.tutorial.osm.importer.TagFilterPrompt;
+import org.polymap.tutorial.osm.importer.api.Overpass.Query;
+import org.polymap.tutorial.osm.importer.taginfo.TagInfoAPI;
 import org.polymap.tutorial.osm.importer.xml.OsmXmlIterableFeatureCollection;
 
 /**
@@ -64,11 +58,11 @@ import org.polymap.tutorial.osm.importer.xml.OsmXmlIterableFeatureCollection;
 public class OsmApiImporter
         implements Importer {
 
-    public static final String      BASE_URL = "http://www.overpass-api.de/api/interpreter?data=";
+    private static final Log log = LogFactory.getLog( Overpass.class );
+    
+    public static final int         ELEMENT_PREVIEW_LIMIT = 10; //100;
 
-    public static final int         ELEMENT_PREVIEW_LIMIT = 100;
-
-    public static final int         ELEMENT_IMPORT_LIMIT  = 50000;
+    public static final int         ELEMENT_IMPORT_LIMIT  = 10; //50000;
 
     @ContextOut
     protected FeatureCollection     features;
@@ -82,7 +76,7 @@ public class OsmApiImporter
     private TagFilterPrompt         tagPrompt;
 
     private int                     totalCount = -1;
-
+    
 
     @Override
     public ImporterSite site() {
@@ -116,7 +110,7 @@ public class OsmApiImporter
         // TODO get from CRS Prompt (not yet merged to master)
         CoordinateReferenceSystem crs = CRS.decode( "EPSG:4326" );
         bboxPrompt = new BBOXPrompt( site, crs, Severity.INFO );
-        tagPrompt = new TagFilterPrompt( site, Severity.INFO );
+        tagPrompt = new TagFilterPrompt( site, Severity.INFO, new TagInfoAPI() );
     }
 
 
@@ -124,30 +118,20 @@ public class OsmApiImporter
     public void verify( IProgressMonitor monitor ) {
         if (tagPrompt.isOk()) {
             try {
-                String bboxStr = getBBOXStr( bboxPrompt.selection() );
-                List<Pair<String,String>> tagFilters = tagPrompt.selection();
-                String tagFilterStr = getTagFilterString( tagFilters );
-                String filterStr = bboxStr.length() + tagFilterStr.length() > 0 ? "node" + tagFilterStr + bboxStr + ";" : "";
-                // TODO make encoding configurable?
-                URL countUrl = new URL( BASE_URL + URLEncoder.encode( "[out:json];" + filterStr + "out count;", "UTF-8" ) );
-                
-                try (
-                    InputStream in = countUrl.openStream();
-                ){
-                    String countJSONString = IOUtils.toString( in, "UTF-8" );
-                    JSONObject json = new JSONObject( countJSONString );
-                    totalCount = json.getJSONArray( "elements" ).getJSONObject( 0 ).getJSONObject( "tags" ).getInt( "nodes" );
-                }
-                
+                List<Pair<String,String>> tagFilters = tagPrompt.result();
+                Query query = Overpass.instance().query()
+                        .whereBBox( bboxPrompt.selection() )
+                        .whereTags( tagFilters );
+                        
+                totalCount = query.resultSize();
                 if (totalCount > ELEMENT_IMPORT_LIMIT) {
                     throw new IndexOutOfBoundsException( "Your query results in more than " + ELEMENT_IMPORT_LIMIT
                             + " elements. Please select a smaller bounding box or refine your tag filters." );
                 }
+                
                 int fetchCount = totalCount > ELEMENT_PREVIEW_LIMIT ? ELEMENT_PREVIEW_LIMIT : totalCount;
-                // TODO make encoding configurable?
-                URL url = new URL( BASE_URL + URLEncoder.encode( filterStr + "out " + fetchCount + ";", "UTF-8" ) );
                 String schemaName = "osm-import-" + RandomStringUtils.randomNumeric( 4 );
-                features = new OsmXmlIterableFeatureCollection( schemaName, url, tagFilters );
+                features = new OsmXmlIterableFeatureCollection( schemaName, query.downloadUrl( fetchCount ), tagFilters );
                 if (features().iterator().hasNext() && features().getException() == null) {
                     site.ok.set( true );
                 }
@@ -157,48 +141,11 @@ public class OsmApiImporter
                 }
             }
             catch (SchemaException | IOException | IndexOutOfBoundsException e) {
+                log.warn( "", e );
                 site.ok.set( false );
                 exception = e;
             }
         }
-    }
-
-
-    private String getTagFilterString( List<Pair<String,String>> filters ) throws UnsupportedEncodingException {
-        List<String> formattedFilters = filters.stream().filter( filter -> !"*".equals( filter.getKey() ) )
-                .map( filter -> {
-                    String filterStr;
-                    String keyStr;
-                    if ("".equals( filter.getKey() )) {
-                        keyStr = "~\"^$\"";
-                    }
-                        else {
-                            keyStr = "\"" + filter.getKey() + "\"";
-                        }
-                        if ("*".equals( filter.getValue() )) {
-                            filterStr = keyStr;
-                        }
-                        else if ("".equals( filter.getValue() )) {
-                            filterStr = keyStr + "~\"^$\"";
-                        }
-                        else {
-                            filterStr = keyStr + "=\"" + filter.getValue() + "\"";
-                        }
-                        return filterStr;
-                    } ).collect( Collectors.toList() );
-
-        if (filters.size() > 0 && !"*".equals( filters.get( 0 ).getKey() )) {
-            return "[" + Joiner.on( "][" ).join( formattedFilters ) + "]";
-        }
-        else {
-            return "";
-        }
-    }
-
-
-    private String getBBOXStr( ReferencedEnvelope bbox ) throws UnsupportedEncodingException {
-        List<Double> values = Arrays.asList( bbox.getMinY(), bbox.getMinX(), bbox.getMaxY(), bbox.getMaxX() );
-        return "(" + Joiner.on( "," ).join( values ) + ")";
     }
 
 
