@@ -16,12 +16,17 @@ package org.polymap.tutorial.osm.importer.xml;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLConnection;
 
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -40,13 +45,15 @@ import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
 class OsmXmlFeatureIterator
         implements Iterator<SimpleFeature> {
 
+    private static final Log log = LogFactory.getLog( OsmXmlFeatureIterator.class );
+    
     private final OsmXmlIterableFeatureCollection fc;
 
     private final SimpleFeatureBuilder            featureBuilder;
 
-    private final InputStream                     in;
+    private InputStream                           in;
 
-    private final OsmXmlIterator                  osmIt;
+    private OsmXmlIterator                        osmIt;
 
     private final int                             limit;
 
@@ -62,7 +69,16 @@ class OsmXmlFeatureIterator
         this.fc = fc;
         this.limit = limit;
         featureBuilder = new SimpleFeatureBuilder( fc.getSchema() );
-        in = this.fc.getUrl().openStream();
+
+        URLConnection conn = fc.getUrl().openConnection();
+        conn.setRequestProperty( "Accept-Encoding", "gzip" );
+        in = conn.getInputStream();
+
+        log.info( "Encoding: " + conn.getContentEncoding() );
+        if ("gzip".equals( conn.getContentEncoding() )) {
+            in = new GZIPInputStream( in );
+        }
+        
         osmIt = new OsmXmlIterator( in, false );
     }
 
@@ -80,12 +96,11 @@ class OsmXmlFeatureIterator
         if (!countMode && currentNode != null) {
             return true;
         }
-        EntityContainer container;
-        OsmNode node;
+        
         while (osmIt.hasNext()) {
-            container = osmIt.next();
+            EntityContainer container = osmIt.next();
             if (container.getType() == EntityType.Node) {
-                node = (OsmNode)container.getEntity();
+                OsmNode node = (OsmNode)container.getEntity();
                 Map<String,String> tags = OsmModelUtil.getTagsAsMap( node );
                 boolean matches = fc.getFilters().size() > 0;
                 for (Map.Entry<String,String> filter : fc.getFilters().entrySet()) {

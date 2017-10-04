@@ -22,6 +22,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -30,19 +32,19 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposal;
-import org.eclipse.jface.fieldassist.IContentProposalProvider;
-import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
-import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.polymap.core.runtime.UIThreadExecutor;
 import org.polymap.core.ui.FormLayoutFactory;
 import org.polymap.core.ui.StatusDispatcher;
 
 import org.polymap.rhei.batik.toolkit.IPanelToolkit;
+import org.polymap.rhei.batik.toolkit.TextProposalDecorator;
 
 import org.polymap.p4.data.importer.ImporterPrompt;
 import org.polymap.p4.data.importer.ImporterPrompt.PromptUIBuilder;
@@ -65,6 +67,8 @@ public abstract class TagFilterPromptUIBuilder
     private static final String UCL  = LCL.toUpperCase();
 
     private static final String NUMS = "0123456789";
+    
+    public static final int     AUTO_ACTIVATION_DELAY = 1750;
 
     // this logic is from swt addons project
     static char[] getAutoactivationChars() {
@@ -82,15 +86,15 @@ public abstract class TagFilterPromptUIBuilder
 
     // instance *******************************************
 
-    private TagInfo             tagInfo;
+    private TagInfo                 tagInfo;
     
-    private Text                keyText, valueText;
+    private Text                    keyText, valueText;
 
-    private ListViewer          filterList;
+    private ListViewer              filterList;
     
     private List<Pair<String,String>>       filters;
 
-    private SimpleContentProposalProvider   valueProposalProvider;
+    private TextProposalDecorator   valueProposals;
 
     /**
      * 
@@ -108,7 +112,7 @@ public abstract class TagFilterPromptUIBuilder
     public void createContents( ImporterPrompt prompt, Composite parent, IPanelToolkit tk ) {
         // keyText
         Label keyLabel = tk.createLabel( parent, "Key" );
-        keyText = createKeyFilter( parent );
+        keyText = createKeyFilter( parent, tk );
 
         // valueText
         Label opLabel = tk.createLabel( parent, "=" );
@@ -170,39 +174,64 @@ public abstract class TagFilterPromptUIBuilder
     }
 
 
-    protected Text createKeyFilter( Composite parent ) {
-        keyText = new Text( parent, SWT.BORDER );
-
-        IContentProposalProvider proposalProvider = new IContentProposalProvider() {
-            @Override public IContentProposal[] getProposals( String text, int pos ) {
+    protected Text createKeyFilter( Composite parent, IPanelToolkit tk ) {
+        keyText = tk.createText( parent, null, SWT.BORDER );
+        
+        new TextProposalDecorator( keyText ) {
+            @Override
+            protected String[] proposals( String text, int maxResults, IProgressMonitor monitor ) {
                 try {
                     if (text.length() < 2) {
-                        return new IContentProposal[0];
+                        return new String[0];
                     }
-                    else {
-                        ResultSet<String> rs = tagInfo.keys( text, Sort.count_all, 50 );
-                        //log.info( "Proposal: " + rs.size() );
-                        //log.info( "Proposal: " + rs.stream().collect( Collectors.toList() ) );
-                        return rs.stream().map( s -> new SimpleContentProposal( s ) )
-                                .toArray( IContentProposal[]::new );
-                    }
+                    ResultSet<String> rs = tagInfo.keys( text, Sort.count_all, 50 );
+                    return rs.stream().toArray( String[]::new );
                 }
                 catch (Exception e) {
-                    StatusDispatcher.handleError( "", e );
+                    UIThreadExecutor.async( () -> StatusDispatcher.handleError( "", e ) );
                     return null;
                 }
             }
         };
-        ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(
-                keyText,
-                new TextContentAdapter(),
-                proposalProvider,
-                getActivationKeystroke(),
-                getAutoactivationChars() );
-        proposalAdapter.setPropagateKeys( true );
-        proposalAdapter.setAutoActivationDelay( 1750 );
-        proposalAdapter.setProposalAcceptanceStyle( ContentProposalAdapter.PROPOSAL_REPLACE );
-        proposalAdapter.addContentProposalListener( prop -> onKeySelected( prop.getContent() ) );
+        keyText.addKeyListener( new KeyAdapter() {
+            @Override public void keyReleased( KeyEvent ev ) {
+                log.info( "code: " + ev.keyCode );
+                if (ev.keyCode == 13) {
+                    keyText.setText( keyText.getText().trim() );  // FIXME
+                    
+                    valueText.setText( "" );
+                    valueText.forceFocus();
+                    //valueProposals.open()
+                }
+            }
+        });
+
+        
+        //proposals.activationDelayMillis.put( AUTO_ACTIVATION_DELAY );
+        
+//        IContentProposalProvider proposalProvider = new IContentProposalProvider() {
+//            @Override public IContentProposal[] getProposals( String text, int pos ) {
+//                try {
+//                    if (text.length() < 2) {
+//                        return new IContentProposal[0];
+//                    }
+//                    ResultSet<String> rs = tagInfo.keys( text, Sort.count_all, 50 );
+//                    return rs.stream().map( s -> new SimpleContentProposal( s ) )
+//                            .toArray( IContentProposal[]::new );
+//                }
+//                catch (Exception e) {
+//                    StatusDispatcher.handleError( "", e );
+//                    return null;
+//                }
+//            }
+//        };
+//        ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(
+//                keyText, new TextContentAdapter(), proposalProvider,
+//                getActivationKeystroke(), getAutoactivationChars() );
+//        proposalAdapter.setPropagateKeys( true );
+//        proposalAdapter.setAutoActivationDelay( AUTO_ACTIVATION_DELAY );
+//        proposalAdapter.setProposalAcceptanceStyle( ContentProposalAdapter.PROPOSAL_REPLACE );
+//        proposalAdapter.addContentProposalListener( prop -> onKeySelected( prop.getContent() ) );
         return keyText;
     }
 
@@ -210,29 +239,45 @@ public abstract class TagFilterPromptUIBuilder
     protected Text createValueFilter( Composite parent ) {
         valueText = new Text( parent, SWT.BORDER );
 
-        valueProposalProvider = new SimpleContentProposalProvider( new String[] {"*"} );
-        ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(
-                valueText,
-                new TextContentAdapter(),
-                valueProposalProvider,
-                getActivationKeystroke(),
-                getAutoactivationChars() );
-        valueProposalProvider.setFiltering( true );
-        proposalAdapter.setPropagateKeys( true );
-        proposalAdapter.setProposalAcceptanceStyle( ContentProposalAdapter.PROPOSAL_REPLACE );
+        valueProposals = new TextProposalDecorator( valueText ) {
+            @Override
+            protected String[] proposals( String text, int maxResults, IProgressMonitor monitor ) {
+                try {
+//                    if (text.length() < 2) {
+//                        return new String[0];
+//                    }
+                    String key = UIThreadExecutor.sync( () -> keyText.getText() ).get();
+                    ResultSet<String> rs = tagInfo.values( key, text, Sort.count_all, 50 );
+                    return rs.stream().toArray( String[]::new );
+                }
+                catch (Exception e) {
+                    UIThreadExecutor.async( () -> StatusDispatcher.handleError( "", e ) );
+                    return null;
+                }
+            }
+        };
+
+//        valueProposalProvider = new SimpleContentProposalProvider( new String[] {"*"} );
+//        ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(
+//                valueText, new TextContentAdapter(), valueProposalProvider,
+//                getActivationKeystroke(), getAutoactivationChars() );
+//        valueProposalProvider.setFiltering( true );
+//        proposalAdapter.setPropagateKeys( true );
+//        proposalAdapter.setAutoActivationDelay( AUTO_ACTIVATION_DELAY );
+//        proposalAdapter.setProposalAcceptanceStyle( ContentProposalAdapter.PROPOSAL_REPLACE );
         return valueText;
     }
 
 
-    protected void onKeySelected( String selectedItem ) {
-//        valueText.removeAll();
-//        valueText.add( "*" );
-//        for (String value : listItems().get( selectedItem )) {
-//            valueText.add( value );
-//        }
-        valueText.setText( "*" );
-//        valueProposalProvider.setProposals( valueText.getItems() );
-    }
+//    protected void onKeySelected( String selectedItem ) {
+////        valueText.removeAll();
+////        valueText.add( "*" );
+////        for (String value : listItems().get( selectedItem )) {
+////            valueText.add( value );
+////        }
+//        valueText.setText( "*" );
+////        valueProposalProvider.setProposals( valueText.getItems() );
+//    }
 
 
 //    protected List<String> filterSelectableKeys( String text ) {

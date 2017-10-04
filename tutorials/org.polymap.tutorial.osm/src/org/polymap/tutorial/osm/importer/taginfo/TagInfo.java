@@ -73,10 +73,12 @@ public abstract class TagInfo {
     /**
      * Query values for the given key.
      *
-     * @param key
+     * @param key The tag key.
+     * @param query Only show results where the value matches this query (substring match, optional).
      * @param sort
      * @param maxResults
+     * @throws Exception 
      */
-    public abstract ResultSet<String> values( String key, Sort sort, int maxResults );
+    public abstract ResultSet<String> values( String key, String query, Sort sort, int maxResults ) throws Exception;
     
 }

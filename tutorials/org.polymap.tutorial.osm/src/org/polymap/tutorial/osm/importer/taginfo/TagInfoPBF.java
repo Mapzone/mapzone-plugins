@@ -54,7 +54,7 @@ public class TagInfoPBF
 
 
     @Override
-    public ResultSet<String> values( String key, Sort sort, int maxResults ) {
+    public ResultSet<String> values( String key, String query, Sort sort, int maxResults ) {
         throw new RuntimeException( "not yet ported to new TagInfo API" );
     }
 

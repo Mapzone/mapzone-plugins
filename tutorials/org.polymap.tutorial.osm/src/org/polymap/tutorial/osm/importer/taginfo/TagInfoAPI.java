@@ -17,6 +17,7 @@ package org.polymap.tutorial.osm.importer.taginfo;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import java.io.BufferedInputStream;
 import java.io.FilterReader;
@@ -43,6 +44,9 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.common.base.Joiner;
 
+import org.polymap.core.runtime.cache.Cache;
+import org.polymap.core.runtime.cache.CacheConfig;
+
 /**
  * 
  *
@@ -53,9 +57,13 @@ public class TagInfoAPI
 
     private static final Log log = LogFactory.getLog( TagInfoAPI.class );
 
-    //public static final JsonFactory JACKSON = new JsonFactory();
+    /** Cache of results. Key: complete URL. */
+    private static Cache<String,JSONObject>   cache = CacheConfig.defaults().initSize( 64 ).createCache();
+
+    // instance *******************************************
 
     private String                  baseUrl = "https://taginfo.openstreetmap.org/api/4/";
+    
     
     /**
      * @see <a href="https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all">TagInfo Doc</a>
@@ -72,45 +80,91 @@ public class TagInfoAPI
         params.put( "sortname", sort.name() );
         params.put( "sortorder", "desc" );
         String url = baseUrl + "keys/all?" + Joiner.on( '&' ).withKeyValueSeparator( "=" ).join( params );
-        log.info( url );
         
-        HttpsURLConnection conn = allTrustingHttpConnection( new URL( url ) );
-        try (
-            InputStream in = new BufferedInputStream( conn.getInputStream() );
-        ){
-            Reader reader = new InputStreamReader( in, "UTF-8" );
-            //reader = new LogReader( reader );
-            JSONObject json = new JSONObject( new JSONTokener( reader ) );
-            return new ResultSet<String>() {
-                private JSONArray array = json.getJSONArray( "data" );
-                @Override
-                public Iterator<String> iterator() {
-                    return new Iterator<String>() {
-                        private int index;
-                        @Override
-                        public boolean hasNext() {
-                            return index < array.length();
-                        }
-                        @Override
-                        public String next() {
-                            JSONObject data = array.getJSONObject( index++ );
-                            return data.getString( "key" );
-                        }
-                    };
-                }
-                @Override
-                public int size() {
-                    return array.length();  //json.getInt( "total" );
-                }
-            };
-        }
+        JSONObject json = cachedContent( url );
+        return new ResultSet<String>() {
+            private JSONArray array = json.getJSONArray( "data" );
+            @Override
+            public Iterator<String> iterator() {
+                return new Iterator<String>() {
+                    private int index;
+                    @Override
+                    public boolean hasNext() {
+                        return index < array.length();
+                    }
+                    @Override
+                    public String next() {
+                        JSONObject data = array.getJSONObject( index++ );
+                        return data.getString( "key" );
+                    }
+                };
+            }
+            @Override
+            public int size() {
+                return array.length();  //json.getInt( "total" );
+            }
+        };
     }
 
     
+    /**
+     * @throws Exception 
+     * @see <a href="https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_key_values">TagInfo Doc</a>
+     */
     @Override
-    public ResultSet<String> values( String key, Sort sort, int maxResults ) {
-        // XXX Auto-generated method stub
-        throw new RuntimeException( "not yet implemented." );
+    public ResultSet<String> values( String key, String query, Sort sort, int maxResults ) throws Exception {
+        Map<String,String> params = new HashMap(); 
+        if (query != null) {
+            params.put( "query", query );
+        }
+        params.put( "key", key );
+        params.put( "page", "1" );
+        params.put( "rp", String.valueOf( maxResults ) );
+        params.put( "filter", "all" );
+        params.put( "sortname", sort.name() );
+        params.put( "sortorder", "desc" );
+        String url = baseUrl + "key/values?" + Joiner.on( '&' ).withKeyValueSeparator( "=" ).join( params );
+        
+        JSONObject json = cachedContent( url );
+        return new ResultSet<String>() {
+            private JSONArray array = json.getJSONArray( "data" );
+            @Override
+            public Iterator<String> iterator() {
+                return new Iterator<String>() {
+                    private int index;
+                    @Override
+                    public boolean hasNext() {
+                        return index < array.length();
+                    }
+                    @Override
+                    public String next() {
+                        JSONObject data = array.getJSONObject( index++ );
+                        return data.getString( "value" );
+                    }
+                };
+            }
+            @Override
+            public int size() {
+                return array.length();  //json.getInt( "total" );
+            }
+        };
+    }
+
+
+    protected JSONObject cachedContent( String url ) throws Exception {
+        return cache.get( url, _key -> {     
+            log.info( url );
+            HttpsURLConnection conn = allTrustingHttpConnection( new URL( url ) );
+            try (
+                InputStream in = new BufferedInputStream( conn.getInputStream() );
+            ){
+                log.info( "Encoding: " + conn.getHeaderField( "Content-Encoding" ) );
+                InputStream in2 = "gzip".equals( conn.getContentEncoding() ) ? new GZIPInputStream( in ) : in;
+                Reader reader = new InputStreamReader( in2, "UTF-8" );
+                //reader = new LogReader( reader );
+                return new JSONObject( new JSONTokener( reader ) );
+            }
+        });
     }
 
 
@@ -139,8 +193,10 @@ public class TagInfoAPI
         };
         // Install the all-trusting host verifier
         conn.setHostnameVerifier( allHostsValid );
+        conn.setRequestProperty( "Accept-Encoding", "gzip" );
         return conn;
     }
+    
     
     /**
      * 

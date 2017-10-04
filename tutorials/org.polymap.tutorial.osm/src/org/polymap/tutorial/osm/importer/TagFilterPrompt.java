@@ -36,7 +36,8 @@ public class TagFilterPrompt {
 
     private static final Log log = LogFactory.getLog( TagFilterPrompt.class );
 
-    private static final List<Pair<String,String>> DEFAULT = Arrays.asList( Pair.of( "name", "*" ) );
+    private static final List<Pair<String,String>> DEFAULT = Arrays.asList( 
+            Pair.of( "name", "*" ), Pair.of( "natural", "water" ) );
 
     private ImporterSite                     site;
 
