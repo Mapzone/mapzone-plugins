@@ -92,7 +92,7 @@ public abstract class TagFilterPromptUIBuilder
 
     private ListViewer              filterList;
     
-    private List<Pair<String,String>>       filters;
+    private List<TagFilter>         filters;
 
     private TextProposalDecorator   valueProposals;
 
@@ -102,7 +102,7 @@ public abstract class TagFilterPromptUIBuilder
      * @param tagInfo
      * @param filters The list to display and manipulate.
      */
-    protected TagFilterPromptUIBuilder( TagInfo tagInfo, List<Pair<String,String>> filters ) {
+    protected TagFilterPromptUIBuilder( TagInfo tagInfo, List<TagFilter> filters ) {
         this.tagInfo = tagInfo;
         this.filters = filters;
     }
@@ -124,7 +124,7 @@ public abstract class TagFilterPromptUIBuilder
         addBtn.setToolTipText( "Add the above key/value pair the list of filters" );
         addBtn.addSelectionListener( new SelectionAdapter() {
             @Override public void widgetSelected( SelectionEvent ev ) {
-                Pair<String,String> filter = Pair.of( keyText.getText(), valueText.getText() );
+                TagFilter filter = TagFilter.of( keyText.getText(), valueText.getText() );
                 filters.add( filter );
                 filterList.refresh();
             }
@@ -150,8 +150,8 @@ public abstract class TagFilterPromptUIBuilder
         filterList.setContentProvider( ArrayContentProvider.getInstance() );
         filterList.setLabelProvider( new LabelProvider() {
             @Override public String getText( Object elm ) {
-                Pair<String,String> filter = (Pair<String,String>)elm;
-                return filter.getKey() + " = " + filter.getValue();
+                TagFilter filter = (TagFilter)elm;
+                return filter.key() + " = " + filter.value();
             }
         });
         filterList.getList().addSelectionListener( new SelectionAdapter() {

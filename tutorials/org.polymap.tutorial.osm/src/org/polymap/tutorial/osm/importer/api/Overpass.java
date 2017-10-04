@@ -32,7 +32,6 @@ import org.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,6 +40,8 @@ import com.google.common.base.Joiner;
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Configurable;
 import org.polymap.core.runtime.config.DefaultString;
+
+import org.polymap.tutorial.osm.importer.TagFilter;
 
 /**
  * Builds URLs to query the Overpass API.
@@ -92,33 +93,33 @@ public class Overpass
         }
         
         
-        public Query whereTags( List<Pair<String,String>> filters ) {
+        public Query whereTags( List<TagFilter> filters ) {
             assert isBlank( tagsString );
             List<String> formattedFilters = filters.stream()
-                    .filter( filter -> !"*".equals( filter.getKey() ) )
+                    .filter( filter -> !"*".equals( filter.key() ) )
                     .map( filter -> {
                         String filterStr;
                         String keyStr;
-                        if ("".equals( filter.getKey() )) {
+                        if ("".equals( filter.key() )) {
                             keyStr = "~\"^$\"";
                         }
                         else {
-                            keyStr = "\"" + filter.getKey() + "\"";
+                            keyStr = "\"" + filter.key() + "\"";
                         }
-                        if ("*".equals( filter.getValue() )) {
+                        if ("*".equals( filter.value() )) {
                             filterStr = keyStr;
                         }
-                        else if ("".equals( filter.getValue() )) {
+                        else if ("".equals( filter.value() )) {
                             filterStr = keyStr + "~\"^$\"";
                         }
                         else {
-                            filterStr = keyStr + "=\"" + filter.getValue() + "\"";
+                            filterStr = keyStr + "=\"" + filter.value() + "\"";
                         }
                         return filterStr;
                     })
                     .collect( Collectors.toList() );
 
-            if (filters.size() > 0 && !"*".equals( filters.get( 0 ).getKey() )) {
+            if (filters.size() > 0 && !"*".equals( filters.get( 0 ).key() )) {
                 tagsString = "[" + Joiner.on( "][" ).join( formattedFilters ) + "]";
             }
             else {

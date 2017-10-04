@@ -14,17 +14,16 @@
  */
 package org.polymap.tutorial.osm.importer.pbf;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.SchemaException;
@@ -37,6 +36,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Point;
 
+import org.polymap.tutorial.osm.importer.TagFilter;
+
 /**
  * @author Joerg Reichert <joerg@mapzone.io>
  *
@@ -44,30 +45,30 @@ import com.vividsolutions.jts.geom.Point;
 public class OsmPbfIterableFeatureCollection
         extends AbstractFeatureCollection {
 
-    private ReferencedEnvelope              env                 = null;
+    private ReferencedEnvelope      env;
 
-    private Double                          minLon              = -1d;
+    private Double                  minLon              = -1d;
 
-    private Double                          maxLon              = -1d;
+    private Double                  maxLon              = -1d;
 
-    private Double                          minLat              = -1d;
+    private Double                  minLat              = -1d;
 
-    private Double                          maxLat              = -1d;
+    private Double                  maxLat              = -1d;
 
-    private final List<Pair<String,String>> filters;
+    private final List<TagFilter>   filters;
 
-    private final URL                       url;
+    private final URL               url;
 
-    private Exception                       exception           = null;
+    private Exception               exception;
 
-    private List<OsmPbfFeatureIterator>     osmFeatureIterators = new ArrayList<OsmPbfFeatureIterator>();
+    private List<OsmPbfFeatureIterator> osmFeatureIterators = new ArrayList<OsmPbfFeatureIterator>();
 
-    private int                             size;
+    private int                     size;
 
-    private int                             limit               = -1;
+    private int                     limit               = -1;
 
 
-    public OsmPbfIterableFeatureCollection( String typeName, File file, List<Pair<String,String>> filters )
+    public OsmPbfIterableFeatureCollection( String typeName, File file, List<TagFilter> filters )
             throws FileNotFoundException, MalformedURLException {
         super( schema( typeName, getKeys( filters ) ) );
         this.url = file.toURI().toURL();
@@ -75,17 +76,17 @@ public class OsmPbfIterableFeatureCollection
     }
 
 
-    static List<String> getKeys( List<Pair<String,String>> filters ) {
-        return filters.stream().map( tag -> tag.getKey() ).collect( Collectors.toList() );
+    static List<String> getKeys( List<TagFilter> filters ) {
+        return filters.stream().map( tag -> tag.key() ).collect( Collectors.toList() );
     }
 
 
-    public OsmPbfIterableFeatureCollection( String typeName, URL url, List<Pair<String,String>> filters )
+    public OsmPbfIterableFeatureCollection( String typeName, URL url, List<TagFilter> filters )
             throws SchemaException, IOException
     {
         super( schema( typeName, getKeys( filters ) ) );
         this.url = url;
-        this.filters = new ArrayList<Pair<String,String>>();
+        this.filters = new ArrayList<TagFilter>();
     }
 
 
@@ -194,7 +195,7 @@ public class OsmPbfIterableFeatureCollection
     }
 
 
-    public List<Pair<String,String>> getFilters() {
+    public List<TagFilter> getFilters() {
         return filters;
     }
 

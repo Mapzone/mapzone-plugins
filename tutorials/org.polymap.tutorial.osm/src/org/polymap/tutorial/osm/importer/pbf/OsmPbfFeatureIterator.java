@@ -30,8 +30,6 @@ import java.text.ParseException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -42,6 +40,7 @@ import org.polymap.tutorial.osm.importer.Fileformat;
 import org.polymap.tutorial.osm.importer.Osmformat;
 import org.polymap.tutorial.osm.importer.Osmformat.PrimitiveGroup;
 import org.polymap.tutorial.osm.importer.Osmformat.StringTable;
+import org.polymap.tutorial.osm.importer.TagFilter;
 
 /**
  * This class uses {@link org.polymap.tutorial.osm.importer.Fileformat} and
@@ -331,11 +330,11 @@ class OsmPbfFeatureIterator
             currentTagIndex++;
         }
         boolean matches = this.iterableFeatureCollection.getFilters().size() > 0;
-        for (Pair<String,String> filter : this.iterableFeatureCollection.getFilters()) {
-            if (!(filter.getKey() == "*"
-            || (tagMap.containsKey( filter.getKey() ) && (filter.getValue() == "*") || (filter
-                    .getValue() != null && filter.getValue().equals(
-                    (tagMap.get( filter.getKey() )) ))))) {
+        for (TagFilter filter : this.iterableFeatureCollection.getFilters()) {
+            if (!(filter.key() == "*"
+            || (tagMap.containsKey( filter.key() ) && (filter.value() == "*") || (filter
+                    .value() != null && filter.value().equals(
+                    (tagMap.get( filter.key() )) ))))) {
                 matches = false;
                 break;
             }

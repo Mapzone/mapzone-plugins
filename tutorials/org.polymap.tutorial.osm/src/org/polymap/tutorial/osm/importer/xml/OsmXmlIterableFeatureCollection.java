@@ -34,9 +34,9 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.vividsolutions.jts.geom.Point;
+
+import org.polymap.tutorial.osm.importer.TagFilter;
 
 /**
  * 
@@ -45,8 +45,8 @@ import com.vividsolutions.jts.geom.Point;
 public class OsmXmlIterableFeatureCollection
         extends AbstractFeatureCollection {
 
-    public static List<String> getKeys( List<Pair<String,String>> filters ) {
-        return filters.stream().map( tag -> tag.getKey() ).collect( Collectors.toList() );
+    public static List<String> getKeys( List<TagFilter> filters ) {
+        return filters.stream().map( tag -> tag.key() ).collect( Collectors.toList() );
     }
 
 
@@ -85,19 +85,19 @@ public class OsmXmlIterableFeatureCollection
     private int                             limit = -1;
 
 
-    public OsmXmlIterableFeatureCollection( String typeName, File file, List<Pair<String,String>> filters )
+    public OsmXmlIterableFeatureCollection( String typeName, File file, List<TagFilter> filters )
             throws SchemaException, IOException {
         this( typeName, file.toURI().toURL(), filters );
     }
 
 
-    public OsmXmlIterableFeatureCollection( String typeName, URL url, List<Pair<String,String>> filters )
+    public OsmXmlIterableFeatureCollection( String typeName, URL url, List<TagFilter> filters )
             throws SchemaException, IOException {
         super( schema( typeName, getKeys( filters ) ) );
         this.url = url;
 
-        for (Pair<String,String> filter : filters) {
-            if (this.filters.put( filter.getKey(), filter.getValue() ) != null) {
+        for (TagFilter filter : filters) {
+            if (this.filters.put( filter.key(), filter.value() ) != null) {
                 throw new RuntimeException( "TagFilter already exists: " + filter );
             }
         }

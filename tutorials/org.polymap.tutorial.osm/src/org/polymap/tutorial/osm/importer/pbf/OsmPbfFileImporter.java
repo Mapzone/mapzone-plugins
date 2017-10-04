@@ -24,7 +24,6 @@ import java.io.IOException;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,6 +41,7 @@ import org.polymap.p4.data.importer.ImporterPrompt.Severity;
 import org.polymap.p4.data.importer.ImporterSite;
 import org.polymap.tutorial.osm.importer.FeatureLazyContentProvider;
 import org.polymap.tutorial.osm.importer.OsmFeatureTableViewer;
+import org.polymap.tutorial.osm.importer.TagFilter;
 import org.polymap.tutorial.osm.importer.TagFilterPrompt;
 import org.polymap.tutorial.osm.importer.taginfo.TagInfoAPI;
 
@@ -101,7 +101,7 @@ public class OsmPbfFileImporter
     public void verify( IProgressMonitor monitor ) {
 //        if (tagPrompt.isOk()) {
             try {
-                List<Pair<String,String>> tagFilters = tagPrompt.result();
+                List<TagFilter> tagFilters = tagPrompt.result();
                 String schemaName = "osm-import-" + RandomStringUtils.randomNumeric( 4 );
                 features = new OsmPbfIterableFeatureCollection( schemaName, file, tagFilters );
                 totalCount = features.size();

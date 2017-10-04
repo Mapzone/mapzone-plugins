@@ -16,7 +16,6 @@ package org.polymap.tutorial.osm.importer;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,14 +35,14 @@ public class TagFilterPrompt {
 
     private static final Log log = LogFactory.getLog( TagFilterPrompt.class );
 
-    private static final List<Pair<String,String>> DEFAULT = Arrays.asList( 
-            Pair.of( "name", "*" ), Pair.of( "natural", "water" ) );
+    private static final List<TagFilter> DEFAULT = Arrays.asList( 
+            TagFilter.of( "name", "*" ), TagFilter.of( "natural", "water" ) );
 
-    private ImporterSite                     site;
+    private ImporterSite            site;
 
-    private List<Pair<String,String>>        result = Lists.newArrayList( DEFAULT );
+    private List<TagFilter>         result = Lists.newArrayList( DEFAULT );
 
-    private final ImporterPrompt             prompt;
+    private final ImporterPrompt    prompt;
 
 
     /**
@@ -74,7 +73,7 @@ public class TagFilterPrompt {
     protected String humanReadableResult() {
         StringBuilder buf = new StringBuilder( 256 );
         result.stream().forEach( f -> buf.append( buf.length() > 0 ? ", " : "" )
-                .append( f.getKey() ).append( "=" ).append( f.getValue() ) );
+                .append( f.key() ).append( "=" ).append( f.value() ) );
         return StringUtils.abbreviate( buf.toString(), 80 );
     }
 
@@ -82,7 +81,7 @@ public class TagFilterPrompt {
     /**
      * The selected tags to use as filter.
      */
-    public List<Pair<String,String>> result() {
+    public List<TagFilter> result() {
         return result;
     }
 
