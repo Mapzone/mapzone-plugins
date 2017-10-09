@@ -180,8 +180,9 @@ public class OverpassFeatureIterator
 
     protected void createAttributes( Entity entity ) {
         for (Tag tag : entity.tags) {
-            if (schema.getDescriptor( tag.key ) != null) {
-                fb.set( tag.key, tag.value );
+            String name = tag.key.replaceAll( ":", "_" );
+            if (schema.getDescriptor( name ) != null) {
+                fb.set( name, tag.value );
             }
         }
     }

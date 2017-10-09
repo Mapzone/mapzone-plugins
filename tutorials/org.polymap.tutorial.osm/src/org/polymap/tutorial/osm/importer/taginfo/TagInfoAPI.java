@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HostnameVerifier;
@@ -72,14 +73,14 @@ public class TagInfoAPI
     public ResultSet<String> keys( String query, Sort sort, int maxResults ) throws Exception {
         Map<String,String> params = new HashMap(); 
         if (query != null) {
-            params.put( "query", query );
+            params.put( "query", URLEncoder.encode( query, "UTF-8" ) );
         }
         params.put( "page", "1" );
         params.put( "rp", String.valueOf( maxResults ) );
         params.put( "filter", "in_wiki" );
         params.put( "sortname", sort.name() );
         params.put( "sortorder", "desc" );
-        String url = baseUrl + "keys/all?" + Joiner.on( '&' ).withKeyValueSeparator( "=" ).join( params );
+        String url = "keys/all?" + Joiner.on( '&' ).withKeyValueSeparator( "=" ).join( params );
         
         JSONObject json = cachedContent( url );
         return new ResultSet<String>() {
@@ -115,15 +116,15 @@ public class TagInfoAPI
     public ResultSet<String> values( String key, String query, Sort sort, int maxResults ) throws Exception {
         Map<String,String> params = new HashMap(); 
         if (query != null) {
-            params.put( "query", query );
+            params.put( "query", URLEncoder.encode( query, "UTF-8" ) );
         }
-        params.put( "key", key );
+        params.put( "key", URLEncoder.encode( key, "UTF-8" ) );
         params.put( "page", "1" );
         params.put( "rp", String.valueOf( maxResults ) );
         params.put( "filter", "all" );
         params.put( "sortname", sort.name() );
         params.put( "sortorder", "desc" );
-        String url = baseUrl + "key/values?" + Joiner.on( '&' ).withKeyValueSeparator( "=" ).join( params );
+        String url = "key/values?" + Joiner.on( '&' ).withKeyValueSeparator( "=" ).join( params );
         
         JSONObject json = cachedContent( url );
         return new ResultSet<String>() {
@@ -151,9 +152,10 @@ public class TagInfoAPI
     }
 
 
-    protected JSONObject cachedContent( String url ) throws Exception {
-        return cache.get( url, _key -> {     
-            log.info( url );
+    protected JSONObject cachedContent( String query ) throws Exception {
+        String url = baseUrl + query;
+        return cache.get( url, _key -> {
+            log.info( query );
             HttpsURLConnection conn = allTrustingHttpConnection( new URL( url ) );
             try (
                 InputStream in = new BufferedInputStream( conn.getInputStream() );
@@ -193,7 +195,10 @@ public class TagInfoAPI
         };
         // Install the all-trusting host verifier
         conn.setHostnameVerifier( allHostsValid );
+        
         conn.setRequestProperty( "Accept-Encoding", "gzip" );
+        conn.setConnectTimeout( 10*1000 );
+        conn.setReadTimeout( 10*1000 );
         return conn;
     }
     

@@ -62,7 +62,7 @@ public class TagFilter {
         ftb.setCRS( DefaultGeographicCRS.WGS84 );
         ftb.setDefaultGeometry( "geom" );
         ftb.add( "geom", geom );
-        filters.forEach( filter -> ftb.add( filter.key(), String.class ) );
+        filters.forEach( filter -> ftb.add( filter.key().replaceAll( ":", "_" ), String.class ) );
         return ftb.buildFeatureType();
     }
 
@@ -97,6 +97,11 @@ public class TagFilter {
     
     public boolean matches( SimpleFeature feature ) {
         throw new RuntimeException( "not yet implemented" );
+    }
+
+    public TagFilter setValue( String value ) {
+        this.value = value;
+        return this;
     }
     
 //    public boolean matches( OsmEntity entity ) {

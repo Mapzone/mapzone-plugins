@@ -17,11 +17,16 @@ package org.polymap.tutorial.osm.importer;
 import static org.polymap.core.ui.FormDataFactory.on;
 import static org.polymap.core.ui.UIUtils.selectionListener;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Callable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.common.collect.FluentIterable;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -35,25 +40,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.jface.fieldassist.ContentProposal;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.polymap.core.runtime.UIThreadExecutor;
 import org.polymap.core.ui.FormLayoutFactory;
-import org.polymap.core.ui.StatusDispatcher;
+import org.polymap.core.ui.UIUtils;
 
 import org.polymap.rhei.batik.app.SvgImageRegistryHelper;
 import org.polymap.rhei.batik.toolkit.IPanelToolkit;
-import org.polymap.rhei.batik.toolkit.TextProposalDecorator;
-
 import org.polymap.p4.P4Plugin;
 import org.polymap.p4.data.importer.ImporterPrompt;
 import org.polymap.p4.data.importer.ImporterPrompt.PromptUIBuilder;
 import org.polymap.tutorial.osm.importer.taginfo.TagInfo;
-import org.polymap.tutorial.osm.importer.taginfo.TagInfo.ResultSet;
 import org.polymap.tutorial.osm.importer.taginfo.TagInfo.Sort;
 
 /**
@@ -66,29 +70,7 @@ public abstract class TagFilterPromptUIBuilder
 
     private static final Log log = LogFactory.getLog( TagFilterPromptUIBuilder.class );
 
-    public static final int         AUTO_ACTIVATION_DELAY = 250;
-
-//    private static final String     LCL  = "abcdefghijklmnopqrstuvwxyz";
-//
-//    private static final String     UCL  = LCL.toUpperCase();
-//
-//    private static final String     NUMS = "0123456789";
-//    
-//    // this logic is from swt addons project
-//    static char[] getAutoactivationChars() {
-//        // To enable content proposal on deleting a char
-//        String delete = new String( new char[] { 8 } );
-//        String allChars = LCL + UCL + NUMS + delete;
-//        return allChars.toCharArray();
-//    }
-//
-//    static KeyStroke getActivationKeystroke() {
-//        KeyStroke instance = KeyStroke.getInstance(
-//                new Integer( SWT.CTRL ).intValue(), new Integer( ' ' ).intValue() );
-//        return instance;
-//    }
-
-    // instance *******************************************
+    public static final int         AUTO_ACTIVATION_DELAY = 750;
 
     private TagInfo                 tagInfo;
     
@@ -96,7 +78,7 @@ public abstract class TagFilterPromptUIBuilder
 
     private ListViewer              filterList;
     
-    private TextProposalDecorator   valueProposals;
+    private ContentProposalAdapter  valueProposals;
 
     /** Start value and result. */
     private List<TagFilter>         filters;
@@ -132,7 +114,7 @@ public abstract class TagFilterPromptUIBuilder
         
         // keyText
         Label keyLabel = tk.createLabel( parent, "Tag" );
-        keyText = createKeyFilter( parent, tk );
+        keyText = createKeyText( parent, tk );
         keyText.forceFocus();
 
         // valueText
@@ -143,11 +125,19 @@ public abstract class TagFilterPromptUIBuilder
         // addBtn
         Button addBtn = tk.createButton( parent, null, SWT.PUSH );
         addBtn.setImage( P4Plugin.images().svgImage( "check.svg", SvgImageRegistryHelper.WHITE24 ) );
-        addBtn.setToolTipText( "Add the above key/value pair the list of filters" );
+        addBtn.setToolTipText( "Add a new entry or update the current selection" );
         addBtn.addSelectionListener( new SelectionAdapter() {
             @Override public void widgetSelected( SelectionEvent ev ) {
-                TagFilter filter = TagFilter.of( keyText.getText(), valueText.getText() );
-                filters.add( filter );
+                Optional<TagFilter> current = filters.stream()
+                        .filter( filter -> filter.key().equals( keyText.getText() ) )
+                        .findAny();
+                if (current.isPresent()) {
+                    current.get().setValue( valueText.getText() );
+                }
+                else {
+                    TagFilter filter = TagFilter.of( keyText.getText(), valueText.getText() );
+                    filters.add( filter );
+                }
                 filterList.refresh();
             }
         });
@@ -180,6 +170,13 @@ public abstract class TagFilterPromptUIBuilder
         filterList.getList().addSelectionListener( new SelectionAdapter() {
             @Override public void widgetSelected( SelectionEvent ev ) {
                 removeBtn.setEnabled( true );
+                
+                UIUtils.selection( filterList.getSelection() ).first( TagFilter.class )
+                        .ifPresent( selected -> {
+                            keyText.setText( selected.key() );
+                            valueText.setText( selected.value() );
+                            valueText.forceFocus();
+                        });
             }
         });
         filterList.setInput( filters );
@@ -196,15 +193,19 @@ public abstract class TagFilterPromptUIBuilder
         polygonBtn.setSelection( true );
         
         // layout
-        parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 3 ).create() );
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 5 ).margins( 3 ).create() );
         on( msg1 ).fill().noBottom().width( 200 ).height( 160 );
+        
         on( keyLabel ).top( msg1 ).left( 0 );
-        on( keyText ).top( keyLabel, -8 ).left( 0 ).right( 47 );
+        on( keyText ).top( keyLabel, -7 ).left( 0 ).width( 90 );
         on( opLabel ).top( keyLabel, -3 ).left( keyText );
+        on( valueText ).top( keyLabel, -7 ).left( opLabel ).width( 90 );
+
+        on( addBtn ).top( keyLabel, -9 ).left( valueText ).height( 30 );
+        on( removeBtn ).top( keyLabel, -9 ).left( addBtn ).height( 30 ).right( 100 );
+        
         on( valueLabel ).top( msg1 ).left( opLabel );
-        on( valueText ).top( keyLabel, -8 ).left( opLabel ).right( 100 );
-        on( addBtn ).top( keyText ).left( 0 ).right( 50 );
-        on( removeBtn ).top( keyText ).left( addBtn ).right( 100 );
+
         on( filterList.getList() ).fill().top( addBtn ).noBottom().width( 330 ).height( 150 );
         on( msg2 ).fill().top( filterList.getControl(), 8 ).noBottom().width( 200 ).height( 70 );
         on( polygonBtn ).left( 0 ).top( msg2 );
@@ -213,33 +214,16 @@ public abstract class TagFilterPromptUIBuilder
     }
 
 
-    protected Text createKeyFilter( Composite parent, IPanelToolkit tk ) {
+    protected Text createKeyText( Composite parent, IPanelToolkit tk ) {
         keyText = tk.createText( parent, null, SWT.BORDER );
         keyText.setToolTipText( "A valid OSM tag that appears in the imported data" );
         
-        TextProposalDecorator proposal = new TextProposalDecorator( keyText ) {
-            @Override
-            protected String[] proposals( String text, int maxResults, IProgressMonitor monitor ) {
-                try {
-                    if (text.length() < 2) {
-                        return new String[0];
-                    }
-                    ResultSet<String> rs = tagInfo.keys( text, Sort.count_all, 50 );
-                    return rs.stream().toArray( String[]::new );
-                }
-                catch (Exception e) {
-                    UIThreadExecutor.async( () -> StatusDispatcher.handleError( "", e ) );
-                    return null;
-                }
-            }
-        };
-        proposal.activationDelayMillis.put( AUTO_ACTIVATION_DELAY );
-        proposal.proposalAdapter().addContentProposalListener( ev -> {
-            keyText.setText( keyText.getText().trim() );  // FIXME
-            
+        ContentProposalAdapter proposals = proposal( keyText, () -> {
+            return tagInfo.keys( keyText.getText(), Sort.count_all, 50 );
+        });
+        proposals.addContentProposalListener( ev -> {
             valueText.setText( "" );
             valueText.forceFocus();
-            valueProposals.proposalAdapter().openProposalPopup();
         });
         return keyText;
     }
@@ -249,24 +233,39 @@ public abstract class TagFilterPromptUIBuilder
         valueText = tk.createText( parent, null, SWT.BORDER );
         valueText.setToolTipText( "The value of the given tag<br/>Allowed <b>wildcards</b> are: *, +, ?" );
 
-        valueProposals = new TextProposalDecorator( valueText ) {
-            @Override
-            protected String[] proposals( String text, int maxResults, IProgressMonitor monitor ) {
-                try {
-//                    if (text.length() < 2) {
-//                        return new String[0];
-//                    }
-                    String key = UIThreadExecutor.sync( () -> keyText.getText() ).get();
-                    ResultSet<String> rs = tagInfo.values( key, text, Sort.count_all, 50 );
-                    return rs.stream().toArray( String[]::new );
-                }
-                catch (Exception e) {
-                    UIThreadExecutor.async( () -> StatusDispatcher.handleError( "", e ) );
-                    return null;
-                }
-            }
-        };
+        valueProposals = proposal( valueText, () -> {
+            String text = valueText.getText();
+            return !StringUtils.containsAny( text, TagFilter.WILDCARDS )
+                    ? tagInfo.values( keyText.getText(), text, Sort.count_all, 50 )
+                    : Collections.EMPTY_LIST;
+        });
         return valueText;
     }
 
+    
+    protected ContentProposalAdapter proposal( Text control, Callable<Iterable> supplier ) {
+        IContentProposalProvider proposalProvider = new IContentProposalProvider() {
+            @Override public IContentProposal[] getProposals( String text, int pos ) {
+                try {
+                    if (text.length() < 2) {
+                        return new IContentProposal[0];
+                    }
+                    return (IContentProposal[])FluentIterable.from( supplier.call() )
+                            .transform( s -> new ContentProposal( s.toString() ) )
+                            .toArray( IContentProposal.class );
+                }
+                catch (Exception e) {
+                    log.warn( "", e );
+                    return new IContentProposal[0];
+                }
+            }
+        };
+        ContentProposalAdapter proposalAdapter = new ContentProposalAdapter(
+                control, new TextContentAdapter(), proposalProvider, null, null );
+        proposalAdapter.setPropagateKeys( true );
+        proposalAdapter.setAutoActivationDelay( AUTO_ACTIVATION_DELAY );
+        proposalAdapter.setProposalAcceptanceStyle( ContentProposalAdapter.PROPOSAL_REPLACE );
+        return proposalAdapter;
+    }
+    
 }
