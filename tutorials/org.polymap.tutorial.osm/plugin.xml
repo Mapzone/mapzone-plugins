@@ -6,12 +6,12 @@
       <importer
             class="org.polymap.tutorial.osm.importer.api.OsmApiImporterFactory">
       </importer>
-      <importer
+      <!--importer
             class="org.polymap.tutorial.osm.importer.pbf.OsmPbfFileImporterFactory">
       </importer>
       <importer
             class="org.polymap.tutorial.osm.importer.xml.OsmXmlFileImporterFactory">
-      </importer>
+      </importer-->
    </extension>
 
 </plugin>
