@@ -14,6 +14,8 @@
  */
 package org.polymap.tutorial.osm.importer.api;
 
+import org.polymap.rhei.batik.BatikApplication;
+
 import org.polymap.p4.data.importer.ContextIn;
 import org.polymap.p4.data.importer.ImporterFactory;
 
@@ -28,11 +30,13 @@ public class OsmApiImporterFactory
     @ContextIn
     protected Object                any;
     
-
     @Override
     public void createImporters( ImporterBuilder builder ) throws Exception {
         if (any == null) {
-            builder.newImporter( new OsmApiImporter() );
+            OsmApiImporter importer = new OsmApiImporter();
+            BatikApplication.instance().getContext().propagate( importer );
+            builder.newImporter( importer );
         }
     }
+    
 }

@@ -14,14 +14,18 @@
  */
 package org.polymap.tutorial.osm.importer;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+
+import org.geotools.feature.NameImpl;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.google.common.base.Joiner;
-
-import de.topobyte.osm4j.core.model.iface.OsmEntity;
-import de.topobyte.osm4j.core.model.iface.OsmTag;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * 
@@ -36,7 +40,7 @@ public class TagFilter {
     public static final String          ZERO_OR_MORE = "*";
     
     /** Wildcard: zero, one or more characters. */
-    public static final String          ONE_OR_MORE = "*";
+    public static final String          ONE_OR_MORE = "+";
     
     /** Wildcard: exactly one character. */
     public static final String          ONE = "?";
@@ -47,6 +51,21 @@ public class TagFilter {
         return new TagFilter( key, value );
     }
     
+    /**
+     * Builds a {@link SimpleFeatureType} out of the keys of the given
+     * list of {@link TagFilter}s.
+     * @param class1 
+     */
+    public static SimpleFeatureType schemaOf( String typeName, List<TagFilter> filters, Class<? extends Geometry> geom ) {
+        final SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
+        ftb.setName( new NameImpl( null, typeName ) );
+        ftb.setCRS( DefaultGeographicCRS.WGS84 );
+        ftb.setDefaultGeometry( "geom" );
+        ftb.add( "geom", geom );
+        filters.forEach( filter -> ftb.add( filter.key(), String.class ) );
+        return ftb.buildFeatureType();
+    }
+
     // instance *******************************************
     
     private String          key;
@@ -59,6 +78,11 @@ public class TagFilter {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        return "TagFilter[key=" + key + ", value=" + value + "]";
+    }
+
     public String key() {
         return key;
     }
@@ -67,29 +91,21 @@ public class TagFilter {
         return value;
     }
 
-    public String overpassQuery() {
-        String k = key;
-
-        String v = StringUtils.replace( value, ONE, "." );
-        v = StringUtils.replace( v, ZERO_OR_MORE, ".*" );
-        v = StringUtils.replace( v, ONE_OR_MORE, ".+" );
-        
-        String op = StringUtils.containsAny( value, WILDCARDS ) ? "~" : "=";
-        
-        return Joiner.on( "\"" ).join( "", k, op, v, "" );        
-    }
-    
     public boolean matches( String matchKey, String matchValue ) {
         throw new RuntimeException( "not yet implemented" );
     }
     
-    public boolean matches( OsmEntity entity ) {
-        for (int i=0; i<entity.getNumberOfTags(); i++) {
-            OsmTag tag = entity.getTag( i );
-            if (matches( tag.getKey(), tag.getValue() )) {
-                return true;
-            }
-        }
-        return false;
+    public boolean matches( SimpleFeature feature ) {
+        throw new RuntimeException( "not yet implemented" );
     }
+    
+//    public boolean matches( OsmEntity entity ) {
+//        for (int i=0; i<entity.getNumberOfTags(); i++) {
+//            OsmTag tag = entity.getTag( i );
+//            if (matches( tag.getKey(), tag.getValue() )) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 }

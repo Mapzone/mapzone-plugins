@@ -16,22 +16,33 @@ package org.polymap.tutorial.osm.importer.xml;
 
 import static org.polymap.rhei.batik.app.SvgImageRegistryHelper.NORMAL24;
 
+import java.util.Iterator;
 import java.util.List;
 
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.SchemaException;
+import org.geotools.feature.collection.AdaptorFeatureCollection;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.common.collect.Iterators;
+
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.polymap.core.ui.FormDataFactory;
+import org.polymap.core.ui.FormLayoutFactory;
 
 import org.polymap.rhei.batik.toolkit.IPanelToolkit;
 
@@ -50,6 +61,7 @@ import org.polymap.tutorial.osm.importer.taginfo.TagInfoAPI;
 /**
  * 
  * @author Joerg Reichert <joerg@mapzone.io>
+ * @author Falko Bräutigam <falko@mapzone.io>
  */
 public class OsmXmlFileImporter
         implements Importer {
@@ -70,8 +82,6 @@ public class OsmXmlFileImporter
 
     private Exception                         exception;
 
-    //private CharsetPrompt                     charsetPrompt;
-
     private TagFilterPrompt                   tagPrompt;
 
     private int                               totalCount = -1;
@@ -82,9 +92,6 @@ public class OsmXmlFileImporter
         return site;
     }
 
-    protected OsmXmlIterableFeatureCollection features() {
-        return (OsmXmlIterableFeatureCollection)features;
-    }
 
     @Override
     public void init( ImporterSite aSite, IProgressMonitor monitor ) throws Exception {
@@ -99,56 +106,51 @@ public class OsmXmlFileImporter
 
     @Override
     public void createPrompts( IProgressMonitor monitor ) throws Exception {
-        log.warn( "XXX TagInfoXML is not yet ready -> using TagInfoAPI" );
+        log.warn( "TagInfoXML is not yet ready -> using TagInfoAPI" );  // XXX
         tagPrompt = new TagFilterPrompt( site, Severity.REQUIRED, new TagInfoAPI() );
     }
 
 
     @Override
     public void verify( IProgressMonitor monitor ) {
-        if (tagPrompt.isOk()) {
-            try {
-                List<TagFilter> tagFilters = tagPrompt.result();
-                String schemaName = "osm-import-" + RandomStringUtils.randomNumeric( 4 );
-                features = new OsmXmlIterableFeatureCollection( schemaName, file, tagFilters );
-                totalCount = features.size();
-                if (totalCount > ELEMENT_IMPORT_LIMIT) {
-                    throw new IndexOutOfBoundsException( "Your query results in more than " + ELEMENT_IMPORT_LIMIT
-                            + " elements. Please provide a smaller OSM extract or refine your tag filters." );
-                }
-                if (features().iterator().hasNext() && features().getException() == null) {
-                    site.ok.set( true );
-                }
-                else {
-                    exception = features().getException();
-                    site.ok.set( false );
-                }
+        try {
+            List<TagFilter> tagFilters = tagPrompt.filters;
+            String schemaName = "osm-import-" + RandomStringUtils.randomNumeric( 4 );
+            SimpleFeatureType schema = TagFilter.schemaOf( schemaName, tagFilters, tagPrompt.geomType );
+            features = new OsmXmlFeatureCollection( schemaName, schema, tagFilters );
+            
+            totalCount = features.size();
+            if (totalCount > ELEMENT_IMPORT_LIMIT) {
+                throw new IndexOutOfBoundsException( "Your query results in more than " + ELEMENT_IMPORT_LIMIT
+                        + " elements. Please provide a smaller OSM extract or refine your tag filters." );
             }
-            catch (IOException | IndexOutOfBoundsException | SchemaException e) {
-                site.ok.set( false );
-                exception = e;
-            }
+            ((OsmXmlFeatureCollection)features).maxResults = ELEMENT_PREVIEW_LIMIT;
+        }
+        catch (Exception e) {
+            log.warn( "", e );
+            site.ok.set( false );
+            exception = e;
         }
     }
 
 
     @Override
-    public void createResultViewer( Composite parent, IPanelToolkit toolkit ) {
+    public void createResultViewer( Composite parent, IPanelToolkit tk ) {
         if (tagPrompt.isOk()) {
             if (exception != null) {
-                toolkit.createFlowText( parent,
+                parent.setLayout( new FillLayout() );
+                tk.createFlowText( parent,
                         "\nUnable to read the data.\n\n" + "**Reason**: " + exception.getMessage() );
             }
             else {
-                SimpleFeatureType schema = (SimpleFeatureType)features.getSchema();
-                OsmFeatureTableViewer table = new OsmFeatureTableViewer( parent, schema );
-                if (totalCount > ELEMENT_PREVIEW_LIMIT) {
-                    toolkit.createFlowText( parent, "\nShowing " + ELEMENT_PREVIEW_LIMIT + " items of totally found "
-                            + totalCount + " elements." );
-                    features().setLimit( ELEMENT_PREVIEW_LIMIT );
-                }
+                parent.setLayout( FormLayoutFactory.defaults().create() );
+                Label l = tk.createLabel( parent, "Previewing " + features.size() + " out of " + totalCount + " elements" );
+                FormDataFactory.on( l ).fill().noBottom().control();
+                
+                OsmFeatureTableViewer table = new OsmFeatureTableViewer( parent, (SimpleFeatureType)features.getSchema() );
                 table.setContentProvider( new FeatureLazyContentProvider( features ) );
                 table.setInput( features );
+                FormDataFactory.on( table.getControl() ).fill().top( l );
             }
         }
 //        else {
@@ -158,18 +160,60 @@ public class OsmXmlFileImporter
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.polymap.p4.data.importer.Importer#execute(org.eclipse.core.runtime.
-     * IProgressMonitor)
-     */
     @Override
     public void execute( IProgressMonitor monitor ) throws Exception {
-        // create all params for contextOut
-        // all is done in verify
-        if (totalCount > ELEMENT_IMPORT_LIMIT) {
-            features().setLimit( ELEMENT_IMPORT_LIMIT );
+        ((OsmXmlFeatureCollection)features).maxResults = ELEMENT_IMPORT_LIMIT;
+    }
+
+
+    /**
+     * 
+     */
+    protected class OsmXmlFeatureCollection
+            extends AdaptorFeatureCollection {
+
+        public int              maxResults = Integer.MAX_VALUE;
+        
+        public List<TagFilter>  tagFilters;
+        
+        protected OsmXmlFeatureCollection( String id, SimpleFeatureType schema, List<TagFilter> tagFilters ) {
+            super( id, schema );
+            this.tagFilters = tagFilters;
+        }
+    
+        @Override
+        public int size() {
+            Iterator<SimpleFeature> it = openIterator();
+            try {
+                return Iterators.size( it );
+            } 
+            finally {
+                closeIterator( it );
+            }
+        }
+    
+        @Override
+        protected Iterator<SimpleFeature> openIterator() {
+            try {
+                InputStream in = new BufferedInputStream( new FileInputStream( file ) );
+                Iterator<SimpleFeature> result = new OsmXmlFeatureIterator( schema, in );
+                
+                result = Iterators.filter( result, feature -> 
+                        tagFilters.stream().anyMatch( filter -> filter.matches( feature ) ) );
+                result = Iterators.limit( result, maxResults );
+                return result;
+            }
+            catch (Exception e) {
+                throw new RuntimeException( e );
+            }
+        }
+    
+        @Override
+        protected void closeIterator( Iterator<SimpleFeature> close ) {
+            // FIXME
+            log.warn( "OsmXmlFeatureCollection: iterator is NOT PROPERLY CLOSED!" );
+            //((OsmXmlFeatureIterator)close).close();
         }
     }
+    
 }

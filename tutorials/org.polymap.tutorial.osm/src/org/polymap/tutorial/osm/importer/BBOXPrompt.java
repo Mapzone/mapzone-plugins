@@ -14,15 +14,26 @@
  */
 package org.polymap.tutorial.osm.importer;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
-import com.google.common.base.Joiner;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import com.vividsolutions.jts.geom.Envelope;
+
+import org.polymap.core.mapeditor.MapViewer;
+import org.polymap.core.project.ILayer;
+
+import org.polymap.rhei.batik.BatikApplication;
+import org.polymap.rhei.batik.Context;
+import org.polymap.rhei.batik.Scope;
+
+import org.polymap.p4.P4Plugin;
 import org.polymap.p4.data.importer.ImporterPrompt;
 import org.polymap.p4.data.importer.ImporterPrompt.Severity;
 import org.polymap.p4.data.importer.ImporterSite;
@@ -34,9 +45,12 @@ import org.polymap.p4.data.importer.ImporterSite;
  */
 public class BBOXPrompt {
 
+    private static final Log log = LogFactory.getLog( BBOXPrompt.class );
+    
+    @Scope( P4Plugin.Scope )
+    protected Context<MapViewer<ILayer>> mainMapViewer;
+    
     private ImporterSite         site;
-
-    private ReferencedEnvelope   selection;
 
     private final ImporterPrompt prompt;
 
@@ -48,80 +62,90 @@ public class BBOXPrompt {
      * @param crs
      * @param severity {@link Severity#INFO} : collapsed importer on startup
      */
-    public BBOXPrompt( ImporterSite site, CoordinateReferenceSystem crs, Severity severity ) {
+    public BBOXPrompt( ImporterSite site, Severity severity ) {
         this.site = site;
+        BatikApplication.instance().getContext().propagate( this );
 
-        selection = getDefaultBBOX( crs );
+        log.info( " " + result() );
 
         prompt = site.newPrompt( "bboxFilter" )
                 .summary.put( "BBOX selector" )
-                .description.put( "Narrow down feature selection by bounding box" )
-                .value.put( getBBOXStr( selection ) )
+                .description.put( "Feature selection by bounding box" )
+                .value.put( "current map extent" )
                 .severity.put( severity )
-                //.ok.put( false )
-                .extendedUI.put( new BBOXPromptUIBuilder() {
-
-                    private ReferencedEnvelope bbox = null;
-
-                    @Override
-                    protected ReferencedEnvelope getBBOX() {
-                        if (bbox == null) {
-                            bbox = BBOXPrompt.this.selection;
-                        }
-                        return bbox;
-                    }
-
-                    @Override
-                    protected void setBBOX( ReferencedEnvelope bbox ) {
-                        this.bbox = bbox;
-                    }
-
-                    @Override
-                    protected String getBBOXStr() {
-                        return BBOXPrompt.this.getBBOXStr( this.bbox );
-                    }
-
-                    @Override
-                    protected String getCRS() {
-                        return "EPSG:4326";
-                    }
-
-                    @Override
-                    public void submit( ImporterPrompt ip ) {
-                        prompt.severity.set( Severity.REQUIRED );
-                        BBOXPrompt.this.selection = bbox;
-                        ip.ok.set( true );
-                    }
-                });
+                .ok.put( true );
+//                .extendedUI.put( new BBOXPromptUIBuilder() {
+//
+//                    private ReferencedEnvelope bbox = null;
+//
+//                    @Override
+//                    protected ReferencedEnvelope getBBOX() {
+//                        if (bbox == null) {
+//                            bbox = BBOXPrompt.this.result;
+//                        }
+//                        return bbox;
+//                    }
+//
+//                    @Override
+//                    protected void setBBOX( ReferencedEnvelope bbox ) {
+//                        this.bbox = bbox;
+//                    }
+//
+//                    @Override
+//                    protected String getBBOXStr() {
+//                        return BBOXPrompt.this.getBBOXStr( this.bbox );
+//                    }
+//
+//                    @Override
+//                    protected String getCRS() {
+//                        return "EPSG:4326";
+//                    }
+//
+//                    @Override
+//                    public void submit( ImporterPrompt ip ) {
+//                        prompt.severity.set( Severity.REQUIRED );
+//                        BBOXPrompt.this.result = bbox;
+//                        ip.ok.set( true );
+//                    }
+//                });
     }
 
 
-    private String getBBOXStr( ReferencedEnvelope bbox ) {
-        if (bbox != null) {
-            List<Double> values = Arrays.asList( bbox.getMinY(), bbox.getMinX(), bbox.getMaxY(), bbox.getMaxX() );
-            return "(" + Joiner.on( "," ).join( values ) + ")";
-        }
-        return "";
-    }
+//    protected String getBBOXStr( ReferencedEnvelope bbox ) {
+//        if (bbox != null) {
+//            List<Double> values = Arrays.asList( bbox.getMinY(), bbox.getMinX(), bbox.getMaxY(), bbox.getMaxX() );
+//            return "(" + Joiner.on( "," ).join( values ) + ")";
+//        }
+//        return "";
+//    }
 
 
-    public ReferencedEnvelope selection() {
-        return selection;
-    }
-
-
-    private static ReferencedEnvelope getDefaultBBOX( CoordinateReferenceSystem crs ) {
-        // FIXME Leipzig
-        double minLon = 12.263489;
-        double maxLon = 12.453003;
-        double minLat = 51.28597;
-        double maxLat = 51.419764;
+    public ReferencedEnvelope result() {
         try {
-            return new ReferencedEnvelope( minLon, maxLon, minLat, maxLat, crs );
+            CoordinateReferenceSystem crs = mainMapViewer.get().maxExtent.get().getCoordinateReferenceSystem();
+            Envelope extent = mainMapViewer.get().mapExtent.get();
+            ReferencedEnvelope result = new ReferencedEnvelope( extent, crs );
+            result = result.transform( DefaultGeographicCRS.WGS84, true );
+            return result;
         }
-        catch (MismatchedDimensionException e) {
-            e.printStackTrace();
-            return null;
+        catch (MismatchedDimensionException | TransformException | FactoryException e) {
+            throw new RuntimeException( e );
         }
     }
+
+
+//    private static ReferencedEnvelope defaultBBOX( CoordinateReferenceSystem crs ) {
+//        // FIXME Leipzig
+//        double minLon = 12.263489;
+//        double maxLon = 12.453003;
+//        double minLat = 51.28597;
+//        double maxLat = 51.419764;
+//        try {
+//            return new ReferencedEnvelope( minLon, maxLon, minLat, maxLat, crs );
+//        }
+//        catch (MismatchedDimensionException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 }

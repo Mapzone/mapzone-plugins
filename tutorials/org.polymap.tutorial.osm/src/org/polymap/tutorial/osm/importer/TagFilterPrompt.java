@@ -15,11 +15,13 @@ package org.polymap.tutorial.osm.importer;
 
 import java.util.Arrays;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.Geometry;
 
 import org.polymap.p4.data.importer.ImporterPrompt;
 import org.polymap.p4.data.importer.ImporterPrompt.Severity;
@@ -40,9 +42,13 @@ public class TagFilterPrompt {
 
     private ImporterSite            site;
 
-    private List<TagFilter>         result = Lists.newArrayList( DEFAULT );
-
     private final ImporterPrompt    prompt;
+
+    /** Result */
+    public List<TagFilter>          filters = Lists.newArrayList( DEFAULT );
+    
+    /** Result */
+    public Class<? extends Geometry> geomType;
 
 
     /**
@@ -59,9 +65,10 @@ public class TagFilterPrompt {
                 .description.put( "Filters features by their tags" )
                 .value.put( humanReadableResult() )
                 .severity.put( severity )
-                .extendedUI.put( new TagFilterPromptUIBuilder( tagInfo, result ) {
+                .extendedUI.put( new TagFilterPromptUIBuilder( tagInfo, filters ) {
                     @Override
                     public void submit( ImporterPrompt ip ) {
+                        TagFilterPrompt.this.geomType = geomType;       
                         prompt.severity.put( Severity.REQUIRED );
                         prompt.value.put( humanReadableResult() );
                         prompt.ok.set( true );
@@ -72,17 +79,9 @@ public class TagFilterPrompt {
 
     protected String humanReadableResult() {
         StringBuilder buf = new StringBuilder( 256 );
-        result.stream().forEach( f -> buf.append( buf.length() > 0 ? ", " : "" )
+        filters.stream().forEach( f -> buf.append( buf.length() > 0 ? ", " : "" )
                 .append( f.key() ).append( "=" ).append( f.value() ) );
         return StringUtils.abbreviate( buf.toString(), 80 );
-    }
-
-
-    /**
-     * The selected tags to use as filter.
-     */
-    public List<TagFilter> result() {
-        return result;
     }
 
 

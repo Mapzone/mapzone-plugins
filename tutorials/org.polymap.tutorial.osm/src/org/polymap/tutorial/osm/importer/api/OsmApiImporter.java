@@ -18,23 +18,26 @@ import static org.polymap.rhei.batik.app.SvgImageRegistryHelper.NORMAL24;
 
 import java.util.List;
 
-import java.io.IOException;
-
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.SchemaException;
-import org.geotools.referencing.CRS;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.vividsolutions.jts.geom.Geometry;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.polymap.core.ui.FormDataFactory;
+import org.polymap.core.ui.FormLayoutFactory;
+
 import org.polymap.rhei.batik.toolkit.IPanelToolkit;
+import org.polymap.rhei.table.FeatureCollectionContentProvider;
 
 import org.polymap.p4.P4Plugin;
 import org.polymap.p4.data.importer.ContextOut;
@@ -42,13 +45,11 @@ import org.polymap.p4.data.importer.Importer;
 import org.polymap.p4.data.importer.ImporterPrompt.Severity;
 import org.polymap.p4.data.importer.ImporterSite;
 import org.polymap.tutorial.osm.importer.BBOXPrompt;
-import org.polymap.tutorial.osm.importer.FeatureLazyContentProvider;
 import org.polymap.tutorial.osm.importer.OsmFeatureTableViewer;
 import org.polymap.tutorial.osm.importer.TagFilter;
 import org.polymap.tutorial.osm.importer.TagFilterPrompt;
-import org.polymap.tutorial.osm.importer.api.Overpass.Query;
+import org.polymap.tutorial.osm.importer.api.Overpass.TagQuery;
 import org.polymap.tutorial.osm.importer.taginfo.TagInfoAPI;
-import org.polymap.tutorial.osm.importer.xml.OsmXmlIterableFeatureCollection;
 
 /**
  * 
@@ -60,9 +61,9 @@ public class OsmApiImporter
 
     private static final Log log = LogFactory.getLog( Overpass.class );
     
-    public static final int         ELEMENT_PREVIEW_LIMIT = 10; //100;
+    public static final int         ELEMENT_PREVIEW_LIMIT = 30;
 
-    public static final int         ELEMENT_IMPORT_LIMIT  = 10; //50000;
+    public static final int         ELEMENT_IMPORT_LIMIT  = 100000;
 
     @ContextOut
     protected FeatureCollection     features;
@@ -76,6 +77,11 @@ public class OsmApiImporter
     private TagFilterPrompt         tagPrompt;
 
     private int                     totalCount = -1;
+
+    /** The query used to build the the result, build by {@link #verify(IProgressMonitor)}. */
+    private TagQuery                query;
+
+    private DefaultFeatureCollection preview;
     
 
     @Override
@@ -84,16 +90,6 @@ public class OsmApiImporter
     }
 
     
-    /**
-     * XXX Due to limitations of the importer engine the {@link ContextOut}
-     * {@link #features} member has to have {@link FeatureCollection} type in order
-     * to get recognized.
-     */
-    public OsmXmlIterableFeatureCollection features() {
-        return (OsmXmlIterableFeatureCollection)features;    
-    }
-    
-
     @Override
     public void init( ImporterSite aSite, IProgressMonitor monitor ) throws Exception {
         this.site = aSite;
@@ -107,80 +103,89 @@ public class OsmApiImporter
 
     @Override
     public void createPrompts( IProgressMonitor monitor ) throws Exception {
-        // TODO get from CRS Prompt (not yet merged to master)
-        CoordinateReferenceSystem crs = CRS.decode( "EPSG:4326" );
-        bboxPrompt = new BBOXPrompt( site, crs, Severity.INFO );
+        bboxPrompt = new BBOXPrompt( site, Severity.INFO );
         tagPrompt = new TagFilterPrompt( site, Severity.INFO, new TagInfoAPI() );
     }
 
 
     @Override
     public void verify( IProgressMonitor monitor ) {
-        if (tagPrompt.isOk()) {
-            try {
-                List<TagFilter> tagFilters = tagPrompt.result();
-                Query query = Overpass.instance().query()
-                        .whereBBox( bboxPrompt.selection() )
-                        .whereTags( tagFilters );
-                        
-                totalCount = query.resultSize();
-                if (totalCount > ELEMENT_IMPORT_LIMIT) {
-                    throw new IndexOutOfBoundsException( "Your query results in more than " + ELEMENT_IMPORT_LIMIT
-                            + " elements. Please select a smaller bounding box or refine your tag filters." );
-                }
-                
-                int fetchCount = totalCount > ELEMENT_PREVIEW_LIMIT ? ELEMENT_PREVIEW_LIMIT : totalCount;
-                String schemaName = "osm-import-" + RandomStringUtils.randomNumeric( 4 );
-                features = new OsmXmlIterableFeatureCollection( schemaName, query.downloadUrl( fetchCount ), tagFilters );
-                if (features().iterator().hasNext() && features().getException() == null) {
-                    site.ok.set( true );
-                }
-                else {
-                    exception = features().getException();
-                    site.ok.set( false );
-                }
+        if (!tagPrompt.isOk()) {
+            return;
+        }
+        try {
+            Class<? extends Geometry> geomType = tagPrompt.geomType;
+            
+            List<TagFilter> tagFilters = tagPrompt.filters;
+            query = Overpass.instance().query()
+                    .whereBBox( bboxPrompt.result() )
+                    .whereTags( tagFilters )
+                    .resultTypes( OverpassFeatureIterator.resultTypesFor( geomType ) );
+
+            // check size
+            totalCount = query.resultSize();
+            if (totalCount > ELEMENT_IMPORT_LIMIT) {
+                throw new IndexOutOfBoundsException( "Your query results in more than " + ELEMENT_IMPORT_LIMIT
+                        + " elements. Please select a smaller bounding box or refine your tag filters." );
             }
-            catch (SchemaException | IOException | IndexOutOfBoundsException e) {
-                log.warn( "", e );
-                site.ok.set( false );
-                exception = e;
-            }
+            String schemaName = "osm-import-" + RandomStringUtils.randomNumeric( 4 );
+            SimpleFeatureType schema = TagFilter.schemaOf( schemaName, tagFilters, geomType );
+
+            features = new OverpassFeatureCollection( schema, query );
+
+            // fetch and check
+            monitor.beginTask( "Fetching data", ELEMENT_PREVIEW_LIMIT );
+            query.maxResults( ELEMENT_PREVIEW_LIMIT );
+            preview = new DefaultFeatureCollection( null, schema );
+            features.accepts( feature -> {
+                Geometry geom = (Geometry)feature.getDefaultGeometryProperty().getValue();
+                if (geom == null || geom.isEmpty() || !geom.isValid()) {
+                    throw new RuntimeException( "Feature has no/valid geometry.");
+                }
+                preview.add( (SimpleFeature)feature );
+                monitor.worked( 1 );
+            }, null );
+
+            query.maxResults( ELEMENT_IMPORT_LIMIT );
+            site.ok.set( true );
+        }
+        catch (Exception e) {
+            log.warn( "", e );
+            site.ok.set( false );
+            exception = e;
         }
     }
 
 
     @Override
-    public void createResultViewer( Composite parent, IPanelToolkit toolkit ) {
-        if (tagPrompt.isOk()) {
-            if (exception != null) {
-                toolkit.createFlowText( parent,
-                        "\nUnable to read the data.\n\n" + "**Reason**: " + exception.getMessage() );
-            }
-            else {
-                SimpleFeatureType schema = (SimpleFeatureType)features.getSchema();
-                OsmFeatureTableViewer table = new OsmFeatureTableViewer( parent, schema );
-                if (totalCount > ELEMENT_PREVIEW_LIMIT) {
-                    toolkit.createFlowText( parent, "\nShowing " + ELEMENT_PREVIEW_LIMIT + " items of totally found "
-                            + totalCount + " elements." );
-                    features().setLimit( ELEMENT_PREVIEW_LIMIT );
-                }
-                table.setContentProvider( new FeatureLazyContentProvider( features ) );
-                table.setInput( features );
-            }
+    public void createResultViewer( Composite parent, IPanelToolkit tk ) {
+        if (!tagPrompt.isOk()) {
+//          toolkit.createFlowText( parent,
+//          "\nOSM Importer is currently deactivated" );
+            return;
         }
-//        else {
-//            toolkit.createFlowText( parent,
-//                    "\nOSM Importer is currently deactivated" );
-//        }
+        else if (exception != null) {
+            parent.setLayout( new FillLayout() );
+            tk.createFlowText( parent,
+                    "\nUnable to read the data.\n\n" + "**Reason**: " + exception.getMessage() );
+        }
+        else {
+            parent.setLayout( FormLayoutFactory.defaults().create() );
+            Label l = tk.createLabel( parent, "Previewing " + preview.size() + " out of " + totalCount + " elements" );
+            FormDataFactory.on( l ).fill().noBottom().control();
+
+            OsmFeatureTableViewer table = new OsmFeatureTableViewer( parent, preview.getSchema() );
+            table.setContentProvider( new FeatureCollectionContentProvider() );
+            table.setInput( preview );
+            FormDataFactory.on( table.getControl() ).fill().top( l );
+        }
     }
 
 
     @Override
     public void execute( IProgressMonitor monitor ) throws Exception {
-        // create all params for contextOut
-        // all is done in verify
-        if (totalCount > ELEMENT_IMPORT_LIMIT) {
-            features().setLimit( ELEMENT_IMPORT_LIMIT );
-        }
+        // #features still uses this query; 
+        // it does not cache, the next request will use this limit
+        query.maxResults( ELEMENT_IMPORT_LIMIT );
     }
 }

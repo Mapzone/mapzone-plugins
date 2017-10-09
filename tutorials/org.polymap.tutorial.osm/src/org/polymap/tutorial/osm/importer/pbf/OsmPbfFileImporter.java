@@ -101,7 +101,7 @@ public class OsmPbfFileImporter
     public void verify( IProgressMonitor monitor ) {
 //        if (tagPrompt.isOk()) {
             try {
-                List<TagFilter> tagFilters = tagPrompt.result();
+                List<TagFilter> tagFilters = tagPrompt.filters;
                 String schemaName = "osm-import-" + RandomStringUtils.randomNumeric( 4 );
                 features = new OsmPbfIterableFeatureCollection( schemaName, file, tagFilters );
                 totalCount = features.size();

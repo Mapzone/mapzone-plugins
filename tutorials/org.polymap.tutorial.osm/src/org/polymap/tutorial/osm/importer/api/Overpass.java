@@ -15,9 +15,14 @@
 package org.polymap.tutorial.osm.importer.api;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.polymap.tutorial.osm.importer.TagFilter.ONE;
+import static org.polymap.tutorial.osm.importer.TagFilter.ONE_OR_MORE;
+import static org.polymap.tutorial.osm.importer.TagFilter.WILDCARDS;
+import static org.polymap.tutorial.osm.importer.TagFilter.ZERO_OR_MORE;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import java.io.IOException;
@@ -29,14 +34,12 @@ import java.net.URLEncoder;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.json.JSONObject;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.common.base.Joiner;
-
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Configurable;
 import org.polymap.core.runtime.config.DefaultString;
@@ -64,78 +67,44 @@ public class Overpass
         return instance;    
     }
     
+    public enum ResultType {
+        Node, Way, Relation
+    }
+    
     // instance *******************************************
     
     @DefaultString( DEFAULT_URL )
     private Config2<Overpass,String>    baseUrl;
     
     
-    public Query query() {
-        return new Query();
+    public Query prepared( String query ) {
+        return new Query() {
+            @Override
+            public URL downloadUrl() {
+                return url( query );
+            }
+            @Override
+            public int resultSize() throws IOException {
+                throw new RuntimeException( "not yet implemented." );
+            }
+        };
+    }
+
+    
+    public TagQuery query() {
+        return new TagQuery();
     }
     
     
     /**
      * 
      */
-    public class Query {
+    public abstract class Query {
         
-        private String          bboxString = StringUtils.EMPTY;
+        public abstract URL downloadUrl();
         
-        private String          tagsString = StringUtils.EMPTY;
-        
+        public abstract int resultSize() throws IOException;
 
-        public Query whereBBox( ReferencedEnvelope bbox ) {
-            assert isBlank( bboxString );
-            List<Double> values = Arrays.asList( bbox.getMinY(), bbox.getMinX(), bbox.getMaxY(), bbox.getMaxX() );
-            bboxString = "(" + Joiner.on( "," ).join( values ) + ")";
-            return this;
-        }
-        
-        
-        public Query whereTags( List<TagFilter> filters ) {
-            assert isBlank( tagsString );
-            List<String> formattedFilters = filters.stream()
-                    .filter( filter -> !"*".equals( filter.key() ) )
-                    .map( filter -> {
-                        String filterStr;
-                        String keyStr;
-                        if ("".equals( filter.key() )) {
-                            keyStr = "~\"^$\"";
-                        }
-                        else {
-                            keyStr = "\"" + filter.key() + "\"";
-                        }
-                        if ("*".equals( filter.value() )) {
-                            filterStr = keyStr;
-                        }
-                        else if ("".equals( filter.value() )) {
-                            filterStr = keyStr + "~\"^$\"";
-                        }
-                        else {
-                            filterStr = keyStr + "=\"" + filter.value() + "\"";
-                        }
-                        return filterStr;
-                    })
-                    .collect( Collectors.toList() );
-
-            if (filters.size() > 0 && !"*".equals( filters.get( 0 ).key() )) {
-                tagsString = "[" + Joiner.on( "][" ).join( formattedFilters ) + "]";
-            }
-            else {
-                tagsString = "";
-            }
-            return this;
-        }
-        
-        
-        protected String filterString() {
-            return !isBlank( bboxString ) || !isBlank( tagsString ) 
-                    ? "node" + tagsString + bboxString
-                    : null;
-        }
-        
-        
         protected URL url( String... parts ) {
             try {
                 String queryString = Joiner.on( ";" ).skipNulls().join( parts );
@@ -147,13 +116,92 @@ public class Overpass
                 throw new RuntimeException( e );
             }
         }
+    }
+    
+    
+    /**
+     * 
+     */
+    public class TagQuery
+            extends Query {
         
+        private String          bboxString = StringUtils.EMPTY;
         
-        public URL downloadUrl( int fetchCount ) {
-            return url( filterString(), "out " + fetchCount + ";" );
+        private String          tagsString = StringUtils.EMPTY;
+        
+        private int             maxResults = Integer.MAX_VALUE;
+        
+        private List<ResultType> types;
+        
+
+        public TagQuery whereBBox( ReferencedEnvelope bbox ) {
+            assert isBlank( bboxString );
+            List<Double> values = Arrays.asList( bbox.getMinY(), bbox.getMinX(), bbox.getMaxY(), bbox.getMaxX() );
+            bboxString = "(" + Joiner.on( "," ).join( values ) + ")";
+            return this;
         }
         
         
+        public TagQuery whereTags( List<TagFilter> filters ) {
+            assert isBlank( tagsString );
+            tagsString = filters.stream()
+                    .map( filter -> {
+                        if (StringUtils.isBlank( filter.value() )) {
+                            return "";  // don't filter empty values
+                        }
+                        else if (filter.value().equals( ZERO_OR_MORE )) {
+                            return "[\"" + filter.key() + "\"]";
+                        }
+                        else {
+                            String k = filter.key();
+
+                            String v = StringUtils.replace( filter.value(), ONE, "." );
+                            v = StringUtils.replace( v, ZERO_OR_MORE, ".*" );
+                            v = StringUtils.replace( v, ONE_OR_MORE, ".+" );
+
+                            String op = StringUtils.containsAny( filter.value(), WILDCARDS ) ? "~" : "=";
+
+                            return Joiner.on( "\"" ).join( "[", k, op, v, "]" );
+                        }
+                    })
+                    .collect( Collectors.joining() );            
+            return this;
+        }
+        
+        @SuppressWarnings( "hiding" )
+        public TagQuery resultTypes( ResultType... types ) {
+            assert this.types == null;
+            this.types = Arrays.asList( types );
+            return this;
+        }
+        
+        public TagQuery maxResults( @SuppressWarnings( "hiding" ) int maxResults ) {
+            this.maxResults = maxResults;
+            return this;
+        }
+        
+        
+        protected String filterString() {
+            if (isBlank( bboxString ) && isBlank( tagsString )) {
+                return "";
+            }
+            StringJoiner result = new StringJoiner( "", "(", ")" );
+            for (ResultType type : types) {
+                result.add( type.name().toLowerCase() ).add( tagsString ).add( bboxString ).add( ";" );
+                //result.add( ">;" );  // include required ways/nodes
+            }
+            return result.toString();
+        }
+        
+        
+        @Override
+        public URL downloadUrl() {
+            // create the OSM XML format with required nodes inside way entity
+            return url( filterString(), "out geom " + maxResults + ";" );
+        }
+        
+        
+        @Override
         public int resultSize() throws IOException {
             URL countUrl = url( "[out:json]", filterString(), "out count;" );
             try (
@@ -162,12 +210,18 @@ public class Overpass
                 String countJSONString = IOUtils.toString( in, "UTF-8" );
                 JSONObject json = new JSONObject( countJSONString );
                 log.info( json.toString( 4 ) );
-                int result = json.getJSONArray( "elements" ).getJSONObject( 0 ).getJSONObject( "tags" ).getInt( "nodes" );
+                JSONObject tags = json.getJSONArray( "elements" ).getJSONObject( 0 ).getJSONObject( "tags" );
+                int result = tags.getInt( "total" );
                 log.info( "  -> " + result );
                 return result;
             }
         }
-    }
 
+
+        @Override
+        public String toString() {
+            return "TagQuery[" + filterString() + "]";
+        }
+    }
 
 }

@@ -1,6 +1,6 @@
 /*
  * polymap.org 
- * Copyright (C) 2015-2017 individual contributors as indicated by the
+ * Copyright (C) 2017 individual contributors as indicated by the
  * @authors tag. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
@@ -14,167 +14,122 @@
  */
 package org.polymap.tutorial.osm.importer.xml;
 
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
-
+import java.util.NoSuchElementException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
+import java.net.URL;
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
 
-import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
-import de.topobyte.osm4j.core.model.iface.EntityContainer;
-import de.topobyte.osm4j.core.model.iface.EntityType;
-import de.topobyte.osm4j.core.model.iface.OsmNode;
-import de.topobyte.osm4j.core.model.util.OsmModelUtil;
-import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
+import org.polymap.tutorial.osm.importer.xml.OsmXmlParser.Entity;
+import org.polymap.tutorial.osm.importer.xml.OsmXmlParser.Node;
+import org.polymap.tutorial.osm.importer.xml.OsmXmlParser.Way;
 
 /**
+ * Transforms OSM entities created by an {@link OsmXmlParser} into
+ * {@link SimpleFeature} instances.
  * 
- * @author Joerg Reichert <joerg@mapzone.io>
+ * @author Falko Bräutigam <falko@mapzone.io>
  */
-class OsmXmlFeatureIterator
-        implements Iterator<SimpleFeature> {
+public class OsmXmlFeatureIterator
+        extends OsmXmlParserFeatureIterator {
 
     private static final Log log = LogFactory.getLog( OsmXmlFeatureIterator.class );
-    
-    private final OsmXmlIterableFeatureCollection fc;
 
-    private final SimpleFeatureBuilder            featureBuilder;
+    private Map<Long,OsmXmlParser.Node>     nodes = new HashMap( 1024 );
 
-    private InputStream                           in;
-
-    private OsmXmlIterator                        osmIt;
-
-    private final int                             limit;
-
-    private int                                   index;
-
-    private OsmNode                               currentNode;
-
-    private int                                   size = -1;
+    private Map<Long,OsmXmlParser.Way>      ways = new HashMap( 1024 );
 
 
-    public OsmXmlFeatureIterator( OsmXmlIterableFeatureCollection fc, int limit )
-            throws IOException {
-        this.fc = fc;
-        this.limit = limit;
-        featureBuilder = new SimpleFeatureBuilder( fc.getSchema() );
+    public OsmXmlFeatureIterator( SimpleFeatureType schema, InputStream in )
+            throws IOException, JAXBException, XMLStreamException {
+        super( schema, in );
+    }
 
-        URLConnection conn = fc.getUrl().openConnection();
-        conn.setRequestProperty( "Accept-Encoding", "gzip" );
-        in = conn.getInputStream();
 
-        log.info( "Encoding: " + conn.getContentEncoding() );
-        if ("gzip".equals( conn.getContentEncoding() )) {
-            in = new GZIPInputStream( in );
-        }
-        
-        osmIt = new OsmXmlIterator( in, false );
+    public OsmXmlFeatureIterator( SimpleFeatureType schema, URL url ) 
+            throws IOException, JAXBException, XMLStreamException {
+        super( schema, url );
     }
 
 
     @Override
     public boolean hasNext() {
-        return hasNext( false );
-    }
-
-
-    private boolean hasNext( boolean countMode ) {
-        if (limit >= 0 && index > limit) {
-            return false;
-        }
-        if (!countMode && currentNode != null) {
-            return true;
-        }
-        
-        while (osmIt.hasNext()) {
-            EntityContainer container = osmIt.next();
-            if (container.getType() == EntityType.Node) {
-                OsmNode node = (OsmNode)container.getEntity();
-                Map<String,String> tags = OsmModelUtil.getTagsAsMap( node );
-                boolean matches = fc.getFilters().size() > 0;
-                for (Map.Entry<String,String> filter : fc.getFilters().entrySet()) {
-                    if (!(filter.getKey() == "*"
-                            || (tags.containsKey( filter.getKey() ) && (filter.getValue() == "*") 
-                            || (filter.getValue() != null && filter.getValue().equals( (tags.get( filter.getKey() )) ))))) {
-                        matches = false;
-                        break;
-                    }
-                }
-                if (matches) {
-                    if (!countMode) {
-                        currentNode = node;
-                        index++;
-                    }
-                    return true;
-                }
+        Class<?> geomType = schema.getGeometryDescriptor().getType().getBinding();
+        while (next == null && parser.hasNext()) {
+            Entity entity = parser.next();
+            log.info( "" + entity );
+            
+            // try to build geometry
+            Geometry geom = null;
+            if (entity instanceof Node && geomType.isAssignableFrom( Point.class )) {
+                geom = createPoint( entity );
+            }
+            if (entity instanceof Way && geomType.isAssignableFrom( LineString.class )) {
+                geom = createLineString( entity );
+            }
+            
+            // target geometry type -> build feature
+            if (geom != null) {
+                createAttributes( entity );
+                fb.set( "geom", geom );
+                next = fb.buildFeature( null );
+            }
+            // store node
+            else if (entity instanceof Node) {
+                nodes.put( entity.id, (Node)entity );
+            }
+            // store way
+            else if (entity instanceof Way) {
+                ways.put( entity.id, (Way)entity );
+            }
+            else {
+                throw new RuntimeException();
             }
         }
-        complete();
-        return false;
+        return next != null;
     }
 
 
     @Override
     public SimpleFeature next() {
-        double longitude = currentNode.getLongitude();
-        double latitude = currentNode.getLatitude();
-        GeometryFactory gf = new GeometryFactory();
-        Point point = gf.createPoint( new Coordinate( longitude, latitude ) );
-        featureBuilder.add( point );
-        Map<String,String> attributes = OsmModelUtil.getTagsAsMap( currentNode );
-        fc.updateBBOX( longitude, latitude );
-        for (String key : fc.getFilters().keySet()) {
-            featureBuilder.add( attributes.get( key ) );
-        }
-        currentNode = null;
         if (!hasNext()) {
-            complete();
+            throw new NoSuchElementException();
         }
-        return featureBuilder.buildFeature( null );
+        try { return next; } finally { next = null; }
+    }
+    
+
+    protected Point createPoint( Entity entity) {
+        return gf.createPoint( new Coordinate( ((Node)entity).lon, ((Node)entity).lat ) );
+    }
+    
+    
+    protected LineString createLineString( Entity entity) {
+        return gf.createLineString( ((Way)entity).nodes.stream()
+                .map( nodeRef -> {
+                    if (nodeRef.lat > 0) { 
+                        return new Coordinate( nodeRef.lon, nodeRef.lat );
+                    }
+                    else {
+                        Node node = nodes.get( nodeRef.nodeId );
+                        return new Coordinate( node.lon, node.lat );              
+                    }
+                })
+                .toArray( Coordinate[]::new ) );
     }
 
-
-    public void complete() {
-        osmIt.complete();
-        try {
-            in.close();
-        }
-        catch (IOException e) {
-            this.fc.setException( e );
-        }
-    }
-
-
-    public int size() {
-        if (size == -1) {
-            try {
-                // by this a new in stream is created for the URL
-                // trade-off: two (API/file) requests (with stream same content)
-                // (this is the current way) vs.
-                // one (API/file) request and then storing node objects while
-                // counting an reusing them when building feature
-                OsmXmlFeatureIterator osmFeatureIterator = new OsmXmlFeatureIterator( this.fc, -1 );
-                int count = 0;
-                while (osmFeatureIterator.hasNext( true )) {
-                    count++;
-                }
-                size = count;
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return size;
-    }
 }

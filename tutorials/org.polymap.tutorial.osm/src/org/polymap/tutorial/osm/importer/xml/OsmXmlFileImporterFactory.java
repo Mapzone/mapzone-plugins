@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.polymap.p4.data.importer.ContextIn;
@@ -35,7 +36,7 @@ public class OsmXmlFileImporterFactory
 
     private static final Log log = LogFactory.getLog( OsmXmlFileImporterFactory.class );
     
-    public final static Set<String> supportedTypes = Sets.newHashSet(".osm", ".xml"); 
+    public final static Set<String> SUPPORTED = Sets.newHashSet( "osm", "xml" );
     
     @ContextIn
     protected File                  file;
@@ -46,21 +47,20 @@ public class OsmXmlFileImporterFactory
 
     @Override
     public void createImporters( ImporterBuilder builder ) throws Exception {
-        if (isSupported( file )) {
+        if (file != null && isSupported( file )) {
             builder.newImporter( new OsmXmlFileImporter(), file );
+        }
+        if (files != null) {
+            for (File f : files) {
+                if (isSupported( f )) {
+                    builder.newImporter( new OsmXmlFileImporter(), f );
+                }
+            }
         }
     }
 
 
     private boolean isSupported( File f ) {
-        if (f == null) {
-            return false;
-        }
-        for (String type : supportedTypes) {
-            if (f.getName().toLowerCase().endsWith( type )) {
-                return true;
-            }
-        }
-        return false;
+        return SUPPORTED.contains( FilenameUtils.getExtension( f.getName() ).toLowerCase() );
     }
 }
