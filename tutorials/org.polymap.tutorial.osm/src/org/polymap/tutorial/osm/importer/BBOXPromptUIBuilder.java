@@ -18,6 +18,7 @@ import org.polymap.p4.data.importer.ImporterPrompt.PromptUIBuilder;
 
 /**
  * 
+ * @deprecated
  * @author Joerg Reichert <joerg@mapzone.io>
  * @author Falko Bräutigam <falko@mapzone.io>
  */

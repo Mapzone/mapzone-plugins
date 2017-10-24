@@ -14,6 +14,8 @@
  */
 package org.polymap.tutorial.osm.importer;
 
+import java.text.NumberFormat;
+
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -26,15 +28,19 @@ import org.apache.commons.logging.LogFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
+import org.eclipse.swt.widgets.Composite;
+
 import org.polymap.core.mapeditor.MapViewer;
 import org.polymap.core.project.ILayer;
-
+import org.polymap.core.runtime.Polymap;
 import org.polymap.rhei.batik.BatikApplication;
 import org.polymap.rhei.batik.Context;
 import org.polymap.rhei.batik.Scope;
+import org.polymap.rhei.batik.toolkit.IPanelToolkit;
 
 import org.polymap.p4.P4Plugin;
 import org.polymap.p4.data.importer.ImporterPrompt;
+import org.polymap.p4.data.importer.ImporterPrompt.PromptUIBuilder;
 import org.polymap.p4.data.importer.ImporterPrompt.Severity;
 import org.polymap.p4.data.importer.ImporterSite;
 
@@ -69,45 +75,24 @@ public class BBOXPrompt {
         log.info( " " + result() );
 
         prompt = site.newPrompt( "bboxFilter" )
-                .summary.put( "BBOX selector" )
-                .description.put( "Feature selection by bounding box" )
+                .summary.put( "Bounding box" )
+                .description.put( "Bounding box" )
                 .value.put( "current map extent" )
                 .severity.put( severity )
-                .ok.put( true );
-//                .extendedUI.put( new BBOXPromptUIBuilder() {
-//
-//                    private ReferencedEnvelope bbox = null;
-//
-//                    @Override
-//                    protected ReferencedEnvelope getBBOX() {
-//                        if (bbox == null) {
-//                            bbox = BBOXPrompt.this.result;
-//                        }
-//                        return bbox;
-//                    }
-//
-//                    @Override
-//                    protected void setBBOX( ReferencedEnvelope bbox ) {
-//                        this.bbox = bbox;
-//                    }
-//
-//                    @Override
-//                    protected String getBBOXStr() {
-//                        return BBOXPrompt.this.getBBOXStr( this.bbox );
-//                    }
-//
-//                    @Override
-//                    protected String getCRS() {
-//                        return "EPSG:4326";
-//                    }
-//
-//                    @Override
-//                    public void submit( ImporterPrompt ip ) {
-//                        prompt.severity.set( Severity.REQUIRED );
-//                        BBOXPrompt.this.result = bbox;
-//                        ip.ok.set( true );
-//                    }
-//                });
+                .ok.put( true )
+                .extendedUI.put( new PromptUIBuilder() {
+                    @Override
+                    public void createContents( ImporterPrompt _prompt, Composite parent, IPanelToolkit tk ) {
+                        NumberFormat nf = NumberFormat.getInstance( Polymap.getSessionLocale() );
+                        nf.setMaximumFractionDigits( 5 );
+                        ReferencedEnvelope bbox = result();
+                        tk.createLabel( parent, nf.format( bbox.getMinX() ) + " : " + nf.format( bbox.getMaxX() ) + " -- "
+                                + nf.format( bbox.getMinY() ) + " : " + nf.format( bbox.getMaxY() ) );
+                    }
+                    @Override
+                    public void submit( ImporterPrompt _prompt ) {
+                    }
+                });
     }
 
 
