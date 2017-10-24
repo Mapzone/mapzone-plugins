@@ -293,7 +293,7 @@ public class OverpassFeatureIterator
         
 
         public NodeSequence( List<NodeRef> nodes, Bounds bounds ) {
-            assert nodes.stream().allMatch( n -> n.lat > 0 && n.lon > 0 );
+            assert nodes.stream().allMatch( n -> n.lat != 0 && n.lon != 0 );
             this.nodes = nodes;
             this.bounds = bounds;
         }
@@ -382,7 +382,7 @@ public class OverpassFeatureIterator
         @Override
         public Envelope expandEnvelope( Envelope env ) {
             if (bounds != null) {
-                assert bounds.minlon > 0 && bounds.minlat > 0 && bounds.maxlon > 0 && bounds.maxlat > 0;
+                assert bounds.minlon != 0 && bounds.minlat != 0 && bounds.maxlon != 0 && bounds.maxlat != 0;
                 env.expandToInclude( bounds.minlon, bounds.minlat );
                 env.expandToInclude( bounds.maxlon, bounds.maxlat );
             }

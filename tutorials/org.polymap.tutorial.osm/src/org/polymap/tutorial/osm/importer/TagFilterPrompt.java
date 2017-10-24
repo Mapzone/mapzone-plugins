@@ -13,7 +13,6 @@
  */
 package org.polymap.tutorial.osm.importer;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,15 +36,12 @@ public class TagFilterPrompt {
 
     private static final Log log = LogFactory.getLog( TagFilterPrompt.class );
 
-    private static final List<TagFilter> DEFAULT = Arrays.asList( 
-            TagFilter.of( "name", "*" ), TagFilter.of( "natural", "water" ) );
-
     private ImporterSite            site;
 
     private final ImporterPrompt    prompt;
 
     /** Result */
-    public List<TagFilter>          filters = Lists.newArrayList( DEFAULT );
+    public List<TagFilter>          filters = Lists.newArrayList( TagFilter.of( "name", "*" ) );
     
     /** Result */
     public Class<? extends Geometry> geomType;
