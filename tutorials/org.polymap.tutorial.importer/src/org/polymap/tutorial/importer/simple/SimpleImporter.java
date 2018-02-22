@@ -177,6 +177,7 @@ public class SimpleImporter
      */
     protected void importCatalogEntry( IProgressMonitor monitor ) {
         // just an example, wherever this comes from
+        @SuppressWarnings( "unused" )
         DataStore ds = null;
         AtomicReference<IResourceInfo> resource = new AtomicReference();
         
