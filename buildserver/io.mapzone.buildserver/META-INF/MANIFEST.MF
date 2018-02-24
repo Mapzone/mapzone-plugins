@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Build Server
+Bundle-SymbolicName: io.mapzone.buildserver;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.polymap.core;bundle-version="4.0.2",
+ org.polymap.rhei.batik;bundle-version="4.0.0"
