@@ -14,18 +14,16 @@
  */
 package io.mapzone.buildserver.scm;
 
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Optional;
 
 import java.io.File;
-import java.io.InputStream;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.AbstractFileFilter;
-import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.google.common.collect.FluentIterable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -70,9 +68,10 @@ public class GitRepository
     }
 
 
-    protected void pull( IProgressMonitor monitor ) {
+    protected void pull( IProgressMonitor monitor ) throws Exception {
         monitor.beginTask( "GIT pull: " + origin, IProgressMonitor.UNKNOWN );
-        log.warn( "pull(): not yet implemented." );
+        String[] command = {"git", "pull", "--verbose"};
+        process( command, dir, monitor );
         monitor.done();
     }
 
@@ -80,25 +79,8 @@ public class GitRepository
     protected void cloneRepo( IProgressMonitor monitor ) throws Exception {
         monitor.beginTask( "GIT clone: " + origin, IProgressMonitor.UNKNOWN );
         dir.mkdirs();
-        Process process = new ProcessBuilder( "git", "clone", origin, dir.getAbsolutePath() )
-                .directory( dir.getParentFile() )
-                .start();
-
-        try (
-                InputStream in = process.getInputStream();
-                InputStream err = process.getErrorStream();
-                ){
-            do {
-                while (in.available() > 0) {
-                    System.out.print( (char)in.read() );
-                }
-                while (err.available() > 0) {
-                    System.out.print( (char)err.read() );
-                }
-                Thread.sleep( 100 );
-                monitor.worked( 1 );
-            } while (process.isAlive());
-        }
+        String[] command = {"git", "clone", origin, dir.getAbsolutePath(), "--verbose"};
+        process( command, dir.getParentFile(), monitor );
         monitor.done();
     }
 
@@ -112,21 +94,51 @@ public class GitRepository
 
     @Override
     public boolean copyBundle( String name, File destDir ) throws Exception {
-        Collection<File> srcDir = FileUtils.listFilesAndDirs( dir, FalseFileFilter.INSTANCE, new AbstractFileFilter() {
-            @Override public boolean accept( File file ) {
-                return file.getName().equals( name );
-            }
-        });
-        assert srcDir.size() <= 2;
-        if (srcDir.isEmpty()) {
+        Optional<File> srcDir = findBundle( name, dir );
+        if (!srcDir.isPresent()) {
             return false;
         }
         else {
-            File src = FluentIterable.from( srcDir ).last().get();
-            File dest = new File( destDir, name );
-            FileUtils.copyDirectory( src, dest );
+            FileUtils.copyDirectory( srcDir.get(), new File( destDir, name ) );
             return true;
         }
     }
     
+
+    protected Optional<File> findBundle( String name, @SuppressWarnings( "hiding" ) File dir ) {
+        int startLevel = StringUtils.split( dir.getAbsolutePath(), "/" ).length;
+        int maxLevel = startLevel + 2;
+        Deque<File> deque = new LinkedList();
+        deque.addLast( dir );
+        while (!deque.isEmpty()) {
+            File f = deque.removeFirst();
+            //log.info( f.getAbsolutePath() );
+            if (f.getName().equals( name )) {
+                return Optional.of( f );
+            }
+            else {
+                int level = StringUtils.split( f.getAbsolutePath(), "/" ).length;
+                if (level < maxLevel) {
+                    Arrays.stream( f.listFiles( child -> child.isDirectory() ) ).forEach( child -> deque.addLast( child ) );
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    
+//    protected Optional<File> findBundle( String name, @SuppressWarnings( "hiding" ) File dir ) {
+//        for (File f: dir.listFiles()) {
+//            if (f.getName().equals( name )) {
+//                return Optional.of( f );
+//            }
+//            else if (f.isDirectory()) {
+//                Optional<File> result = findBundle( name, f );
+//                if (result.isPresent()) {
+//                    return result;
+//                }
+//            }
+//        }
+//        return Optional.empty();
+//    }
 }

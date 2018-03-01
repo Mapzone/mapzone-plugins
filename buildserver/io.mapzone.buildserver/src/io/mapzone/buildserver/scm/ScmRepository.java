@@ -15,6 +15,7 @@
 package io.mapzone.buildserver.scm;
 
 import java.io.File;
+import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +36,7 @@ public abstract class ScmRepository {
     public static final String  BASE_PATH = "/home/falko/servers/buildserver/scm";
     
     public static ScmRepository forConfig( ScmConfiguration config ) {
-        if (config.type.get() == ScmConfiguration.TYPE.Git) {
+        if (config.type.get() == ScmConfiguration.Type.GIT) {
             return new GitRepository().init( config );
         }
         else {
@@ -57,4 +58,28 @@ public abstract class ScmRepository {
     public abstract void switchBranch( String branch, IProgressMonitor monitor ) throws Exception;
 
     public abstract boolean copyBundle( String name, File dir ) throws Exception;
+    
+    
+    protected Process process( String[] command, File dir, IProgressMonitor monitor ) throws Exception {
+        Process process = new ProcessBuilder( command )
+                .directory( dir )
+                .start();
+        try (
+            InputStream in = process.getInputStream();
+            InputStream err = process.getErrorStream();
+        ){
+            do {
+                while (in.available() > 0) {
+                    System.out.print( (char)in.read() );
+                }
+                while (err.available() > 0) {
+                    System.out.print( (char)err.read() );
+                }
+                Thread.sleep( 100 );
+                monitor.worked( 1 );
+            } while (process.isAlive());
+        }
+        return process;
+    }
+    
 }

@@ -12,7 +12,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  */
-package io.mapzone.buildserver.targetplatform;
+package io.mapzone.buildserver.tp;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.target.ITargetLocation;
@@ -24,25 +27,12 @@ import io.mapzone.buildserver.BuildConfiguration.TargetPlatformConfiguration;
  *
  * @author Falko Bräutigam
  */
-public class DirectoryLocationHandler
-        extends LocationHandler {
+public abstract class LocationHandler {
 
-    private TargetPlatformHelper        helper;
+    private static final Log log = LogFactory.getLog( LocationHandler.class );
+
+    public abstract LocationHandler init( TargetPlatformHelper helper, TargetPlatformConfiguration config );
     
-    private TargetPlatformConfiguration config;
-
-    @Override
-    @SuppressWarnings( "hiding" )
-    public LocationHandler init( TargetPlatformHelper helper, TargetPlatformConfiguration config ) {
-        this.helper = helper;
-        this.config = config;
-        return this;
-    }
-
-    @Override
-    public ITargetLocation create( IProgressMonitor monitor ) {
-        monitor.beginTask( "Directory: " + config.url.get(), IProgressMonitor.UNKNOWN );
-        return helper.service.newDirectoryLocation( config.url.get() );
-    }
-
+    public abstract ITargetLocation create( IProgressMonitor monitor );
+    
 }

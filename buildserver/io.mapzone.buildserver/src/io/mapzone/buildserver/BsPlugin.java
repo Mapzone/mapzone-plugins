@@ -60,60 +60,20 @@ public class BsPlugin
         
         // create repo
         BuildRepository repo = new BuildRepository();
-        UnitOfWork uow = repo.newUnitOfWork();
-        BuildConfiguration config = uow.createEntity( BuildConfiguration.class, null, (BuildConfiguration proto) -> {
-            proto.productName.set( "io.mapzone.atlas" );
-            proto.targetPlatform.createElement( (TargetPlatformConfiguration proto2) -> {
-                proto2.type.set( TargetPlatformConfiguration.TYPE.Directory );
-                proto2.url.set( "/home/falko/servers/polymap4-targetplatform/polymap4_target/plugins/" );
-                return proto2;
-            });
-            proto.scm.createElement( (ScmConfiguration proto2) -> {
-                proto2.type.set( ScmConfiguration.TYPE.Git );
-                proto2.name.set( "polymap4-core" );
-                proto2.url.set( "https://github.com/Polymap4/polymap4-core.git" );
-                return proto2;
-            });
-            proto.scm.createElement( (ScmConfiguration proto2) -> {
-                proto2.type.set( ScmConfiguration.TYPE.Git );
-                proto2.name.set( "polymap4-rap" );
-                proto2.url.set( "git@github.com:Polymap4/polymap4-rap.git" );
-                return proto2;
-            });
-            proto.scm.createElement( (ScmConfiguration proto2) -> {
-                proto2.type.set( ScmConfiguration.TYPE.Git );
-                proto2.name.set( "polymap4-rhei" );
-                proto2.url.set( "git@github.com:Polymap4/polymap4-rhei.git" );
-                return proto2;
-            });
-            proto.scm.createElement( (ScmConfiguration proto2) -> {
-                proto2.type.set( ScmConfiguration.TYPE.Git );
-                proto2.name.set( "polymap4-p4" );
-                proto2.url.set( "git@github.com:Polymap4/polymap4-p4.git" );
-                return proto2;
-            });
-            proto.scm.createElement( (ScmConfiguration proto2) -> {
-                proto2.type.set( ScmConfiguration.TYPE.Git );
-                proto2.name.set( "polymap4-model" );
-                proto2.url.set( "git@github.com:Polymap4/polymap4-model.git" );
-                return proto2;
-            });
-            proto.scm.createElement( (ScmConfiguration proto2) -> {
-                proto2.type.set( ScmConfiguration.TYPE.Git );
-                proto2.name.set( "mapzone-atlas-plugin" );
-                proto2.url.set( "git@github.com:Mapzone/mapzone-atlas-plugin.git" );
-                return proto2;
-            });
-            return proto; 
-        });
-        uow.commit();
+        createArenaProductConfiguration( repo );
+        createAtlasPluginConfiguration( repo );
+        createCorePluginConfiguration( repo );
 
         // build
         Job buildJob = new Job( "Build" ) {
             @Override
             protected IStatus run( IProgressMonitor monitor ) {
-                try {
+                try (
+                    UnitOfWork uow = repo.newUnitOfWork();
+                ){
                     PrintProgressMonitor printMonitor = new PrintProgressMonitor();
+                    BuildConfiguration config = uow.entity( BuildConfiguration.class, "arena.product" );
+                    //BuildConfiguration config = uow.entity( BuildConfiguration.class, "core.plugin" );
                     Build build = new Build( config );
                     build.run( printMonitor );
                     printMonitor.done();
@@ -129,10 +89,115 @@ public class BsPlugin
         buildJob.schedule( 2000 );
     }
 
-
+    
     @Override
     public void stop( BundleContext context ) throws Exception {
         log.info( "Stop" );
+    }
+
+    
+    protected void createCorePluginConfiguration( BuildRepository repo ) {
+        try (
+            UnitOfWork uow = repo.newUnitOfWork();
+        ){
+            uow.createEntity( BuildConfiguration.class, "core.plugin", (BuildConfiguration proto) -> {
+                proto.productName.set( "org.polymap.core" );
+                proto.type.set( BuildConfiguration.Type.PLUGIN );
+                proto.targetPlatform.createElement( (TargetPlatformConfiguration proto2) -> {
+                    proto2.type.set( TargetPlatformConfiguration.Type.DIRECTORY );
+                    proto2.url.set( "/home/falko/servers/polymap4_target/plugins/" );
+                    return proto2;
+                });
+                proto.scm.createElement( (ScmConfiguration proto2) -> {
+                    proto2.type.set( ScmConfiguration.Type.GIT );
+                    proto2.name.set( "polymap4-core" );
+                    proto2.url.set( "https://github.com/Polymap4/polymap4-core.git" );
+                    return proto2;
+                });
+                return proto;
+            });
+            uow.commit();
+        }
+    }
+    
+    
+    protected void createAtlasPluginConfiguration( BuildRepository repo ) {
+        try (
+            UnitOfWork uow = repo.newUnitOfWork();
+        ){
+            uow.createEntity( BuildConfiguration.class, "atlas.plugin", (BuildConfiguration proto) -> {
+                proto.productName.set( "io.mapzone.atlas" );
+                proto.type.set( BuildConfiguration.Type.PLUGIN );
+                proto.targetPlatform.createElement( (TargetPlatformConfiguration proto2) -> {
+                    proto2.type.set( TargetPlatformConfiguration.Type.DIRECTORY );
+                    proto2.url.set( "/home/falko/servers/polymap4-targetplatform/polymap4_target/plugins/" );
+                    return proto2;
+                });
+                proto.scm.createElement( (ScmConfiguration proto2) -> {
+                    proto2.type.set( ScmConfiguration.Type.GIT );
+                    proto2.name.set( "mapzone-atlas-plugin" );
+                    proto2.url.set( "git@github.com:Mapzone/mapzone-atlas-plugin.git" );
+                    return proto2;
+                });
+                return proto;
+            });
+            uow.commit();
+        }
+    }
+    
+    
+    protected void createArenaProductConfiguration( BuildRepository repo ) {
+        try (
+            UnitOfWork uow = repo.newUnitOfWork();
+        ){
+            uow.createEntity( BuildConfiguration.class, "arena.product", (BuildConfiguration proto) -> {
+                proto.productName.set( "io.mapzone.arena.product" );
+                proto.type.set( BuildConfiguration.Type.PRODUCT );
+                proto.targetPlatform.createElement( (TargetPlatformConfiguration proto2) -> {
+                    proto2.type.set( TargetPlatformConfiguration.Type.DIRECTORY );
+                    proto2.url.set( "/home/falko/servers/polymap4-targetplatform/polymap4_target/plugins/" );
+                    return proto2;
+                });
+                proto.scm.createElement( (ScmConfiguration proto2) -> {
+                    proto2.type.set( ScmConfiguration.Type.GIT );
+                    proto2.name.set( "polymap4-core" );
+                    proto2.url.set( "https://github.com/Polymap4/polymap4-core.git" );
+                    return proto2;
+                });
+                proto.scm.createElement( (ScmConfiguration proto2) -> {
+                    proto2.type.set( ScmConfiguration.Type.GIT );
+                    proto2.name.set( "polymap4-rap" );
+                    proto2.url.set( "git@github.com:Polymap4/polymap4-rap.git" );
+                    return proto2;
+                });
+                proto.scm.createElement( (ScmConfiguration proto2) -> {
+                    proto2.type.set( ScmConfiguration.Type.GIT );
+                    proto2.name.set( "polymap4-rhei" );
+                    proto2.url.set( "git@github.com:Polymap4/polymap4-rhei.git" );
+                    return proto2;
+                });
+                proto.scm.createElement( (ScmConfiguration proto2) -> {
+                    proto2.type.set( ScmConfiguration.Type.GIT );
+                    proto2.name.set( "polymap4-p4" );
+                    proto2.url.set( "git@github.com:Polymap4/polymap4-p4.git" );
+                    return proto2;
+                });
+                proto.scm.createElement( (ScmConfiguration proto2) -> {
+                    proto2.type.set( ScmConfiguration.Type.GIT );
+                    proto2.name.set( "polymap4-model" );
+                    proto2.url.set( "git@github.com:Polymap4/polymap4-model.git" );
+                    return proto2;
+                });
+                proto.scm.createElement( (ScmConfiguration proto2) -> {
+                    proto2.type.set( ScmConfiguration.Type.GIT );
+                    proto2.name.set( "mapzone" );
+                    proto2.url.set( "git@github.com:Mapzone/mapzone.git" );
+                    return proto2;
+                });
+                return proto; 
+            });
+            uow.commit();
+        }
     }
     
 }

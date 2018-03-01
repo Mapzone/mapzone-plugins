@@ -30,10 +30,16 @@ import org.polymap.model2.Property;
 public class BuildConfiguration
         extends Entity {
 
+    public enum Type {
+        PRODUCT, PLUGIN
+    }
+
     /**
      * The bundle-id of the product to build. 
      */
     public Property<String>         productName;
+    
+    public Property<Type>           type;
     
     public Property<File>           targetDir;
 
@@ -50,11 +56,11 @@ public class BuildConfiguration
     public static class ScmConfiguration
             extends Composite {
 
-        public enum TYPE {
-            Directory, Git
+        public enum Type {
+            DIRECTORY, GIT
         }
 
-        public Property<TYPE>       type;
+        public Property<Type>       type;
         
         public Property<String>     name;
         
@@ -70,13 +76,13 @@ public class BuildConfiguration
     public static class TargetPlatformConfiguration
             extends Composite {
 
-        public enum TYPE {
-            Directory, ZipDownload
+        public enum Type {
+            DIRECTORY, ZIP_DOWNLOAD
         }
         
         public Property<String>     url;
         
-        public Property<TYPE>       type;
+        public Property<Type>       type;
     }
     
 }

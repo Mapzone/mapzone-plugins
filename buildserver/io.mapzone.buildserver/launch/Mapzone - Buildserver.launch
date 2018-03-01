@@ -24,13 +24,13 @@
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="/tmp"/>
 <stringAttribute key="org.eclipse.rap.launch.browserMode" value="INTERNAL"/>
 <stringAttribute key="org.eclipse.rap.launch.contextpath" value="/"/>
-<stringAttribute key="org.eclipse.rap.launch.dataLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.rap.tools.launch/Mapzone-Buildserver"/>
+<stringAttribute key="org.eclipse.rap.launch.dataLocation" value="${env_var:HOME}/servers/workspace-buildserver"/>
 <booleanAttribute key="org.eclipse.rap.launch.developmentMode" value="false"/>
 <booleanAttribute key="org.eclipse.rap.launch.openBrowser" value="false"/>
 <intAttribute key="org.eclipse.rap.launch.port" value="8080"/>
 <stringAttribute key="org.eclipse.rap.launch.servletPath" value="/rap"/>
 <intAttribute key="org.eclipse.rap.launch.sessionTimeout" value="0"/>
-<booleanAttribute key="org.eclipse.rap.launch.useDefaultDataLocation" value="true"/>
+<booleanAttribute key="org.eclipse.rap.launch.useDefaultDataLocation" value="false"/>
 <booleanAttribute key="org.eclipse.rap.launch.useManualContextPath" value="false"/>
 <booleanAttribute key="org.eclipse.rap.launch.useManualPort" value="true"/>
 <booleanAttribute key="org.eclipse.rap.launch.useSessionTimeout" value="false"/>

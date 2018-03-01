@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  */
-package io.mapzone.buildserver.targetplatform;
+package io.mapzone.buildserver.tp;
 
 import java.util.List;
 
@@ -107,7 +107,7 @@ public class TargetPlatformHelper {
     
 
     public LocationHandler newLocation( TargetPlatformConfiguration config ) {
-        if (config.type.get() == TargetPlatformConfiguration.TYPE.Directory) {
+        if (config.type.get() == TargetPlatformConfiguration.Type.DIRECTORY) {
             return new DirectoryLocationHandler().init( this, config );
         }
         else {

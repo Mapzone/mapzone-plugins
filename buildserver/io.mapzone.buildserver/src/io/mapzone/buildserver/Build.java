@@ -15,29 +15,34 @@
 package io.mapzone.buildserver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import java.io.File;
-
+import java.io.IOException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.polymap.core.ui.UIUtils;
 
 import io.mapzone.buildserver.BuildConfiguration.ScmConfiguration;
 import io.mapzone.buildserver.BuildConfiguration.TargetPlatformConfiguration;
 import io.mapzone.buildserver.scm.ScmRepository;
-import io.mapzone.buildserver.targetplatform.LocationHandler;
-import io.mapzone.buildserver.targetplatform.TargetPlatformHelper;
+import io.mapzone.buildserver.tp.LocationHandler;
+import io.mapzone.buildserver.tp.TargetPlatformHelper;
 
 /**
  * 
@@ -68,8 +73,11 @@ public class Build {
             installTargetPlatform( UIUtils.submon( monitor, 4 ) );
             installBundleSources( UIUtils.submon( monitor, 4 ) );
             
-            workspace.build( IncrementalProjectBuilder.FULL_BUILD, UIUtils.submon( monitor, 10 ) );
-            reportProblems( UIUtils.submon( monitor, 1 ) );
+//            workspace.build( IncrementalProjectBuilder.FULL_BUILD, UIUtils.submon( monitor, 10 ) );
+//            File exportDir = export( UIUtils.submon( monitor, 10 ) );
+//            reportProblems( UIUtils.submon( monitor, 1 ) );
+            workspace.save( true, UIUtils.submon( monitor, 1 ) );
+            log.info( "DONE." );
         }
         catch (CoreException e) {
             log.warn( "", e );
@@ -123,50 +131,82 @@ public class Build {
             scms.add( scm );
         }
         
-        IProject product = installBundleSource( config.productName.get(), scms, UIUtils.submon( monitor, 1 ) );
+        IProject product = installBundleSource( config.productName.get(), scms, UIUtils.submon( monitor, 1 ) ).get();
         
-        // XXX find dependencies
+        List<String> dependencies = config.type.get() == BuildConfiguration.Type.PRODUCT
+                ? findProductDependencies( product )
+                : findPluginDependencies( product );
+                
+        for (String dependency : dependencies) {
+            installBundleSource( dependency, scms, UIUtils.submon( monitor, 1 ) );
+        }
     }
 
     
-    protected IProject installBundleSource( String name, List<ScmRepository> scms, IProgressMonitor monitor ) throws Exception {
+    protected List<String> findPluginDependencies( IProject project ) throws IOException {
+        log.warn( "!!!No plugin dependencies!!!" );
+        return Collections.EMPTY_LIST;
+    }
+
+    
+    protected List<String> findProductDependencies( IProject project ) throws IOException {
+        IResource productFile = project.findMember( project.getName() );
+        AtomicBoolean plugins = new AtomicBoolean( false );
+        return FileUtils.readLines( productFile.getLocation().toFile() ).stream()
+                .peek( line -> {
+                    if (line.contains( "<plugins>" )) {
+                        plugins.set( true );
+                    }
+                    else if (line.contains( "</plugins>" )) {
+                        plugins.set( false );
+                    }
+                })
+                .filter( line -> plugins.get() && line.contains( "<plugin id=" ) )
+                .map( line -> StringUtils.split( line, "\"" )[1] )
+                .collect( Collectors.toList() );
+    }
+    
+    
+    protected Optional<IProject> installBundleSource( String name, List<ScmRepository> scms, IProgressMonitor monitor ) throws Exception {
         monitor.beginTask( "Copy bundle source: " + name, IProgressMonitor.UNKNOWN );
         for (ScmRepository scm : scms) {
             if (scm.copyBundle( name, workspace.getRoot().getRawLocation().toFile() )) {
-                break;
+                IProject project = workspace.getRoot().getProject( name );
+                project.create( UIUtils.submon( monitor, 1 ) );
+                project.open( UIUtils.submon( monitor, 1 ) );
+                project.refreshLocal( IResource.DEPTH_INFINITE, UIUtils.submon( monitor, 1 ) );
+                return Optional.of( project );
             }
         }
-        IProject project = workspace.getRoot().getProject( name );
-        project.create( UIUtils.submon( monitor, 1 ) );
-        project.open( UIUtils.submon( monitor, 1 ) );
-        project.refreshLocal( IResource.DEPTH_INFINITE, UIUtils.submon( monitor, 1 ) );
-        return project;
+        return Optional.empty();
     }
 
     
-    protected void reportProblems( IProgressMonitor monitor ) throws CoreException {
-        monitor.beginTask( "Report", IProgressMonitor.UNKNOWN );
-        IMarker[] markers = workspace.getRoot().findMarkers( null, true, IResource.DEPTH_INFINITE );
-        for (int i=0; i<10 && i<markers.length; i++) {
-            monitor.subTask( "[" + severity(markers[i]) + "] " 
-                    + markers[i].getResource().getName() 
-                    + ":" + markers[i].getAttribute( IMarker.LINE_NUMBER, -1 )
-                    + ": " + markers[i].getAttribute( IMarker.MESSAGE, "" ) );
-        }
-        if (markers.length > 3) {
-            monitor.subTask( "... " + markers.length + " problems" );
-        }
-        monitor.subTask( "" );
-        monitor.done();
-    }
+//    protected void reportProblems( IProgressMonitor monitor ) throws CoreException {
+//        monitor.beginTask( "Report", IProgressMonitor.UNKNOWN );
+//        IMarker[] markers = workspace.getRoot().findMarkers( null, true, IResource.DEPTH_INFINITE );
+//        for (int i=0; i<10 && i<markers.length; i++) {
+//            monitor.subTask( "[" + severity(markers[i]) + "] " 
+//                    + markers[i].getResource().getName() 
+//                    + ":" + markers[i].getAttribute( IMarker.LINE_NUMBER, -1 )
+//                    + ": " + markers[i].getAttribute( IMarker.MESSAGE, "" ) );
+//        }
+//        if (markers.length > 3) {
+//            monitor.subTask( "... " + markers.length + " problems" );
+//        }
+//        monitor.subTask( "" );
+//        monitor.done();
+//    }
+//
+//    
+//    protected String severity( IMarker marker ) throws CoreException {
+//        int severity = (Integer)marker.getAttribute( IMarker.SEVERITY );
+//        switch (severity) {
+//            case IMarker.SEVERITY_ERROR: return "ERROR";
+//            case IMarker.SEVERITY_WARNING: return "WARN";
+//            case IMarker.SEVERITY_INFO: return "INFO";
+//            default: throw new RuntimeException( "Unknown severity: " + severity );
+//        }
+//    }
     
-    protected String severity( IMarker marker ) throws CoreException {
-        int severity = (Integer)marker.getAttribute( IMarker.SEVERITY );
-        switch (severity) {
-            case IMarker.SEVERITY_ERROR: return "ERROR";
-            case IMarker.SEVERITY_WARNING: return "WARN";
-            case IMarker.SEVERITY_INFO: return "INFO";
-            default: throw new RuntimeException( "Unknown severity: " + severity );
-        }
-    }
 }
