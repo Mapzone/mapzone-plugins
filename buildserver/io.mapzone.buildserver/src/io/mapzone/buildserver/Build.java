@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -55,13 +56,16 @@ public class Build {
 
     private BuildConfiguration      config;
     
+    private File                    workspaceDir;
+    
     private IWorkspace              workspace;
 
     private CoreException           exception;
+
     
-    
-    public Build( BuildConfiguration config ) {
+    public Build( BuildConfiguration config, File workspaceDir ) {
         this.config = config;
+        this.workspaceDir = workspaceDir;
     }
 
 
@@ -88,7 +92,7 @@ public class Build {
 
     
     protected void createWorkspace( IProgressMonitor monitor ) {
-        workspace = ResourcesPlugin.getWorkspace();
+        workspace = new Workspace(); //ResourcesPlugin.getWorkspace();
         File root = workspace.getRoot().getRawLocation().toFile();
         monitor.beginTask( "Create workspace in: " + root, 1 );
         if (root.list().length > 0) {

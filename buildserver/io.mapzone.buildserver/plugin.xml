@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension
+         point="org.eclipse.rap.ui.entrypoint">
+      <entrypoint
+            brandingId="org.polymap.rhei.batik.branding"
+            class="org.polymap.rhei.batik.BatikApplication"
+            id="io.mapzone.buildserver.entrypoint"
+            path="/builds">
+      </entrypoint>
+   </extension>
+   <extension
+         point="org.polymap.rhei.batik.design">
+      <design
+            class="org.polymap.rhei.batik.toolkit.md.MdAppDesign"
+            id="io.mapzone.buildserver.design"
+            servletNameMatcher="/builds">
+      </design>
+   </extension>
+   <extension
+         point="org.polymap.rhei.batik.panels">
+      <panel
+            class="io.mapzone.buildserver.ui.StartPanel"
+            id="io.mapzone.buildserver.StartPanel">
+      </panel>
+      <panel
+            class="io.mapzone.buildserver.ui.BuildConfigurationPanel"
+            id="io.mapzone.buildserver.BuildConfigurationPanel">
+      </panel>
+   </extension>
+   <extension
+         point="org.polymap.rhei.batik.panelFilters">
+      <panelFilter
+            class="io.mapzone.buildserver.ui.BsPanelFilter"
+            servletNameMatcher="/builds">
+      </panelFilter>
+   </extension>
 
 </plugin>

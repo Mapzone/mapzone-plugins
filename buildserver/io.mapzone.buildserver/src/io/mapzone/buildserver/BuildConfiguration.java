@@ -14,13 +14,15 @@
  */
 package io.mapzone.buildserver;
 
-import java.io.File;
-
 import org.polymap.model2.CollectionProperty;
 import org.polymap.model2.Composite;
+import org.polymap.model2.Computed;
+import org.polymap.model2.ComputedBidiManyAssocation;
 import org.polymap.model2.Defaults;
 import org.polymap.model2.Entity;
+import org.polymap.model2.ManyAssociation;
 import org.polymap.model2.Property;
+import org.polymap.model2.runtime.UnitOfWork;
 
 /**
  * 
@@ -30,24 +32,36 @@ import org.polymap.model2.Property;
 public class BuildConfiguration
         extends Entity {
 
+    public static BuildConfiguration    TYPE;
+    
     public enum Type {
         PRODUCT, PLUGIN
     }
 
+    public Property<String>             name;
+    
     /**
      * The bundle-id of the product to build. 
      */
-    public Property<String>         productName;
+    public Property<String>             productName;
     
-    public Property<Type>           type;
+    public Property<Type>               type;
     
-    public Property<File>           targetDir;
-
+    public Property<String>             userId;
+    
     @Defaults
     public CollectionProperty<TargetPlatformConfiguration> targetPlatform;
     
     @Defaults
-    public CollectionProperty<ScmConfiguration>            scm;
+    public CollectionProperty<ScmConfiguration> scm;
+    
+    @Computed( ComputedBidiManyAssocation.class )
+    public ManyAssociation<BuildResult> buildResults;
+    
+    
+    public UnitOfWork belongsTo() {
+        return context.getUnitOfWork();
+    }
     
     
     /**
@@ -84,5 +98,5 @@ public class BuildConfiguration
         
         public Property<Type>       type;
     }
-    
+
 }

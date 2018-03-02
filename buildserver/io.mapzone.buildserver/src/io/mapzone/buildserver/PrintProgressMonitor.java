@@ -17,6 +17,7 @@ package io.mapzone.buildserver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
@@ -28,6 +29,17 @@ public class PrintProgressMonitor
         extends NullProgressMonitor {
 
     private static final Log log = LogFactory.getLog( PrintProgressMonitor.class );
+    
+    private IProgressMonitor        delegate;
+
+    public PrintProgressMonitor( IProgressMonitor delegate ) {
+        this.delegate = delegate;
+    }
+
+    @Override
+    public boolean isCanceled() {
+        return delegate.isCanceled();
+    }
 
     @Override
     public void beginTask( String name, int totalWork ) {
