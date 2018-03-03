@@ -14,12 +14,28 @@
  */
 package io.mapzone.buildserver;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.google.common.base.Throwables;
 
 import org.polymap.model2.Association;
 import org.polymap.model2.Entity;
@@ -41,6 +57,10 @@ public class BuildResult
     public enum Status {
         RUNNING, OK, FAILED
     }
+    
+    private static final Pattern            SEVERITY = Pattern.compile( "^[0-9]+\\. ([A-Za-z]+) " );
+    
+    // instance *******************************************
     
     public Association<BuildConfiguration>  config;
     
@@ -65,6 +85,87 @@ public class BuildResult
             log.warn( "", e );
         }
         context.getUnitOfWork().removeEntity( this );
+    }
+
+
+    public Optional<String> console() {
+        try {
+            File f = new File( dataDir(), BuildManager.BUILDRUNNER_LOG );
+            return Optional.ofNullable( f.exists() ? FileUtils.readFileToString( f, "UTF-8" ) : null );
+        }
+        catch (IOException e) {
+            log.warn( "", e );
+            return Optional.empty();
+        }
+    }
+    
+    
+    public List<LogEntry> logEntries( int maxResults, LogEntry.Severity... severities  ) {
+        try (
+            ZipFile zip = new ZipFile( new File( dataDir(), "logs.zip" ) );
+        ){
+            List<LogEntry> result = new ArrayList( maxResults );
+            for (ZipEntry file : Collections.list( zip.entries() )) {
+                log.info( "  " + file.getName() );
+                if (file.getName().endsWith( "@dot.log" )) {
+                    LineNumberReader reader = new LineNumberReader( new InputStreamReader( zip.getInputStream( file ), "ISO-8859-1" ) );
+                    LogEntry logEntry = null;
+                    for (String line=reader.readLine(); line != null; line=reader.readLine()) {
+                        if (line.startsWith( "#" )) { // skip
+                        }
+                        else if (line.startsWith( "----" )) {
+                            logEntry = null;
+                            if (result.size() >= maxResults) {
+                                return result;
+                            }
+                        }
+                        else if (logEntry != null) {
+                            assert logEntry.head != null;
+                            logEntry.text.add( line );
+                        }
+                        else {
+                            Matcher matcher = SEVERITY.matcher( line );
+                            if (!matcher.find()) {
+                                log.info( "Skipping line: " + line );  // summary line
+                            }
+                            else {
+                                LogEntry.Severity severity = LogEntry.Severity.valueOf( matcher.group( 1 ) );
+                                logEntry = new LogEntry();
+                                logEntry.severity = severity;
+                                logEntry.head = line;
+                                logEntry.bundleId = FilenameUtils.getPath( file.getName() );
+                                if (severities.length == 0 || ArrayUtils.contains( severities, severity )) {
+                                    result.add( logEntry );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        catch (Exception e) {
+            throw Throwables.propagate( e );
+        }
+    }
+    
+
+    /**
+     * 
+     */
+    public static class LogEntry {
+        
+        public enum Severity {
+            WARNING, ERROR
+        }
+        
+        public Severity     severity;
+        
+        public String       bundleId;
+        
+        public String       head;
+        
+        public List<String> text = new ArrayList();
     }
     
 }

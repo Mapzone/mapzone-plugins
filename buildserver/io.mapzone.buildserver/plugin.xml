@@ -28,6 +28,10 @@
             class="io.mapzone.buildserver.ui.BuildConfigurationPanel"
             id="io.mapzone.buildserver.BuildConfigurationPanel">
       </panel>
+      <panel
+            class="io.mapzone.buildserver.ui.BuildResultPanel"
+            id="io.mapzone.buildserver.BuildResultPanel">
+      </panel>
    </extension>
    <extension
          point="org.polymap.rhei.batik.panelFilters">

@@ -48,6 +48,8 @@ import org.polymap.model2.runtime.UnitOfWork;
 public class BuildManager {
 
     private static final Log log = LogFactory.getLog( BuildManager.class );
+    
+    public static final String BUILDRUNNER_LOG = "buildrunner.log";
 
     private static Map<String,BuildManager> instances = new ConcurrentHashMap();
     
@@ -132,7 +134,7 @@ public class BuildManager {
             try {
                 File workspaceDir = Files.createTempDirectory( "buildserver.workspace." ).toFile();
                 File exportDir = Files.createTempDirectory( "buildserver.export." ).toFile();
-                logFile = new File( exportDir, "buildrunner.log" );
+                logFile = new File( exportDir, BUILDRUNNER_LOG );
 
                 PrintProgressMonitor printMonitor = new PrintProgressMonitor( monitor );
                 

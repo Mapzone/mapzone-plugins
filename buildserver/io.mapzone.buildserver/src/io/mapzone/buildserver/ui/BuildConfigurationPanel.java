@@ -37,6 +37,7 @@ import org.polymap.core.ui.FormLayoutFactory;
 import org.polymap.core.ui.UIUtils;
 
 import org.polymap.rhei.batik.Context;
+import org.polymap.rhei.batik.Mandatory;
 import org.polymap.rhei.batik.PanelIdentifier;
 import org.polymap.rhei.batik.Scope;
 import org.polymap.rhei.batik.app.SvgImageRegistryHelper;
@@ -72,9 +73,16 @@ public class BuildConfigurationPanel
     /**
      * Inbound: The config the work with.
      */
+    @Mandatory
     @Scope( BsPlugin.ID )
     protected Context<BuildConfiguration>   config;
 
+    /**
+     * Outbound:
+     */
+    @Scope( BsPlugin.ID )
+    protected Context<BuildResult>          buildResult;
+    
     private BatikFormContainer              form;
 
     private BuildManager                    buildManager;
@@ -98,7 +106,7 @@ public class BuildConfigurationPanel
         createMainSection( section.getBody() );
         Composite btnContainer = tk().createComposite( parent );
         createBuildButton( btnContainer );
-        IPanelSection resultsSection = tk().createPanelSection( parent, "Results", SWT.BORDER );
+        IPanelSection resultsSection = tk().createPanelSection( parent, "Results", SWT.NONE );
         createResultsSection( resultsSection.getBody() );
         
         FormDataFactory.on( section.getControl() ).fill().noBottom();
@@ -172,6 +180,10 @@ public class BuildConfigurationPanel
                 case OK: cell.setImage( BsPlugin.images().svgImage( "check.svg", SvgImageRegistryHelper.OK24 ) ); break;
             }
         }));
+        resultsList.addOpenListener( ev -> {
+            buildResult.set( UIUtils.selection( resultsList.getSelection() ).first( BuildResult.class ).get() );
+            getContext().openPanel( site().path(), BuildResultPanel.ID );
+        });
         resultsList.setContentProvider( new ListTreeContentProvider() );
         refreshResultsList();
     }
