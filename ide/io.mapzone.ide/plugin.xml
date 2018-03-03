@@ -180,6 +180,19 @@
             name="Publish Plugin">
       </command>
    </extension>
+   <extension
+         id="io.mapzone.ide.BuildApplication"
+         name="Mapzone Builder"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="io.mapzone.ide.build.BuildRunner">
+         </run>
+      </application>
+   </extension>
    <!--extension
          point="org.eclipse.ui.handlers">
       <handler

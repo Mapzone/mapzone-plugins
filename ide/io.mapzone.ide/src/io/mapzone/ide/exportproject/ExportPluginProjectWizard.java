@@ -41,7 +41,7 @@ import io.mapzone.ide.MapzonePluginProject;
  * to the mapzone project.
  * 
  * @deprecated Directly installing plugin into project is no longer supported because
- *             the controller does not know about the plugin.
+ *             the controller does not know about the new plugin.
  * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
 @SuppressWarnings( "restriction" )

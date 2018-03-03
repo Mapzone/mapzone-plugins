@@ -36,9 +36,11 @@ import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
+import io.mapzone.ide.build.ExportHelper;
+
 /**
  * 
- *
+ * @deprecated In favour of {@link ExportHelper}.
  * @author <a href="http://mapzone.io">Falko Bräutigam</a>
  */
 @SuppressWarnings( "restriction" )

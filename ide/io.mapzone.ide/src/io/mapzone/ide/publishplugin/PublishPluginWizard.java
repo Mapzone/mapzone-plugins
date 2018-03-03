@@ -1,6 +1,6 @@
 /* 
  * polymap.org
- * Copyright (C) 2017, the @authors. All rights reserved.
+ * Copyright (C) 2017-2018, the @authors. All rights reserved.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -24,13 +24,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.internal.core.JavaProject;
+import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 
-import io.mapzone.ide.ExportPluginHelper;
-import io.mapzone.ide.ExportPluginHelper.PluginExportOperation2;
 import io.mapzone.ide.IdePlugin;
 import io.mapzone.ide.MapzonePluginProject;
 import io.mapzone.ide.apiclient.MapzoneAPIClient;
 import io.mapzone.ide.apiclient.MapzoneAPIClient.PluginsFolder;
+import io.mapzone.ide.build.ExportHelper;
+import io.mapzone.ide.build.ExportHelper.PluginExportOperation2;
 import io.mapzone.ide.util.UIUtils;
 
 /**
@@ -111,7 +112,9 @@ public class PublishPluginWizard
             
             // export plugin
             if (data.exportPlugin) {
-                PluginExportOperation2 job = ExportPluginHelper.createExportJob( data.mproject.project() );
+                FeatureExportInfo info = ExportHelper.standardExportInfo( data.mproject.project() );
+                PluginExportOperation2 job = ExportHelper.createPluginExportJob( info );
+                job.addJobChangeListener( ExportHelper.informUserAboutErrors() );
                 job.addJobChangeListener( new JobChangeAdapter() {
                     @Override public void done( IJobChangeEvent ev ) {
                         try {
