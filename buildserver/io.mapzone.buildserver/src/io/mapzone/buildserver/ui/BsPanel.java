@@ -29,19 +29,13 @@ public abstract class BsPanel
     
     public static final int                 SIDE_PANEL_WIDTH2 = 450;
     
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * Sets size to: 
-     * <pre>
-     * SIDE_PANEL_WIDTH, SIDE_PANEL_WIDTH, Integer.MAX_VALUE
-     * </pre>
-     */
+
     @Override
     public void init() {
-        site().setSize( SIDE_PANEL_WIDTH, SIDE_PANEL_WIDTH, Integer.MAX_VALUE );
+        site().setSize( SIDE_PANEL_WIDTH, SIDE_PANEL_WIDTH2, SIDE_PANEL_WIDTH2 );
     }
 
+    
     public MdToolkit tk() {
         return (MdToolkit)site().toolkit();
     }

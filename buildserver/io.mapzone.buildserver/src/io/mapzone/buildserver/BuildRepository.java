@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.polymap.core.CorePlugin;
 import org.polymap.core.runtime.session.SessionSingleton;
 
 import org.polymap.model2.runtime.EntityRepository;
@@ -43,7 +44,8 @@ public class BuildRepository {
     private static BuildRepository  instance;
     
     static void init() throws IOException {
-        instance = new BuildRepository();
+        File storeDir = new File( CorePlugin.getDataLocation( BsPlugin.instance() ), "store" );
+        instance = new BuildRepository( storeDir );
         try (
             UnitOfWork uow = instance.newUnitOfWork();
         ){

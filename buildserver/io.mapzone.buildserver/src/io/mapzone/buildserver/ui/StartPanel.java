@@ -71,6 +71,9 @@ public class StartPanel
         parent.setLayout( new FillLayout() );
         
         list = tk().createListViewer( parent, SWT.FULL_SELECTION, SWT.SINGLE );
+        list.iconProvider.set( FunctionalLabelProvider.of( cell -> {
+            cell.setImage( BsPlugin.images().svgImage( "wrench.svg", SvgImageRegistryHelper.NORMAL12 ) );
+        }));
         list.firstLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
             BuildConfiguration elm = (BuildConfiguration)cell.getElement();
             cell.setText( elm.name.get() );
@@ -84,6 +87,8 @@ public class StartPanel
                 cell.setImage( BsPlugin.images().svgImage( "chevron-right.svg", SvgImageRegistryHelper.NORMAL24 ) );
             }
             @Override public void perform( MdListViewer viewer, Object elm ) {
+                config.set( UIUtils.selection( list.getSelection() ).first( BuildConfiguration.class ).get() );
+                getContext().openPanel( site().path(), BuildConfigurationPanel.ID );
             }
         });
         list.setContentProvider( new ListTreeContentProvider() );

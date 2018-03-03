@@ -38,8 +38,6 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
-import org.polymap.core.CorePlugin;
-
 import org.polymap.model2.runtime.UnitOfWork;
 
 /**
@@ -78,7 +76,7 @@ public class BuildManager {
     }
 
     
-    public synchronized BuildProcess start() {
+    public synchronized BuildProcess startNewBuild() {
         if (running == null) {
             running = new BuildProcess();
             running.addJobChangeListener( new JobChangeAdapter() {
@@ -132,25 +130,24 @@ public class BuildManager {
             uow.commit();
             
             try {
-                
                 File workspaceDir = Files.createTempDirectory( "buildserver.workspace." ).toFile();
                 File exportDir = Files.createTempDirectory( "buildserver.export." ).toFile();
-                logFile = new File( exportDir, "log" );
+                logFile = new File( exportDir, "buildrunner.log" );
 
                 PrintProgressMonitor printMonitor = new PrintProgressMonitor( monitor );
                 
                 // prepare workspace
-                workspaceDir.mkdir();
                 Build build = new Build( config, workspaceDir );
                 build.run( printMonitor );
                 printMonitor.done();
                 
                 // BuildRunner process
                 exportDir.mkdir();
-                File buildrunner = new File( CorePlugin.getDataLocation( BsPlugin.instance() ), "../../buildrunner.sh" );
-                process = new ProcessBuilder( buildrunner.getAbsolutePath(), config.productName.get(), exportDir.getAbsolutePath() )
+                File buildrunner = new File( BsPlugin.buildserverDir(), "runners/eclipse-neon/buildrunner.sh" );
+                process = new ProcessBuilder( buildrunner.getAbsolutePath(), workspaceDir.getAbsolutePath(), config.productName.get(), exportDir.getAbsolutePath() )
                         .directory( workspaceDir )
-                        .redirectOutput( logFile ).redirectError( logFile )
+                        .redirectOutput( logFile )
+                        .redirectError( logFile )
                         .start();
                 while (process.isAlive()) {
                     if (monitor.isCanceled()) {
@@ -160,12 +157,21 @@ public class BuildManager {
                 }
                 
                 // copy files
-                File exportZip = new File( exportDir, "..." ); 
-                File logsZip = new File( exportDir, "logs.zip" ); 
                 File dataDir = new File( BsPlugin.exportDataDir(), config.productName.get()+System.currentTimeMillis() );
                 dataDir.mkdir();
-                FileUtils.copyFileToDirectory( exportZip, dataDir, true );
-                FileUtils.copyFileToDirectory( logsZip, dataDir, true );
+                File exportZip = new File( exportDir, "..." );
+                if (exportZip.exists()) {
+                    FileUtils.copyFileToDirectory( exportZip, dataDir, true );
+                }
+                File logsZip = new File( exportDir, "logs.zip" );
+                if (logsZip.exists()) {
+                    FileUtils.copyFileToDirectory( logsZip, dataDir, true );
+                }
+                if (logFile.exists()) {
+                    FileUtils.copyFileToDirectory( logFile, dataDir, true );
+                }
+                
+                build.cleanup();
                 
                 // commit result
                 buildResult.status.set( BuildResult.Status.OK );

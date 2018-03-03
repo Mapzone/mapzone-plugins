@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import io.mapzone.buildserver.BsPlugin;
 import io.mapzone.buildserver.BuildConfiguration.ScmConfiguration;
 
 /**
@@ -33,7 +34,7 @@ public abstract class ScmRepository {
 
     private static final Log log = LogFactory.getLog( ScmRepository.class );
     
-    public static final String  BASE_PATH = "/home/falko/servers/buildserver/scm";
+    public static final File CACHE_DIR = new File( BsPlugin.buildserverDir(), "scm" );
     
     public static ScmRepository forConfig( ScmConfiguration config ) {
         if (config.type.get() == ScmConfiguration.Type.GIT) {

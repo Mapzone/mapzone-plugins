@@ -46,7 +46,7 @@ public class GitRepository
     
     @Override
     public ScmRepository init( ScmConfiguration config ) {
-        this.dir = new File( BASE_PATH, config.name.get() );
+        this.dir = new File( CACHE_DIR, config.name.get() );
         this.origin = config.url.get();
         return this;
     }

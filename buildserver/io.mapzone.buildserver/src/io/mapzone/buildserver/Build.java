@@ -23,17 +23,15 @@ import java.util.stream.Collectors;
 
 import java.io.File;
 import java.io.IOException;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -42,8 +40,6 @@ import org.polymap.core.ui.UIUtils;
 import io.mapzone.buildserver.BuildConfiguration.ScmConfiguration;
 import io.mapzone.buildserver.BuildConfiguration.TargetPlatformConfiguration;
 import io.mapzone.buildserver.scm.ScmRepository;
-import io.mapzone.buildserver.tp.LocationHandler;
-import io.mapzone.buildserver.tp.TargetPlatformHelper;
 
 /**
  * 
@@ -56,16 +52,14 @@ public class Build {
 
     private BuildConfiguration      config;
     
-    private File                    workspaceDir;
+    private File                    workspace;
     
-    private IWorkspace              workspace;
-
     private CoreException           exception;
 
     
-    public Build( BuildConfiguration config, File workspaceDir ) {
+    public Build( BuildConfiguration config, File workspace ) {
         this.config = config;
-        this.workspaceDir = workspaceDir;
+        this.workspace = workspace;
     }
 
 
@@ -73,14 +67,9 @@ public class Build {
         monitor.beginTask( "Build", 20 );
         try {
             createWorkspace( UIUtils.submon( monitor, 1 ) );
-            enableAutoBuild( false, UIUtils.submon( monitor, 1 ) );
             installTargetPlatform( UIUtils.submon( monitor, 4 ) );
             installBundleSources( UIUtils.submon( monitor, 4 ) );
             
-//            workspace.build( IncrementalProjectBuilder.FULL_BUILD, UIUtils.submon( monitor, 10 ) );
-//            File exportDir = export( UIUtils.submon( monitor, 10 ) );
-//            reportProblems( UIUtils.submon( monitor, 1 ) );
-            workspace.save( true, UIUtils.submon( monitor, 1 ) );
             log.info( "DONE." );
         }
         catch (CoreException e) {
@@ -91,37 +80,30 @@ public class Build {
     }
 
     
-    protected void createWorkspace( IProgressMonitor monitor ) {
-        workspace = new Workspace(); //ResourcesPlugin.getWorkspace();
-        File root = workspace.getRoot().getRawLocation().toFile();
-        monitor.beginTask( "Create workspace in: " + root, 1 );
-        if (root.list().length > 0) {
-            log.warn( "Workspace is not empty." );
+    public void cleanup() throws IOException {
+        if (workspace.exists()) {
+            FileUtils.deleteDirectory( workspace );
         }
-        monitor.done();
     }
 
 
-    protected void enableAutoBuild( boolean enable, IProgressMonitor monitor ) throws CoreException {
-        monitor.beginTask( (enable?"Enable":"Disable") + " auto build", 1 );
-        final IWorkspaceDescription description = workspace.getDescription();
-        description.setAutoBuilding( enable );
-        workspace.setDescription( description );
+    protected void createWorkspace( IProgressMonitor monitor ) {
+        monitor.beginTask( "Create workspace in: " + workspace.getAbsolutePath(), 1 );
+        workspace.mkdir();
         monitor.done();
     }
 
 
     protected void installTargetPlatform( IProgressMonitor monitor ) throws Exception {
-        TargetPlatformHelper helper = new TargetPlatformHelper();
-        assert helper.list( monitor ).isEmpty();
-        
-        List<LocationHandler> locations = new ArrayList();
+        monitor.beginTask( "Create target platform config", 1 );
+
+        JSONArray tps = new JSONArray();
         for (TargetPlatformConfiguration c : config.targetPlatform) {
-            locations.add( helper.newLocation( c ) );
+            tps.put( new JSONObject().put( "type", c.type.get() ).put( "url", c.url.get() ) );
         }
+        JSONObject json = new JSONObject().put( "targetPlatform", tps );
         
-        helper.create( "Default Target", locations, true, monitor );
-        //helper.list( monitor ).forEach( target -> log.info( "Target: " + target ) );
+        FileUtils.write( new File( workspace, "config" ), json.toString( 2 ), "UTF-8" );
         monitor.done();
     }
 
@@ -135,7 +117,7 @@ public class Build {
             scms.add( scm );
         }
         
-        IProject product = installBundleSource( config.productName.get(), scms, UIUtils.submon( monitor, 1 ) ).get();
+        File product = installBundleSource( config.productName.get(), scms, UIUtils.submon( monitor, 1 ) ).get();
         
         List<String> dependencies = config.type.get() == BuildConfiguration.Type.PRODUCT
                 ? findProductDependencies( product )
@@ -147,16 +129,16 @@ public class Build {
     }
 
     
-    protected List<String> findPluginDependencies( IProject project ) throws IOException {
+    protected List<String> findPluginDependencies( File project ) throws IOException {
         log.warn( "!!!No plugin dependencies!!!" );
         return Collections.EMPTY_LIST;
     }
 
     
-    protected List<String> findProductDependencies( IProject project ) throws IOException {
-        IResource productFile = project.findMember( project.getName() );
+    protected List<String> findProductDependencies( File project ) throws IOException {
+        File productFile = new File( project, project.getName() );
         AtomicBoolean plugins = new AtomicBoolean( false );
-        return FileUtils.readLines( productFile.getLocation().toFile() ).stream()
+        return FileUtils.readLines( productFile ).stream()
                 .peek( line -> {
                     if (line.contains( "<plugins>" )) {
                         plugins.set( true );
@@ -171,46 +153,16 @@ public class Build {
     }
     
     
-    protected Optional<IProject> installBundleSource( String name, List<ScmRepository> scms, IProgressMonitor monitor ) throws Exception {
+    protected Optional<File> installBundleSource( String name, List<ScmRepository> scms, IProgressMonitor monitor ) throws Exception {
         monitor.beginTask( "Copy bundle source: " + name, IProgressMonitor.UNKNOWN );
         for (ScmRepository scm : scms) {
-            if (scm.copyBundle( name, workspace.getRoot().getRawLocation().toFile() )) {
-                IProject project = workspace.getRoot().getProject( name );
-                project.create( UIUtils.submon( monitor, 1 ) );
-                project.open( UIUtils.submon( monitor, 1 ) );
-                project.refreshLocal( IResource.DEPTH_INFINITE, UIUtils.submon( monitor, 1 ) );
+            if (scm.copyBundle( name, workspace )) {
+                File project = new File( workspace, name );
+                assert project.exists();
                 return Optional.of( project );
             }
         }
         return Optional.empty();
     }
 
-    
-//    protected void reportProblems( IProgressMonitor monitor ) throws CoreException {
-//        monitor.beginTask( "Report", IProgressMonitor.UNKNOWN );
-//        IMarker[] markers = workspace.getRoot().findMarkers( null, true, IResource.DEPTH_INFINITE );
-//        for (int i=0; i<10 && i<markers.length; i++) {
-//            monitor.subTask( "[" + severity(markers[i]) + "] " 
-//                    + markers[i].getResource().getName() 
-//                    + ":" + markers[i].getAttribute( IMarker.LINE_NUMBER, -1 )
-//                    + ": " + markers[i].getAttribute( IMarker.MESSAGE, "" ) );
-//        }
-//        if (markers.length > 3) {
-//            monitor.subTask( "... " + markers.length + " problems" );
-//        }
-//        monitor.subTask( "" );
-//        monitor.done();
-//    }
-//
-//    
-//    protected String severity( IMarker marker ) throws CoreException {
-//        int severity = (Integer)marker.getAttribute( IMarker.SEVERITY );
-//        switch (severity) {
-//            case IMarker.SEVERITY_ERROR: return "ERROR";
-//            case IMarker.SEVERITY_WARNING: return "WARN";
-//            case IMarker.SEVERITY_INFO: return "INFO";
-//            default: throw new RuntimeException( "Unknown severity: " + severity );
-//        }
-//    }
-    
 }

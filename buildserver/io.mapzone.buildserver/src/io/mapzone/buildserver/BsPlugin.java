@@ -52,8 +52,19 @@ public class BsPlugin
         return instance().images;
     }
     
+    /**
+     * The directory to store {@link BuildResult} files.
+     */
     public static File exportDataDir() {
         return new File( CorePlugin.getDataLocation( instance() ), "exports" );
+    }
+
+    /**
+     * The directory where runners and SCM cache are stored.
+     */
+    public static File buildserverDir() {
+        // FIXME
+        return new File( "/home/falko/servers/buildserver/" );
     }
 
 
