@@ -14,11 +14,15 @@
  */
 package io.mapzone.buildserver.ui;
 
+import static org.polymap.rhei.batik.app.SvgImageRegistryHelper.NORMAL24;
+import static org.polymap.rhei.batik.app.SvgImageRegistryHelper.WHITE24;
+
 import java.util.stream.Collectors;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -26,8 +30,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
@@ -48,8 +57,12 @@ import org.polymap.rhei.batik.toolkit.md.ListTreeContentProvider;
 import org.polymap.rhei.batik.toolkit.md.MdListViewer;
 import org.polymap.rhei.form.batik.BatikFormContainer;
 
+import org.polymap.model2.runtime.UnitOfWork;
+
 import io.mapzone.buildserver.BsPlugin;
 import io.mapzone.buildserver.BuildConfiguration;
+import io.mapzone.buildserver.BuildConfiguration.ScmConfiguration;
+import io.mapzone.buildserver.BuildConfiguration.TargetPlatformConfiguration;
 import io.mapzone.buildserver.BuildManager;
 import io.mapzone.buildserver.BuildManager.BuildProcess;
 import io.mapzone.buildserver.BuildResult;
@@ -83,18 +96,27 @@ public class BuildConfigurationPanel
     @Scope( BsPlugin.ID )
     protected Context<BuildResult>          buildResult;
     
-    private BatikFormContainer              form;
+    private UnitOfWork                      nested;
+    
+    private BuildConfiguration              nestedConfig;
+    
+    private BatikFormContainer              form, scmForm, tpForm;
 
     private BuildManager                    buildManager;
 
-    private MdListViewer                    resultsList;
-    
+    private MdListViewer                    resultsList, scmList;
+
+    private Button                          fab;
+
     
     @Override
     public void init() {
         super.init();
         site().title.set( "Build Configuration" );
-        buildManager = BuildManager.of( config.get() );
+        
+        nested = config.get().belongsTo().newUnitOfWork();
+        nestedConfig = nested.entity( config.get() );
+        buildManager = BuildManager.of( nestedConfig );
     }
 
 
@@ -108,15 +130,26 @@ public class BuildConfigurationPanel
         createBuildButton( btnContainer );
         IPanelSection resultsSection = tk().createPanelSection( parent, "Results", SWT.NONE );
         createResultsSection( resultsSection.getBody() );
+
+        fab = tk().createFab( "Submit" );
+        fab.setEnabled( false );
+        fab.setVisible( false );
         
         FormDataFactory.on( section.getControl() ).fill().noBottom();
         FormDataFactory.on( btnContainer ).fill().top( section.getControl() ).noBottom();
         FormDataFactory.on( resultsSection.getControl() ).fill().top( btnContainer );
     }
 
+    
+    protected void updateEnabled() {
+        fab.setEnabled( true );
+        fab.setVisible( true );
+    }
 
+    
     protected void createMainSection( Composite parent ) {
-        BuildConfigurationForm formPage = new BuildConfigurationForm( config.get(), false ) {
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 10 ).create() );
+        BuildConfigurationForm formPage = new BuildConfigurationForm( nestedConfig, false ) {
             @Override
             protected void updateEnabled() {
                 //ProjectInfoPanel.this.updateEnabled();
@@ -124,9 +157,154 @@ public class BuildConfigurationPanel
         };
         form = new BatikFormContainer( formPage );
         form.createContents( parent );
+    
+        IPanelSection scmSection = tk().createPanelSection( parent, "Source repositories", SWT.NONE );
+        createScmList( scmSection.getBody() );
+        IPanelSection tpsSection = tk().createPanelSection( parent, "Target platform", SWT.NONE );
+        createTargetPlatformList( tpsSection.getBody() );
+        
+        // layout
+        FormDataFactory.on( form.getContents() ).fill().noBottom();
+        FormDataFactory.on( scmSection.getControl() ).fill().top( form.getContents() ).noBottom().height( 170 );
+        FormDataFactory.on( tpsSection.getControl() ).fill().top( scmSection.getControl() ).noBottom().height( 120 );
+    }
+
+    
+    protected void createScmList( Composite parent ) {
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 0, 8, 0, 0 ).create() );
+
+        // list
+        scmList = tk().createListViewer( parent, SWT.FULL_SELECTION, SWT.SINGLE );
+        scmList.firstLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
+            ScmConfiguration elm = (ScmConfiguration)cell.getElement();
+            cell.setText( elm.type.get().toString() + " - " + StringUtils.abbreviateMiddle( elm.url.get(), "...", 40 ) );
+        }));
+        scmList.iconProvider.set( FunctionalLabelProvider.of( cell -> {
+            ScmConfiguration elm = (ScmConfiguration)cell.getElement();
+            switch (elm.type.get()) {
+                case GIT: cell.setImage( BsPlugin.images().svgImage( "git.svg", NORMAL24 ) ); break;
+                case DIRECTORY: ; break;
+            }
+        }));
+        scmList.setSorter( new ViewerSorter() {
+            @Override public int compare( Viewer viewer, Object e1, Object e2 ) {
+                return ((ScmConfiguration)e2).url.get().compareTo( ((ScmConfiguration)e1).url.get() );
+            }
+        });
+        scmList.addOpenListener( ev -> {
+            ScmConfiguration sel = UIUtils.selection( scmList.getSelection() ).first( ScmConfiguration.class ).get();
+            openScmDialog( sel );
+        });
+        scmList.setContentProvider( new ListTreeContentProvider() );
+        scmList.setInput( nestedConfig.scm );
+        
+        // add button
+        Button addBtn = tk().createButton( parent, null, SWT.PUSH );
+        addBtn.setImage( BsPlugin.images().svgImage( "plus-circle-outline.svg", WHITE24 ) );
+        addBtn.addSelectionListener( UIUtils.selectionListener( ev -> {
+            ScmConfiguration newElm = nestedConfig.scm.createElement( ScmConfiguration.defaults() );
+            int ok = openScmDialog( newElm );
+            if (ok != Window.OK) {
+                nested.rollback();
+            }
+        }));
+        
+        // clear button
+        Button clearBtn = tk().createButton( parent, null, SWT.PUSH );
+        clearBtn.setImage( BsPlugin.images().svgImage( "delete.svg", WHITE24 ) );
+        clearBtn.addSelectionListener( UIUtils.selectionListener( ev -> {
+            throw new RuntimeException( "not yet...");
+        }));
+        
+        // layout
+        FormDataFactory.on( addBtn ).right( 100 ).top( 0 ).width( 35 );
+        FormDataFactory.on( clearBtn ).right( 100 ).top( addBtn ).width( 35 );
+        FormDataFactory.on( scmList.getControl() ).fill().right( addBtn );
     }
 
 
+    protected int openScmDialog( ScmConfiguration elm ) {
+        try {
+            return tk().createSimpleDialog( "Source repository" )
+                    .setContents( p -> {
+                        ScmForm formPage = new ScmForm( elm );
+                        scmForm = new BatikFormContainer( formPage );
+                        scmForm.createContents( p );
+                    })
+                    .addOkAction( () -> {
+                        scmForm.submit( new NullProgressMonitor() );
+                        scmList.refresh();
+                        updateEnabled();
+                        return true;
+                    })
+                    .addCancelAction()
+                    .openAndBlock();
+        }
+        finally {
+            scmForm = null;
+            scmList.setSelection( new StructuredSelection() );
+        }
+    }
+
+    
+    protected void createTargetPlatformList( Composite parent ) {
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 0, 8, 0, 0 ).create() );
+
+        // list
+        MdListViewer tpList = tk().createListViewer( parent, SWT.FULL_SELECTION, SWT.SINGLE );
+        tpList.firstLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
+            TargetPlatformConfiguration elm = (TargetPlatformConfiguration)cell.getElement();
+            cell.setText( elm.type.get().toString() + " - " + StringUtils.abbreviateMiddle( elm.url.get(), "...", 40 ) );
+        }));
+        tpList.iconProvider.set( FunctionalLabelProvider.of( cell -> {
+            TargetPlatformConfiguration elm = (TargetPlatformConfiguration)cell.getElement();
+            switch (elm.type.get()) {
+                case DIRECTORY: cell.setImage( BsPlugin.images().svgImage( "folder.svg", SvgImageRegistryHelper.NORMAL24 ) ); break;
+                case ZIP_DOWNLOAD: cell.setImage( BsPlugin.images().svgImage( "folder-download.svg", SvgImageRegistryHelper.NORMAL24 ) ); break;
+            }
+        }));
+//        tpList.firstSecondaryActionProvider.set( new ActionProvider() {
+//            @Override public void update( ViewerCell cell ) {
+//                cell.setImage( BsPlugin.images().svgImage( "delete-circle.svg", SvgImageRegistryHelper.ACTION24 ) );
+//            }
+//            @Override public void perform( MdListViewer viewer, Object elm ) {
+//            }
+//        });
+        tpList.setSorter( new ViewerSorter() {
+            @Override public int compare( Viewer viewer, Object e1, Object e2 ) {
+                return ((TargetPlatformConfiguration)e2).url.get().compareTo( ((TargetPlatformConfiguration)e1).url.get() );
+            }
+        });
+        tpList.addOpenListener( ev -> {
+            TargetPlatformConfiguration sel = UIUtils.selection( tpList.getSelection() ).first( TargetPlatformConfiguration.class ).get();
+            tk().createSimpleDialog( "Target platform" )
+                .setContents( p -> {
+                    TargetPlatformForm formPage = new TargetPlatformForm( sel );
+                    tpForm = new BatikFormContainer( formPage );
+                    tpForm.createContents( p );
+                })
+                .addOkAction( () -> {
+                    tpForm.submit( new NullProgressMonitor() );
+                    return true;
+                })
+                .addCancelAction()
+                .openAndBlock();
+            tpForm = null;
+            tpList.setSelection( new StructuredSelection() );
+        });
+        tpList.setContentProvider( new ListTreeContentProvider() );
+        tpList.setInput( nestedConfig.targetPlatform );
+        
+        // add button
+        Button addBtn = tk().createButton( parent, null, SWT.PUSH );
+        addBtn.setImage( BsPlugin.images().svgImage( "plus-circle-outline.svg", SvgImageRegistryHelper.WHITE24 ) );
+        
+        // layout
+        FormDataFactory.on( addBtn ).right( 100 ).top( 0 ).width( 35 );
+        FormDataFactory.on( tpList.getControl() ).fill().right( addBtn );
+    }
+
+    
     protected void createBuildButton( Composite parent ) {
         parent.setLayout( FormLayoutFactory.defaults().spacing( 5 ).margins( 0, 3 ).create() );        
         Button btn = tk().createButton( parent, "Build Now", SWT.PUSH );
@@ -180,6 +358,11 @@ public class BuildConfigurationPanel
                 case OK: cell.setImage( BsPlugin.images().svgImage( "check.svg", SvgImageRegistryHelper.OK24 ) ); break;
             }
         }));
+        resultsList.setSorter( new ViewerSorter() {
+            @Override public int compare( Viewer viewer, Object e1, Object e2 ) {
+                return ((BuildResult)e2).started.get().compareTo( ((BuildResult)e1).started.get() );
+            }
+        });
         resultsList.addOpenListener( ev -> {
             buildResult.set( UIUtils.selection( resultsList.getSelection() ).first( BuildResult.class ).get() );
             getContext().openPanel( site().path(), BuildResultPanel.ID );
@@ -190,7 +373,7 @@ public class BuildConfigurationPanel
     
     
     protected void refreshResultsList() {
-        resultsList.setInput( config.get().buildResults.stream().collect( Collectors.toList() ) );        
+        resultsList.setInput( nestedConfig.buildResults.stream().collect( Collectors.toList() ) );        
     }
     
 }

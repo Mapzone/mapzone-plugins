@@ -18,11 +18,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.ViewerSorter;
 
+import org.polymap.core.ui.FormDataFactory;
+import org.polymap.core.ui.FormLayoutFactory;
 import org.polymap.core.ui.UIUtils;
 
 import org.polymap.rhei.batik.Context;
@@ -58,6 +62,10 @@ public class StartPanel
     
     private MdListViewer                    list;
 
+    private Button                          addBtn;
+
+    private Button                          removeBtn;
+
     
     @Override
     public void init() {
@@ -68,11 +76,37 @@ public class StartPanel
 
     @Override
     public void createContents( Composite parent ) {
-        parent.setLayout( new FillLayout() );
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 0, 8 ).create() );
         
+        createList( parent );
+        createButtons( parent );
+        
+        FormDataFactory.on( list.getControl() ).fill().noBottom();
+        FormDataFactory.on( addBtn ).left( 35 ).right( 65 ).top( list.getControl() ).noBottom();
+//        FormDataFactory.on( removeBtn ).left( addBtn ).right( 75 ).top( list.getControl() ).noBottom();
+    }
+
+    
+    protected void createButtons( Composite parent ) {
+        addBtn = tk().createButton( parent, "New...", SWT.PUSH );
+        addBtn.setImage( BsPlugin.images().svgImage( "plus-circle-outline.svg", SvgImageRegistryHelper.WHITE24 ) );
+        addBtn.addSelectionListener( UIUtils.selectionListener( ev -> {
+            
+        }));
+
+//        removeBtn = tk().createButton( parent, "Remove", SWT.PUSH );
+//        removeBtn.setImage( BsPlugin.images().svgImage( "delete-circle.svg", SvgImageRegistryHelper.WHITE24 ) );
+//        removeBtn.addSelectionListener( UIUtils.selectionListener( ev -> {
+//            
+//        }));
+//        removeBtn.setEnabled( false );
+    }
+    
+    
+    protected void createList( Composite parent ) {
         list = tk().createListViewer( parent, SWT.FULL_SELECTION, SWT.SINGLE );
         list.iconProvider.set( FunctionalLabelProvider.of( cell -> {
-            cell.setImage( BsPlugin.images().svgImage( "wrench.svg", SvgImageRegistryHelper.NORMAL12 ) );
+            cell.setImage( BsPlugin.images().svgImage( "package-variant.svg", SvgImageRegistryHelper.NORMAL24 ) );
         }));
         list.firstLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
             BuildConfiguration elm = (BuildConfiguration)cell.getElement();
@@ -80,8 +114,15 @@ public class StartPanel
         }));
         list.secondLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
             BuildConfiguration elm = (BuildConfiguration)cell.getElement();
-            cell.setText( elm.type.get() + ": " + elm.productName.get() );
+            cell.setText( elm.productName.get() + " -- " + elm.type.get() );
         }));
+        list.secondSecondaryActionProvider.set( new ActionProvider() {
+            @Override public void update( ViewerCell cell ) {
+                cell.setImage( BsPlugin.images().svgImage( "delete-circle.svg", SvgImageRegistryHelper.ACTION24 ) );
+            }
+            @Override public void perform( MdListViewer viewer, Object elm ) {
+            }
+        });
         list.firstSecondaryActionProvider.set( new ActionProvider() {
             @Override public void update( ViewerCell cell ) {
                 cell.setImage( BsPlugin.images().svgImage( "chevron-right.svg", SvgImageRegistryHelper.NORMAL24 ) );
@@ -89,6 +130,11 @@ public class StartPanel
             @Override public void perform( MdListViewer viewer, Object elm ) {
                 config.set( UIUtils.selection( list.getSelection() ).first( BuildConfiguration.class ).get() );
                 getContext().openPanel( site().path(), BuildConfigurationPanel.ID );
+            }
+        });
+        list.setSorter( new ViewerSorter() {
+            @Override public int compare( Viewer viewer, Object e1, Object e2 ) {
+                return ((BuildConfiguration)e1).name.get().compareTo( ((BuildConfiguration)e2).name.get() );
             }
         });
         list.setContentProvider( new ListTreeContentProvider() );

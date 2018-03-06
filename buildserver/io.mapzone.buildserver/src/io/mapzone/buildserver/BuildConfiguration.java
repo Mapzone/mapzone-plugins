@@ -14,6 +14,8 @@
  */
 package io.mapzone.buildserver;
 
+import java.util.Objects;
+
 import org.polymap.model2.CollectionProperty;
 import org.polymap.model2.Composite;
 import org.polymap.model2.Computed;
@@ -21,8 +23,10 @@ import org.polymap.model2.ComputedBidiManyAssocation;
 import org.polymap.model2.Defaults;
 import org.polymap.model2.Entity;
 import org.polymap.model2.ManyAssociation;
+import org.polymap.model2.Nullable;
 import org.polymap.model2.Property;
 import org.polymap.model2.runtime.UnitOfWork;
+import org.polymap.model2.runtime.ValueInitializer;
 
 /**
  * 
@@ -70,17 +74,45 @@ public class BuildConfiguration
     public static class ScmConfiguration
             extends Composite {
 
+        public static final ValueInitializer<ScmConfiguration> defaults() {
+            return (ScmConfiguration proto) -> {
+                proto.type.set( Type.GIT );
+                proto.url.set( "" );
+                proto.branch.set( "master" );
+                return proto;
+            };
+        }
+        
         public enum Type {
             DIRECTORY, GIT
         }
 
         public Property<Type>       type;
         
+        @Deprecated
         public Property<String>     name;
         
         public Property<String>     url;
         
+        @Nullable
         public Property<String>     branch;
+
+        @Override
+        public boolean equals( Object obj ) {
+            if (obj == this) {
+                return true;
+            }
+            else if (obj instanceof TargetPlatformConfiguration) {
+                ScmConfiguration other = (ScmConfiguration)obj;
+                return url.get().equals( other.url.get() ) && type.get().equals( other.type.get() );
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash( url.get(), type.get() );
+        }
     }
 
     
@@ -97,6 +129,23 @@ public class BuildConfiguration
         public Property<String>     url;
         
         public Property<Type>       type;
+
+        @Override
+        public boolean equals( Object obj ) {
+            if (obj == this) {
+                return true;
+            }
+            else if (obj instanceof TargetPlatformConfiguration) {
+                TargetPlatformConfiguration other = (TargetPlatformConfiguration)obj;
+                return url.get().equals( other.url.get() ) && type.get().equals( other.type.get() );
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash( url.get(), type.get() );
+        }
     }
 
 }

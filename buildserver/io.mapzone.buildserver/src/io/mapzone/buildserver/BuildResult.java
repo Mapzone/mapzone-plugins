@@ -30,8 +30,8 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -132,8 +132,9 @@ public class BuildResult
                                 LogEntry.Severity severity = LogEntry.Severity.valueOf( matcher.group( 1 ) );
                                 logEntry = new LogEntry();
                                 logEntry.severity = severity;
-                                logEntry.head = line;
-                                logEntry.bundleId = FilenameUtils.getPath( file.getName() );
+                                logEntry.bundleId = StringUtils.substringBefore( file.getName(), "_" );  // version number
+                                logEntry.head = StringUtils.substringAfter( line, logEntry.bundleId );
+                                
                                 if (severities.length == 0 || ArrayUtils.contains( severities, severity )) {
                                     result.add( logEntry );
                                 }

@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.polymap.core.runtime.Polymap;
@@ -40,6 +41,7 @@ import io.mapzone.buildserver.BsPlugin;
 import io.mapzone.buildserver.BuildResult;
 import io.mapzone.buildserver.BuildResult.LogEntry;
 import io.mapzone.buildserver.BuildResult.LogEntry.Severity;
+import io.mapzone.buildserver.BuildResult.Status;
 
 /**
  * 
@@ -78,13 +80,19 @@ public class BuildResultPanel
     public void createContents( Composite parent ) {
         parent.setLayout( FormLayoutFactory.defaults().spacing( 5 ).margins( 3, 8 ).create() );
         
-        IPanelSection consoleSection = tk().createPanelSection( parent, "Console", SWT.NONE );
-        createConsoleSection( consoleSection.getBody() );
-        IPanelSection logsSection = tk().createPanelSection( parent, "Errors / Warnings", SWT.NONE );
-        createLogsSection( logsSection.getBody() );
-        
-        FormDataFactory.on( logsSection.getControl() ).fill().bottom( 50 ).height( 100 );
-        FormDataFactory.on( consoleSection.getControl() ).fill().top( logsSection.getControl() ).height( 100 );
+        if (buildResult.get().status.get() == Status.RUNNING) {
+            Label l = tk().createFlowText( parent, "Running ..." );
+            FormDataFactory.on( l ).left( 0 ).top( 0 );
+        }
+        else {
+            IPanelSection consoleSection = tk().createPanelSection( parent, "Console", SWT.NONE );
+            createConsoleSection( consoleSection.getBody() );
+            IPanelSection logsSection = tk().createPanelSection( parent, "Errors / Warnings", SWT.NONE );
+            createLogsSection( logsSection.getBody() );
+
+            FormDataFactory.on( logsSection.getControl() ).fill().bottom( 50 ).height( 100 );
+            FormDataFactory.on( consoleSection.getControl() ).fill().top( logsSection.getControl() ).height( 100 );
+        }
     }
 
 
@@ -101,9 +109,9 @@ public class BuildResultPanel
         parent.setLayout( new FillLayout() );
         StringBuilder buf = new StringBuilder( 4*1024 );
         for (LogEntry entry : buildResult.get().logEntries( 5, Severity.ERROR )) {
+            buf.append( "______ " ).append( entry.severity ).append( " ______________________________________________________\n" );
             buf.append( entry.head ).append( "\n" );
             entry.text.forEach( line -> buf.append( "    " ).append( line ).append( "\n" ) );
-            buf.append( "--------\n" );
         }
         
         Text text = tk().createText( parent, buf.length()>0?buf.toString():"<empty>", SWT.MULTI, SWT.BORDER );

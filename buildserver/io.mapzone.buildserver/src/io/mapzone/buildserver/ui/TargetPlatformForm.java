@@ -15,34 +15,33 @@
 package io.mapzone.buildserver.ui;
 
 import org.eclipse.swt.widgets.Composite;
+
+import org.polymap.core.ui.ColumnDataFactory;
 import org.polymap.core.ui.ColumnLayoutFactory;
 
 import org.polymap.rhei.field.FormFieldEvent;
 import org.polymap.rhei.field.IFormFieldListener;
 import org.polymap.rhei.field.NotEmptyValidator;
+import org.polymap.rhei.field.VerticalFieldLayout;
 import org.polymap.rhei.form.DefaultFormPage;
-import org.polymap.rhei.form.FieldBuilder;
 import org.polymap.rhei.form.IFormPageSite;
 
-import io.mapzone.buildserver.BuildConfiguration;
+import io.mapzone.buildserver.BuildConfiguration.TargetPlatformConfiguration;
 
 /**
  * 
  *
  * @author Falko Bräutigam
  */
-public class BuildConfigurationForm 
+public class TargetPlatformForm 
         extends DefaultFormPage 
         implements IFormFieldListener {
 
-    private BuildConfiguration      config;
-    
-    private boolean                 creation;
+    private TargetPlatformConfiguration config;
     
 
-    public BuildConfigurationForm( BuildConfiguration config, boolean creation ) {
+    public TargetPlatformForm( TargetPlatformConfiguration config ) {
         this.config = config;
-        this.creation = creation;
     }
 
 
@@ -52,39 +51,21 @@ public class BuildConfigurationForm
         
         Composite body = site.getPageBody();
         body.setLayout( ColumnLayoutFactory.defaults().spacing( 5 ).create() );
-        //site.setDefaultFieldLayout( VerticalFieldLayout.INSTANCE );
-
-        // name
-        FieldBuilder nameField = site.newFormField( new PropertyAdapter( config.name ) );
-        nameField.tooltip.put( "The name of this build configuration.\nSomething like: org.example.test.product_master" );
-        nameField.fieldEnabled.put( creation );
-        if (creation) {
-            nameField.validator.put( new NotEmptyValidator<String,String>() {
-                @Override
-                public String validate( String fieldValue ) {
-                    String result = super.validate( fieldValue );
-                    if (result == null) {
-                    }
-                    return result;
-                }
-            });
-        }
-        nameField.create();
-
-        // productName
-        site.newFormField( new PropertyAdapter( config.productName ) )
-                .label.put( "Product" )
-                .tooltip.put( "The symbolic name of the product to build" )
-                .fieldEnabled.put( creation )
-                .validator.put( new NotEmptyValidator() )
-                .create();
+        site.setDefaultFieldLayout( VerticalFieldLayout.INSTANCE );
 
         // type
         site.newFormField( new PropertyAdapter( config.type ) )
                 .label.put( "Type" )
-                .fieldEnabled.put( creation )
                 .validator.put( new NotEmptyValidator() )
                 .create();
+
+        // url
+        site.newFormField( new PropertyAdapter( config.url ) )
+                .label.put( "URL" )
+                .tooltip.put( "The URL of this entry, depending on the type" )
+                .validator.put( new NotEmptyValidator() )
+                .create()
+                .setLayoutData( ColumnDataFactory.defaults().widthHint( 350 ).create() );
     }
     
 
