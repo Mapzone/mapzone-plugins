@@ -112,8 +112,8 @@ public class BuildRepository {
             proto.userId.set( "Test" );
             proto.type.set( BuildConfig.Type.PLUGIN );
             proto.targetPlatform.createElement( (TargetPlatformConfig proto2) -> {
-                proto2.type.set( TargetPlatformConfig.Type.DIRECTORY );
-                proto2.url.set( "/home/falko/servers/polymap4_target/plugins/" );
+                proto2.type.set( TargetPlatformConfig.Type.ZIP_DOWNLOAD );
+                proto2.url.set( "file:///home/falko/servers/polymap4-targetplatform.zip" );
                 return proto2;
             });
             proto.scm.createElement( (ScmConfig proto2) -> {
@@ -130,8 +130,8 @@ public class BuildRepository {
             proto.type.set( BuildConfig.Type.PLUGIN );
             proto.userId.set( "Test" );
             proto.targetPlatform.createElement( (TargetPlatformConfig proto2) -> {
-                proto2.type.set( TargetPlatformConfig.Type.DIRECTORY );
-                proto2.url.set( "/home/falko/servers/polymap4-targetplatform/polymap4_target/plugins/" );
+                proto2.type.set( TargetPlatformConfig.Type.ZIP_DOWNLOAD );
+                proto2.url.set( "file:///home/falko/servers/polymap4-targetplatform.zip" );
                 return proto2;
             });
             proto.scm.createElement( (ScmConfig proto2) -> {
@@ -148,8 +148,8 @@ public class BuildRepository {
             proto.userId.set( "Test" );
             proto.type.set( BuildConfig.Type.PRODUCT );
             proto.targetPlatform.createElement( (TargetPlatformConfig proto2) -> {
-                proto2.type.set( TargetPlatformConfig.Type.DIRECTORY );
-                proto2.url.set( "/home/falko/servers/polymap4-targetplatform/polymap4_target/plugins/" );
+                proto2.type.set( TargetPlatformConfig.Type.ZIP_DOWNLOAD );
+                proto2.url.set( "file:///home/falko/servers/polymap4-targetplatform.zip" );
                 return proto2;
             });
             proto.scm.createElement( (ScmConfig proto2) -> {

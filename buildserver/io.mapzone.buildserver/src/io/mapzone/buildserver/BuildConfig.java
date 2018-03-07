@@ -147,7 +147,7 @@ public class BuildConfig
         }
         
         public enum Type {
-            DIRECTORY, ZIP_DOWNLOAD
+            /*DIRECTORY,*/ ZIP_DOWNLOAD
         }
         
         public Property<String>     url;

@@ -14,24 +14,17 @@
  */
 package io.mapzone.buildserver.ui;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 import org.eclipse.swt.widgets.Composite;
 
 import org.polymap.core.ui.ColumnDataFactory;
 import org.polymap.core.ui.ColumnLayoutFactory;
 
-import org.polymap.rhei.field.FormFieldEvent;
-import org.polymap.rhei.field.IFormFieldListener;
 import org.polymap.rhei.field.NotEmptyValidator;
-import org.polymap.rhei.field.PicklistFormField;
 import org.polymap.rhei.field.VerticalFieldLayout;
 import org.polymap.rhei.form.DefaultFormPage;
 import org.polymap.rhei.form.IFormPageSite;
 
 import io.mapzone.buildserver.BuildConfig.ScmConfig;
-import io.mapzone.buildserver.BuildConfig.ScmConfig.Type;
 
 /**
  * 
@@ -39,8 +32,7 @@ import io.mapzone.buildserver.BuildConfig.ScmConfig.Type;
  * @author Falko Bräutigam
  */
 public class ScmForm 
-        extends DefaultFormPage 
-        implements IFormFieldListener {
+        extends DefaultFormPage {
 
     private ScmConfig        config;
     
@@ -61,15 +53,7 @@ public class ScmForm
         // type
         site.newFormField( new PropertyAdapter( config.type ) )
                 .label.put( "Type" )
-                .field.put( new PicklistFormField( Arrays.stream( ScmConfig.Type.values() ).map( v -> v.toString() ).collect( Collectors.toList()  ) ) )
-                .validator.put( new NotEmptyValidator<String,ScmConfig.Type>() {
-                    @Override public Type transform2Model( String fieldValue ) throws Exception {
-                        return ScmConfig.Type.valueOf( fieldValue );
-                    }
-                    @Override public String transform2Field( Type modelValue ) throws Exception {
-                        return modelValue.toString();
-                    }
-                })
+                .field.put( EnumPicklistFormField.create( ScmConfig.Type.values() ) )
                 .fieldEnabled.put( false )
                 .create()
                 .setLayoutData( ColumnDataFactory.defaults().widthHint( 350 ).create() );
@@ -90,17 +74,4 @@ public class ScmForm
                 .create();
     }
     
-
-    @Override
-    public void fieldChange( FormFieldEvent ev ) {
-        if (ev.getEventCode() == VALUE_CHANGE) {
-        }
-    }
-
-
-    protected void updateEnabled() {
-        // XXX Auto-generated method stub
-        throw new RuntimeException( "not yet implemented." );
-    }
-
 }

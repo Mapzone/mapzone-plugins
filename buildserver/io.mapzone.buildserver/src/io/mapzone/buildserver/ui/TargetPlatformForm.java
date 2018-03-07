@@ -19,8 +19,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.polymap.core.ui.ColumnDataFactory;
 import org.polymap.core.ui.ColumnLayoutFactory;
 
-import org.polymap.rhei.field.FormFieldEvent;
-import org.polymap.rhei.field.IFormFieldListener;
 import org.polymap.rhei.field.NotEmptyValidator;
 import org.polymap.rhei.field.VerticalFieldLayout;
 import org.polymap.rhei.form.DefaultFormPage;
@@ -34,8 +32,7 @@ import io.mapzone.buildserver.BuildConfig.TargetPlatformConfig;
  * @author Falko Bräutigam
  */
 public class TargetPlatformForm 
-        extends DefaultFormPage 
-        implements IFormFieldListener {
+        extends DefaultFormPage {
 
     private TargetPlatformConfig config;
     
@@ -69,17 +66,4 @@ public class TargetPlatformForm
                 .setLayoutData( ColumnDataFactory.defaults().widthHint( 350 ).create() );
     }
     
-
-    @Override
-    public void fieldChange( FormFieldEvent ev ) {
-        if (ev.getEventCode() == VALUE_CHANGE) {
-        }
-    }
-
-
-    protected void updateEnabled() {
-        // XXX Auto-generated method stub
-        throw new RuntimeException( "not yet implemented." );
-    }
-
 }

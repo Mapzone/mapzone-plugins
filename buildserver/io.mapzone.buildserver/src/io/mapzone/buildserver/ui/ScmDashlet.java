@@ -29,12 +29,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.polymap.core.ui.FormLayoutFactory;
 import org.polymap.core.ui.UIUtils;
 
 import org.polymap.rhei.batik.dashboard.DashletSite;
+import org.polymap.rhei.batik.dashboard.ISubmitableDashlet;
 import org.polymap.rhei.batik.toolkit.md.FunctionalLabelProvider;
 import org.polymap.rhei.batik.toolkit.md.ListTreeContentProvider;
 import org.polymap.rhei.batik.toolkit.md.MdListViewer;
@@ -51,7 +53,8 @@ import io.mapzone.buildserver.BuildConfig.ScmConfig;
  * @author Falko Bräutigam
  */
 public class ScmDashlet
-        extends BuildConfigDashlet {
+        extends BuildConfigDashlet
+        implements ISubmitableDashlet {
 
     private static final Log log = LogFactory.getLog( ScmDashlet.class );
     
@@ -75,10 +78,14 @@ public class ScmDashlet
         getSite().title.set( "Source repositories" );
     }
 
+    @Override
+    public boolean submit( IProgressMonitor monitor ) throws Exception {
+        return true;
+    }
 
     @Override
     public void createContents( Composite parent ) {
-        parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 0, 8, 0, 0 ).create() );
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 6 ).margins( 0, 8, 3, 0 ).create() );
 
         // list
         list = tk().createListViewer( parent, SWT.FULL_SELECTION, SWT.SINGLE );
@@ -115,7 +122,9 @@ public class ScmDashlet
         
         // clear button
         clearBtn = createClearButton( parent, ev -> {
-            throw new RuntimeException( "not yet...");
+            config.scm.clear();
+            list.setInput( config.scm );
+            getSite().enableSubmit( true, true );
         });
         
         layout( list, addBtn, clearBtn );
@@ -132,8 +141,8 @@ public class ScmDashlet
                     })
                     .addOkAction( () -> {
                         dialogForm.submit( new NullProgressMonitor() );
-                        list.refresh();
                         getSite().enableSubmit( true, true );
+                        list.setInput( config.scm );
                         return true;
                     })
                     .addCancelAction()

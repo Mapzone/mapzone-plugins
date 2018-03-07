@@ -24,11 +24,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import io.mapzone.buildserver.BuildConfig;
 import io.mapzone.buildserver.BuildConfig.TargetPlatformConfig;
-import io.mapzone.buildserver.BuildConfig.TargetPlatformConfig.Type;
 
 /**
  * 
- *
+ * @deprecated Local directory is no longer supported.
  * @author Falko Bräutigam
  */
 public class LocalDirectoryStrategy
@@ -38,7 +37,8 @@ public class LocalDirectoryStrategy
 
     @Override
     public boolean init( BuildConfig config ) {
-        return config.targetPlatform.stream().anyMatch( tp -> tp.type.get() == Type.DIRECTORY );
+        throw new RuntimeException( "Local directory is no longer supported." );
+        //return config.targetPlatform.stream().anyMatch( tp -> tp.type.get() == Type.DIRECTORY );
     }
 
 

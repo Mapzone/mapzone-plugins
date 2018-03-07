@@ -56,6 +56,7 @@ public abstract class BuildConfigDashlet
     protected Button createClearButton( Composite parent, Consumer<SelectionEvent> listener  ) {
         Button clearBtn = tk().createButton( parent, null, SWT.PUSH );
         clearBtn.setImage( BsPlugin.images().svgImage( "delete.svg", WHITE24 ) );
+        clearBtn.setToolTipText( "Delete <b>ALL</b> entries from the list!" );
         clearBtn.addSelectionListener( UIUtils.selectionListener( listener ) );
         return clearBtn;
     }

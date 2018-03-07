@@ -62,7 +62,7 @@ public class ZipDownloadStrategy
         for (TargetPlatformConfig c : context.config.get().targetPlatform) {
             String url = download( context, c, monitor );
             tps.put( new JSONObject()
-                    .put( "type", Type.DIRECTORY.toString() )
+                    .put( "type", "DIRECTORY" )
                     .put( "url", url ) );
         }
         saveConfig( context, config );

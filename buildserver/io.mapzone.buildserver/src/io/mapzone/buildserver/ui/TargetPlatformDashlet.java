@@ -86,7 +86,7 @@ public class TargetPlatformDashlet
 
     @Override
     public void createContents( Composite parent ) {
-        parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 0, 8, 0, 0 ).create() );
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 6 ).margins( 0, 8, 3, 0 ).create() );
 
         // list
         list = tk().createListViewer( parent, SWT.FULL_SELECTION, SWT.SINGLE );
@@ -97,7 +97,7 @@ public class TargetPlatformDashlet
         list.iconProvider.set( FunctionalLabelProvider.of( cell -> {
             TargetPlatformConfig elm = (TargetPlatformConfig)cell.getElement();
             switch (elm.type.get()) {
-                case DIRECTORY: cell.setImage( BsPlugin.images().svgImage( "folder.svg", SvgImageRegistryHelper.NORMAL24 ) ); break;
+                //case DIRECTORY: cell.setImage( BsPlugin.images().svgImage( "folder.svg", SvgImageRegistryHelper.NORMAL24 ) ); break;
                 case ZIP_DOWNLOAD: cell.setImage( BsPlugin.images().svgImage( "folder-download.svg", SvgImageRegistryHelper.NORMAL24 ) ); break;
             }
         }));
@@ -123,7 +123,9 @@ public class TargetPlatformDashlet
         
         // clear button
         clearBtn = createClearButton( parent, ev -> {
-            throw new RuntimeException( "not yet...");
+            config.targetPlatform.clear();
+            list.setInput( config.targetPlatform );
+            getSite().enableSubmit( true, true );
         });
         
         layout( list, addBtn, clearBtn );
@@ -140,8 +142,8 @@ public class TargetPlatformDashlet
                     })
                     .addOkAction( () -> {
                         dialogForm.submit( new NullProgressMonitor() );
-                        list.refresh();
                         getSite().enableSubmit( true, true );
+                        list.setInput( config.targetPlatform );
                         return true;
                     })
                     .addCancelAction()

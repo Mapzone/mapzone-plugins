@@ -29,7 +29,6 @@ import org.polymap.core.runtime.config.Configurable;
 import org.polymap.core.runtime.config.Immutable;
 
 import io.mapzone.buildserver.scm.GitStrategy;
-import io.mapzone.buildserver.tp.LocalDirectoryStrategy;
 import io.mapzone.buildserver.tp.ZipDownloadStrategy;
 
 /**
@@ -47,7 +46,7 @@ public abstract class BuildStrategy {
             InitWorkspaceStrategy.class, 
             GitStrategy.class,
             ZipDownloadStrategy.class,
-            LocalDirectoryStrategy.class,
+            //LocalDirectoryStrategy.class,
             BuildRunnerStrategy.class};
     
     
