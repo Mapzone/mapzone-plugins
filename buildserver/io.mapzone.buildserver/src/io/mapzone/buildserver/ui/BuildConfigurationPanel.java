@@ -41,8 +41,10 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import org.polymap.core.runtime.Polymap;
+import org.polymap.core.runtime.UIThreadExecutor;
 import org.polymap.core.ui.FormDataFactory;
 import org.polymap.core.ui.FormLayoutFactory;
+import org.polymap.core.ui.StatusDispatcher;
 import org.polymap.core.ui.UIUtils;
 
 import org.polymap.rhei.batik.Context;
@@ -51,10 +53,13 @@ import org.polymap.rhei.batik.PanelIdentifier;
 import org.polymap.rhei.batik.Scope;
 import org.polymap.rhei.batik.app.SvgImageRegistryHelper;
 import org.polymap.rhei.batik.toolkit.IPanelSection;
+import org.polymap.rhei.batik.toolkit.Snackbar.Appearance;
 import org.polymap.rhei.batik.toolkit.md.ActionProvider;
 import org.polymap.rhei.batik.toolkit.md.FunctionalLabelProvider;
 import org.polymap.rhei.batik.toolkit.md.ListTreeContentProvider;
 import org.polymap.rhei.batik.toolkit.md.MdListViewer;
+import org.polymap.rhei.field.FormFieldEvent;
+import org.polymap.rhei.field.IFormFieldListener;
 import org.polymap.rhei.form.batik.BatikFormContainer;
 
 import org.polymap.model2.runtime.UnitOfWork;
@@ -65,6 +70,7 @@ import io.mapzone.buildserver.BuildConfig.ScmConfig;
 import io.mapzone.buildserver.BuildConfig.TargetPlatformConfig;
 import io.mapzone.buildserver.BuildManager;
 import io.mapzone.buildserver.BuildManager.BuildProcess;
+import io.mapzone.buildserver.BuildRepository;
 import io.mapzone.buildserver.BuildResult;
 
 /**
@@ -73,53 +79,93 @@ import io.mapzone.buildserver.BuildResult;
  * @author Falko Bräutigam
  */
 public class BuildConfigurationPanel
-        extends BsPanel {
+        extends BsPanel
+        implements IFormFieldListener {
 
     private static final Log log = LogFactory.getLog( BuildConfigurationPanel.class );
 
-    public static final PanelIdentifier     ID = PanelIdentifier.parse( "buildconfig" );
+    public static final PanelIdentifier ID = PanelIdentifier.parse( "buildconfig" );
 
-    private DateFormat                      df = SimpleDateFormat.getDateInstance( DateFormat.LONG, Polymap.getSessionLocale() );
+    private DateFormat                  df = SimpleDateFormat.getDateInstance( DateFormat.LONG, Polymap.getSessionLocale() );
 
-    private DateFormat                      tf = SimpleDateFormat.getTimeInstance( DateFormat.DEFAULT, Polymap.getSessionLocale() );
+    private DateFormat                  tf = SimpleDateFormat.getTimeInstance( DateFormat.DEFAULT, Polymap.getSessionLocale() );
     
     /**
-     * Inbound: The config the work with.
+     * Inbound: The config the work with, or null to create a new one. Use
+     * {@link #nestedConfig} to modify!
      */
     @Mandatory
     @Scope( BsPlugin.ID )
-    protected Context<BuildConfig>   config;
+    protected Context<BuildConfig>      config;
 
-    /**
-     * Outbound:
-     */
+    /** Outbound: */
     @Scope( BsPlugin.ID )
-    protected Context<BuildResult>          buildResult;
+    protected Context<BuildResult>      buildResult;
     
-    private UnitOfWork                      nested;
+    /** True if {@link #nested} was created by this panel. */
+    private boolean                     created;
     
-    private BuildConfig              nestedConfig;
+    private UnitOfWork                  uow, nested;
     
-    private BatikFormContainer              form, scmForm, tpForm;
+    private BuildConfig                 nestedConfig;
+    
+    private BatikFormContainer          form, scmForm, tpForm;
 
-    private BuildManager                    buildManager;
+    private BuildManager                buildManager;
 
-    private MdListViewer                    resultsList, scmList;
+    private MdListViewer                resultsList, scmList;
 
-    private Button                          fab;
+    private Button                      fab;
 
     
     @Override
     public void init() {
         super.init();
         site().title.set( "Build Configuration" );
-        
-        nested = config.get().belongsTo().newUnitOfWork();
-        nestedConfig = nested.entity( config.get() );
-        buildManager = BuildManager.of( nestedConfig );
+
+        this.uow = BuildRepository.session();
+        this.nested = uow.newUnitOfWork();
+        if (!config.isPresent()) {
+            // create new
+            this.nestedConfig = nested.createEntity( BuildConfig.class, null, BuildConfig.defaults() );
+            this.created = true;
+        }
+        else {
+            // edit existing
+            assert config.get().belongsTo() == uow;
+            this.nestedConfig = nested.entity( config.get() );
+            this.created = false;
+        }
+     
+        this.buildManager = BuildManager.of( nestedConfig );
+    }
+
+    
+    @Override
+    public void dispose() {
+        if (nested != null) {
+            nested.close();
+        }
+        super.dispose();
     }
 
 
+    protected void submit() {
+        try {
+            form.submit( new NullProgressMonitor() );
+            nested.commit();
+            uow.commit();
+        
+            tk().createSnackbar( Appearance.FadeIn, "Saved" );
+            UIThreadExecutor.async( () -> fab.setEnabled( false ) );  // XXX fixes race with updateEnables()
+        }
+        catch (Exception e) {
+            StatusDispatcher.handleError( "Unable to save changes.", e );
+            uow.rollback();
+        }
+    }
+
+    
     @Override
     public void createContents( Composite parent ) {
         parent.setLayout( FormLayoutFactory.defaults().spacing( 5 ).margins( 3, 8 ).create() );
@@ -134,6 +180,7 @@ public class BuildConfigurationPanel
         fab = tk().createFab( "Submit" );
         fab.setEnabled( false );
         fab.setVisible( false );
+        fab.addSelectionListener( UIUtils.selectionListener( ev -> submit() ) );
         
         FormDataFactory.on( section.getControl() ).fill().noBottom();
         FormDataFactory.on( btnContainer ).fill().top( section.getControl() ).noBottom();
@@ -147,16 +194,20 @@ public class BuildConfigurationPanel
     }
 
     
+    @Override
+    public void fieldChange( FormFieldEvent ev ) {
+        if (ev.getEventCode() == IFormFieldListener.VALUE_CHANGE && form.isValid()) {
+            updateEnabled();
+        }
+    }
+
+
     protected void createMainSection( Composite parent ) {
         parent.setLayout( FormLayoutFactory.defaults().spacing( 10 ).create() );
-        BuildConfigurationForm formPage = new BuildConfigurationForm( nestedConfig, false ) {
-            @Override
-            protected void updateEnabled() {
-                //ProjectInfoPanel.this.updateEnabled();
-            }
-        };
+        BuildConfigurationForm formPage = new BuildConfigurationForm( nestedConfig, created );
         form = new BatikFormContainer( formPage );
         form.createContents( parent );
+        form.addFieldListener( this );
     
         IPanelSection scmSection = tk().createPanelSection( parent, "Source repositories", SWT.NONE );
         createScmList( scmSection.getBody() );

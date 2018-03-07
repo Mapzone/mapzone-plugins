@@ -16,6 +16,8 @@ package io.mapzone.buildserver;
 
 import java.util.Objects;
 
+import org.polymap.core.runtime.event.EventManager;
+
 import org.polymap.model2.CollectionProperty;
 import org.polymap.model2.Composite;
 import org.polymap.model2.Computed;
@@ -25,6 +27,7 @@ import org.polymap.model2.Entity;
 import org.polymap.model2.ManyAssociation;
 import org.polymap.model2.Nullable;
 import org.polymap.model2.Property;
+import org.polymap.model2.runtime.Lifecycle;
 import org.polymap.model2.runtime.UnitOfWork;
 import org.polymap.model2.runtime.ValueInitializer;
 
@@ -34,19 +37,28 @@ import org.polymap.model2.runtime.ValueInitializer;
  * @author Falko Bräutigam
  */
 public class BuildConfig
-        extends Entity {
+        extends Entity 
+        implements Lifecycle {
 
     public static BuildConfig    TYPE;
+    
+    public static final ValueInitializer<BuildConfig> defaults() {
+        return (BuildConfig proto) -> {
+            proto.type.set( Type.PRODUCT );
+            proto.userId.set( "Test" );  // FIXME
+            return proto;
+        };
+    }
     
     public enum Type {
         PRODUCT, PLUGIN
     }
 
+    @Nullable
     public Property<String>             name;
     
-    /**
-     * The bundle-id of the product to build. 
-     */
+    /** The bundle-id of the product to build. */
+    @Nullable
     public Property<String>             productName;
     
     public Property<Type>               type;
@@ -67,7 +79,14 @@ public class BuildConfig
         return context.getUnitOfWork();
     }
     
-    
+    @Override
+    public void onLifecycleChange( State state ) {
+        if (state == State.AFTER_COMMIT) {
+            EventManager.instance().publish( new BuildConfigCommittedEvent( BuildConfig.this ) );
+        }
+    }
+
+
     /**
      * Configuration of a SCM system.
      */

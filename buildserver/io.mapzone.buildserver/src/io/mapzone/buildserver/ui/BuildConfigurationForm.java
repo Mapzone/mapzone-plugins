@@ -17,8 +17,6 @@ package io.mapzone.buildserver.ui;
 import org.eclipse.swt.widgets.Composite;
 import org.polymap.core.ui.ColumnLayoutFactory;
 
-import org.polymap.rhei.field.FormFieldEvent;
-import org.polymap.rhei.field.IFormFieldListener;
 import org.polymap.rhei.field.NotEmptyValidator;
 import org.polymap.rhei.form.DefaultFormPage;
 import org.polymap.rhei.form.FieldBuilder;
@@ -32,17 +30,16 @@ import io.mapzone.buildserver.BuildConfig;
  * @author Falko Bräutigam
  */
 public class BuildConfigurationForm 
-        extends DefaultFormPage 
-        implements IFormFieldListener {
+        extends DefaultFormPage {
 
-    private BuildConfig      config;
+    private BuildConfig         config;
     
-    private boolean                 creation;
+    private boolean             created;
     
 
-    public BuildConfigurationForm( BuildConfig config, boolean creation ) {
+    public BuildConfigurationForm( BuildConfig config, boolean created ) {
         this.config = config;
-        this.creation = creation;
+        this.created = created;
     }
 
 
@@ -52,13 +49,11 @@ public class BuildConfigurationForm
         
         Composite body = site.getPageBody();
         body.setLayout( ColumnLayoutFactory.defaults().spacing( 5 ).create() );
-        //site.setDefaultFieldLayout( VerticalFieldLayout.INSTANCE );
 
         // name
         FieldBuilder nameField = site.newFormField( new PropertyAdapter( config.name ) );
         nameField.tooltip.put( "The name of this build configuration.\nSomething like: org.example.test.product_master" );
-        nameField.fieldEnabled.put( creation );
-        if (creation) {
+        if (created) {
             nameField.validator.put( new NotEmptyValidator<String,String>() {
                 @Override
                 public String validate( String fieldValue ) {
@@ -75,29 +70,15 @@ public class BuildConfigurationForm
         site.newFormField( new PropertyAdapter( config.productName ) )
                 .label.put( "Product" )
                 .tooltip.put( "The symbolic name of the product to build" )
-                .fieldEnabled.put( creation )
                 .validator.put( new NotEmptyValidator() )
                 .create();
 
         // type
         site.newFormField( new PropertyAdapter( config.type ) )
                 .label.put( "Type" )
-                .fieldEnabled.put( creation )
+                .field.put( EnumPicklistFormField.create( BuildConfig.Type.values() ) )
                 .validator.put( new NotEmptyValidator() )
                 .create();
-    }
-    
-
-    @Override
-    public void fieldChange( FormFieldEvent ev ) {
-        if (ev.getEventCode() == VALUE_CHANGE) {
-        }
-    }
-
-
-    protected void updateEnabled() {
-        // XXX Auto-generated method stub
-        throw new RuntimeException( "not yet implemented." );
     }
 
 }
