@@ -29,7 +29,7 @@ import io.mapzone.buildserver.BuildConfig;
  *
  * @author Falko Bräutigam
  */
-public class BuildConfigurationForm 
+public class BuildConfigForm 
         extends DefaultFormPage {
 
     private BuildConfig         config;
@@ -37,7 +37,7 @@ public class BuildConfigurationForm
     private boolean             created;
     
 
-    public BuildConfigurationForm( BuildConfig config, boolean created ) {
+    public BuildConfigForm( BuildConfig config, boolean created ) {
         this.config = config;
         this.created = created;
     }

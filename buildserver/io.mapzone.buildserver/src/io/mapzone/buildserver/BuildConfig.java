@@ -138,6 +138,14 @@ public class BuildConfig
     public static class TargetPlatformConfig
             extends Composite {
 
+        public static final ValueInitializer<TargetPlatformConfig> defaults() {
+            return (TargetPlatformConfig proto) -> {
+                proto.type.set( Type.ZIP_DOWNLOAD );
+                proto.url.set( "" );
+                return proto;
+            };
+        }
+        
         public enum Type {
             DIRECTORY, ZIP_DOWNLOAD
         }

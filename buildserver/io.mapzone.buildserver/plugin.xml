@@ -25,7 +25,7 @@
             id="io.mapzone.buildserver.StartPanel">
       </panel>
       <panel
-            class="io.mapzone.buildserver.ui.BuildConfigurationPanel"
+            class="io.mapzone.buildserver.ui.BuildConfigPanel"
             id="io.mapzone.buildserver.BuildConfigurationPanel">
       </panel>
       <panel

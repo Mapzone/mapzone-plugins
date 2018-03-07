@@ -177,7 +177,7 @@ public class StartPanel
     
     protected void createBuildConfig() {
         selected.set( null );
-        getContext().openPanel( site().path(), BuildConfigurationPanel.ID );        
+        getContext().openPanel( site().path(), BuildConfigPanel.ID );        
     }
     
     
@@ -209,7 +209,7 @@ public class StartPanel
 
     protected void openDetailPanel( BuildConfig config ) {
         selected.set( config );
-        getContext().openPanel( site().path(), BuildConfigurationPanel.ID );
+        getContext().openPanel( site().path(), BuildConfigPanel.ID );
     }
     
 }
