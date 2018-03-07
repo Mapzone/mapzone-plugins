@@ -56,6 +56,7 @@ public class TargetPlatformForm
         // type
         site.newFormField( new PropertyAdapter( config.type ) )
                 .label.put( "Type" )
+                .field.put( EnumPicklistFormField.create( TargetPlatformConfig.Type.values() ) )
                 .validator.put( new NotEmptyValidator() )
                 .create();
 

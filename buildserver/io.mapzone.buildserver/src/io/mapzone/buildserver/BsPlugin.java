@@ -66,8 +66,7 @@ public class BsPlugin
      * @param name 
      */
     public static File buildserverDir() {
-        // FIXME
-        return new File( "/home/falko/servers/buildserver" );
+        return new File( System.getProperty( ID, System.getProperty( "user.home" ) + "/buildserver" ) );
     }
 
     public static File createTempDir() {

@@ -35,7 +35,7 @@ public class InitWorkspaceStrategy
     @Override
     public void preBuild( BuildContext context, IProgressMonitor monitor ) throws Exception {
         File dir = BsPlugin.createTempDir();
-        monitor.beginTask( "Temporary build directory: " + dir.getAbsolutePath(), 1 );
+        monitor.beginTask( "Build directory: " + dir.getName(), 1 );
         context.workspace.set( new File( dir, "workspace" ) );
         context.workspace.get().mkdir();
         context.export.set( new File( dir, "export" ) );

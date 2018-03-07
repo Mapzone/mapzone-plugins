@@ -14,6 +14,10 @@
  */
 package io.mapzone.buildserver.ui;
 
+import static org.polymap.core.runtime.event.TypeEventFilter.ifType;
+
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -21,9 +25,12 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.polymap.core.runtime.UIThreadExecutor;
+import org.polymap.core.runtime.event.EventHandler;
+import org.polymap.core.runtime.event.EventManager;
 import org.polymap.core.ui.StatusDispatcher;
 import org.polymap.core.ui.UIUtils;
 
@@ -33,10 +40,11 @@ import org.polymap.rhei.batik.PanelIdentifier;
 import org.polymap.rhei.batik.Scope;
 import org.polymap.rhei.batik.contribution.ContributionManager;
 import org.polymap.rhei.batik.dashboard.Dashboard;
+import org.polymap.rhei.batik.dashboard.ISubmitableDashlet;
+import org.polymap.rhei.batik.dashboard.SubmitStatusChangeEvent;
 import org.polymap.rhei.batik.toolkit.MinWidthConstraint;
 import org.polymap.rhei.batik.toolkit.PriorityConstraint;
 import org.polymap.rhei.batik.toolkit.Snackbar.Appearance;
-import org.polymap.rhei.batik.toolkit.md.MdListViewer;
 import org.polymap.rhei.field.FormFieldEvent;
 import org.polymap.rhei.field.IFormFieldListener;
 import org.polymap.rhei.form.batik.BatikFormContainer;
@@ -76,10 +84,6 @@ public class BuildConfigPanel
     
     private BuildConfig                 nestedConfig;
     
-    private BatikFormContainer          form, tpForm;
-
-    private MdListViewer                resultsList;
-
     private Button                      fab;
     
     private Dashboard                   dashboard;
@@ -117,7 +121,7 @@ public class BuildConfigPanel
 
     protected void submit() {
         try {
-            form.submit( new NullProgressMonitor() );
+            dashboard.submit( new NullProgressMonitor() );
             nested.commit();
             uow.commit();
         
@@ -131,6 +135,13 @@ public class BuildConfigPanel
     }
 
     
+    @EventHandler( display=true, delay=250 )
+    protected void updateEnabled( List<SubmitStatusChangeEvent> evs ) {
+        fab.setEnabled( dashboard.isValid() && dashboard.isDirty() );
+        fab.setVisible( fab.isVisible() || dashboard.isValid() );
+    }
+
+
     @Override
     public void createContents( Composite parent ) {
         dashboard = new Dashboard( getSite(), DASHBOARD_ID ).defaultExpandable.put( true );
@@ -144,6 +155,9 @@ public class BuildConfigPanel
                 .addConstraint( new PriorityConstraint( 0 ) ) );
         ContributionManager.instance().contributeTo( dashboard, this, DASHBOARD_ID );
         dashboard.createContents( parent );
+        
+        EventManager.instance().subscribe( this, ifType( SubmitStatusChangeEvent.class, ev -> 
+                ev.getDashboard() == dashboard ) );
 
 //        EventManager.instance().subscribe( this, ifType( ExpansionEvent.class, ev -> 
 //                dashboard.dashlets().stream().anyMatch( d -> d.site().getPanelSection() == ev.getSource() ) ) );
@@ -167,18 +181,14 @@ public class BuildConfigPanel
 //    }
     
     
-    protected void updateEnabled() {
-        fab.setEnabled( true );
-        fab.setVisible( true );
-    }
-
-    
     /**
      * 
      */
     class FormDashlet
             extends BuildConfigDashlet
-            implements IFormFieldListener {
+            implements IFormFieldListener, ISubmitableDashlet {
+
+        private BatikFormContainer          form;
         
         @Override
         public void createContents( Composite parent ) {
@@ -193,10 +203,17 @@ public class BuildConfigPanel
 
         @Override
         public void fieldChange( FormFieldEvent ev ) {
-            if (ev.getEventCode() == IFormFieldListener.VALUE_CHANGE && form.isValid()) {
-                updateEnabled();
+            if (ev.getEventCode() == IFormFieldListener.VALUE_CHANGE) {
+                getSite().enableSubmit( form.isDirty(), form.isValid() );
             }
         }
+        
+        @Override
+        public boolean submit( IProgressMonitor monitor ) throws Exception {
+            form.submit( monitor );
+            return true;
+        }
+
     }
     
 }

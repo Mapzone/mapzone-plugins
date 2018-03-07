@@ -29,12 +29,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.polymap.core.ui.FormLayoutFactory;
 
 import org.polymap.rhei.batik.app.SvgImageRegistryHelper;
 import org.polymap.rhei.batik.dashboard.DashletSite;
+import org.polymap.rhei.batik.dashboard.ISubmitableDashlet;
 import org.polymap.rhei.batik.toolkit.md.FunctionalLabelProvider;
 import org.polymap.rhei.batik.toolkit.md.ListTreeContentProvider;
 import org.polymap.rhei.batik.toolkit.md.MdListViewer;
@@ -50,7 +52,8 @@ import io.mapzone.buildserver.BuildConfig.TargetPlatformConfig;
  * @author Falko Bräutigam
  */
 public class TargetPlatformDashlet
-        extends BuildConfigDashlet {
+        extends BuildConfigDashlet
+        implements ISubmitableDashlet {
 
     private static final Log log = LogFactory.getLog( TargetPlatformDashlet.class );
     
@@ -75,6 +78,12 @@ public class TargetPlatformDashlet
     }
 
     
+    @Override
+    public boolean submit( IProgressMonitor monitor ) throws Exception {
+        return true;
+    }
+
+
     @Override
     public void createContents( Composite parent ) {
         parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 0, 8, 0, 0 ).create() );
