@@ -33,10 +33,10 @@ import org.polymap.model2.runtime.ValueInitializer;
  *
  * @author Falko Bräutigam
  */
-public class BuildConfiguration
+public class BuildConfig
         extends Entity {
 
-    public static BuildConfiguration    TYPE;
+    public static BuildConfig    TYPE;
     
     public enum Type {
         PRODUCT, PLUGIN
@@ -54,10 +54,10 @@ public class BuildConfiguration
     public Property<String>             userId;
     
     @Defaults
-    public CollectionProperty<TargetPlatformConfiguration> targetPlatform;
+    public CollectionProperty<TargetPlatformConfig> targetPlatform;
     
     @Defaults
-    public CollectionProperty<ScmConfiguration> scm;
+    public CollectionProperty<ScmConfig> scm;
     
     @Computed( ComputedBidiManyAssocation.class )
     public ManyAssociation<BuildResult> buildResults;
@@ -71,11 +71,11 @@ public class BuildConfiguration
     /**
      * Configuration of a SCM system.
      */
-    public static class ScmConfiguration
+    public static class ScmConfig
             extends Composite {
 
-        public static final ValueInitializer<ScmConfiguration> defaults() {
-            return (ScmConfiguration proto) -> {
+        public static final ValueInitializer<ScmConfig> defaults() {
+            return (ScmConfig proto) -> {
                 proto.type.set( Type.GIT );
                 proto.url.set( "" );
                 proto.branch.set( "master" );
@@ -89,9 +89,6 @@ public class BuildConfiguration
 
         public Property<Type>       type;
         
-        @Deprecated
-        public Property<String>     name;
-        
         public Property<String>     url;
         
         @Nullable
@@ -102,8 +99,8 @@ public class BuildConfiguration
             if (obj == this) {
                 return true;
             }
-            else if (obj instanceof TargetPlatformConfiguration) {
-                ScmConfiguration other = (ScmConfiguration)obj;
+            else if (obj instanceof TargetPlatformConfig) {
+                ScmConfig other = (ScmConfig)obj;
                 return url.get().equals( other.url.get() ) && type.get().equals( other.type.get() );
             }
             return false;
@@ -119,7 +116,7 @@ public class BuildConfiguration
     /**
      * Configuration of a target platform location. 
      */
-    public static class TargetPlatformConfiguration
+    public static class TargetPlatformConfig
             extends Composite {
 
         public enum Type {
@@ -135,8 +132,8 @@ public class BuildConfiguration
             if (obj == this) {
                 return true;
             }
-            else if (obj instanceof TargetPlatformConfiguration) {
-                TargetPlatformConfiguration other = (TargetPlatformConfiguration)obj;
+            else if (obj instanceof TargetPlatformConfig) {
+                TargetPlatformConfig other = (TargetPlatformConfig)obj;
                 return url.get().equals( other.url.get() ) && type.get().equals( other.type.get() );
             }
             return false;

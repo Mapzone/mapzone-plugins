@@ -14,31 +14,28 @@
  */
 package io.mapzone.buildserver;
 
-import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import java.io.File;
-import java.nio.file.Files;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import org.polymap.model2.runtime.UnitOfWork;
+
+import io.mapzone.buildserver.BuildStrategy.BuildContext;
 
 /**
  * 
@@ -51,25 +48,26 @@ public class BuildManager {
     
     public static final String BUILDRUNNER_LOG = "buildrunner.log";
 
+    /** Maps {@link BuildConfig#id()} into {@link BuildManager} instances. */
     private static Map<String,BuildManager> instances = new ConcurrentHashMap();
     
     /**
      * The singleton for the given config.
      */
-    public static BuildManager of( BuildConfiguration config ) {
-        return instances.computeIfAbsent( (String)config.id(), key -> new BuildManager( config ) );
+    public static BuildManager of( BuildConfig config ) {
+        return instances.computeIfAbsent( (String)config.id(), key -> new BuildManager( config.id() ) );
     }
     
     
     // instance *******************************************
     
-    private BuildConfiguration      config;
+    private Object                      configId;
     
-    private volatile BuildProcess   running;
+    private volatile BuildProcess       running;
     
     
-    private BuildManager( BuildConfiguration config ) {
-        this.config = config;
+    private BuildManager( Object configId ) {
+        this.configId = configId;
     }
 
 
@@ -84,7 +82,6 @@ public class BuildManager {
             running.addJobChangeListener( new JobChangeAdapter() {
                 @Override public void done( IJobChangeEvent ev ) {
                     running = null;
-                    pruneResults();
                 }
             });
             running.schedule();
@@ -92,18 +89,7 @@ public class BuildManager {
         return running;
     }
     
-    
-    protected void pruneResults() {
-        Map<Date,BuildResult> sorted = new TreeMap();
-        config.buildResults.forEach( result -> sorted.put( result.started.get(), result ) );
-        for (Iterator<BuildResult> it=sorted.values().iterator(); it.hasNext() && sorted.size() > 3; ) {
-            BuildResult result = it.next(); it.remove();
-            result.destroy();
-        }
-        config.belongsTo().commit();
-    }
-    
-    
+        
     /**
      * 
      */
@@ -115,82 +101,57 @@ public class BuildManager {
         private File                logFile;
         
         public BuildProcess() {
-            super( "Build: " + config.name.get() );
+            super( "Build: " + configId );
             setSystem( true );
         }
-
+        
         @Override
-        protected IStatus run( IProgressMonitor monitor ) {
-            UnitOfWork uow = config.belongsTo();
+        protected IStatus run( IProgressMonitor monitor ) {            
+            BuildContext context = new BuildContext();
+            PrintProgressMonitor printMonitor = new PrintProgressMonitor( monitor );
 
-            BuildResult buildResult = uow.createEntity( BuildResult.class, null, (BuildResult proto) -> {
-                proto.config.set( config );
-                proto.started.set( new Date() );
-                proto.status.set( BuildResult.Status.RUNNING );
-                return proto;
-            });
-            uow.commit();
-            
-            try {
-                File workspaceDir = Files.createTempDirectory( "buildserver.workspace." ).toFile();
-                File exportDir = Files.createTempDirectory( "buildserver.export." ).toFile();
-                logFile = new File( exportDir, BUILDRUNNER_LOG );
-
-                PrintProgressMonitor printMonitor = new PrintProgressMonitor( monitor );
-                
-                // prepare workspace
-                Build build = new Build( config, workspaceDir );
-                build.run( printMonitor );
-                printMonitor.done();
-                
-                // BuildRunner process
-                exportDir.mkdir();
-                File buildrunner = new File( BsPlugin.buildserverDir(), "runners/eclipse-neon/buildrunner.sh" );
-                process = new ProcessBuilder( buildrunner.getAbsolutePath(), workspaceDir.getAbsolutePath(), config.productName.get(), exportDir.getAbsolutePath() )
-                        .directory( workspaceDir )
-                        .redirectOutput( logFile )
-                        .redirectError( logFile )
-                        .start();
-                while (process.isAlive()) {
-                    if (monitor.isCanceled()) {
-                        throw new CancellationException( "Cancel requested" );
+            try (
+                UnitOfWork uow = BuildRepository.instance().newUnitOfWork();
+            ){
+                BuildConfig config = uow.entity( BuildConfig.class, configId );
+                context.config.set( config );
+                List<BuildStrategy> strategies = BuildStrategy.availableFor( config );
+                try {
+                    // pre
+                    for (BuildStrategy strategy : strategies) {
+                        strategy.preBuild( context, printMonitor );
+                        checkCancel( monitor );
                     }
-                    Thread.sleep( 1000 );
+                    // post
+                    for (BuildStrategy strategy : Lists.reverse( strategies )) {
+                        strategy.postBuild( context, printMonitor );
+                        checkCancel( monitor );
+                    }
                 }
-                
-                // copy files
-                File dataDir = new File( BsPlugin.exportDataDir(), config.productName.get()+System.currentTimeMillis() );
-                dataDir.mkdir();
-                File exportZip = new File( exportDir, "..." );
-                if (exportZip.exists()) {
-                    FileUtils.copyFileToDirectory( exportZip, dataDir, true );
+                catch (Exception e) {
+                    context.exception.set( e );
+                    log.warn( "", e );
+                }                
+                // dispose
+                for (BuildStrategy strategy : Lists.reverse( strategies )) {
+                    try {
+                        strategy.cleanup( context, printMonitor );
+                    }
+                    catch (Exception e) {
+                        log.warn( "", e );
+                    }
                 }
-                File logsZip = new File( exportDir, "logs.zip" );
-                if (logsZip.exists()) {
-                    FileUtils.copyFileToDirectory( logsZip, dataDir, true );
-                }
-                if (logFile.exists()) {
-                    FileUtils.copyFileToDirectory( logFile, dataDir, true );
-                }
-                
-                build.cleanup();
-                
-                // commit result
-                buildResult.status.set( BuildResult.Status.OK );
-                buildResult.dataDir.set( dataDir.getAbsolutePath() );
-                uow.commit();
-                return Status.OK_STATUS;
             }
-            catch (Exception e) {
-                log.warn( "", e );
-                buildResult.status.set( BuildResult.Status.FAILED );
-                uow.commit();
-                throw Throwables.propagate( e );
-            }
+            return Status.OK_STATUS;
         }
 
-//        public synchronized void stop() {
-//        }
+        
+        protected void checkCancel( IProgressMonitor monitor ) {
+            if (monitor.isCanceled()) {
+                throw new OperationCanceledException();
+            }
+        }
+        
     }
     
 }

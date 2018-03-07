@@ -24,7 +24,7 @@ import org.polymap.rhei.form.DefaultFormPage;
 import org.polymap.rhei.form.FieldBuilder;
 import org.polymap.rhei.form.IFormPageSite;
 
-import io.mapzone.buildserver.BuildConfiguration;
+import io.mapzone.buildserver.BuildConfig;
 
 /**
  * 
@@ -35,12 +35,12 @@ public class BuildConfigurationForm
         extends DefaultFormPage 
         implements IFormFieldListener {
 
-    private BuildConfiguration      config;
+    private BuildConfig      config;
     
     private boolean                 creation;
     
 
-    public BuildConfigurationForm( BuildConfiguration config, boolean creation ) {
+    public BuildConfigurationForm( BuildConfig config, boolean creation ) {
         this.config = config;
         this.creation = creation;
     }

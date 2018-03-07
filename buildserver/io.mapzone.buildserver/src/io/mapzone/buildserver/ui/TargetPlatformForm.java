@@ -26,7 +26,7 @@ import org.polymap.rhei.field.VerticalFieldLayout;
 import org.polymap.rhei.form.DefaultFormPage;
 import org.polymap.rhei.form.IFormPageSite;
 
-import io.mapzone.buildserver.BuildConfiguration.TargetPlatformConfiguration;
+import io.mapzone.buildserver.BuildConfig.TargetPlatformConfig;
 
 /**
  * 
@@ -37,10 +37,10 @@ public class TargetPlatformForm
         extends DefaultFormPage 
         implements IFormFieldListener {
 
-    private TargetPlatformConfiguration config;
+    private TargetPlatformConfig config;
     
 
-    public TargetPlatformForm( TargetPlatformConfiguration config ) {
+    public TargetPlatformForm( TargetPlatformConfig config ) {
         this.config = config;
     }
 

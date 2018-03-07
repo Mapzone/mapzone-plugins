@@ -62,7 +62,7 @@ public class BuildResult
     
     // instance *******************************************
     
-    public Association<BuildConfiguration>  config;
+    public Association<BuildConfig>         config;
     
     public Property<Status>                 status;
 
@@ -101,8 +101,13 @@ public class BuildResult
     
     
     public List<LogEntry> logEntries( int maxResults, LogEntry.Severity... severities  ) {
+        File f = new File( dataDir(), "logs.zip" );
+        if (!f.exists()) {
+            return Collections.EMPTY_LIST;
+        }
+        
         try (
-            ZipFile zip = new ZipFile( new File( dataDir(), "logs.zip" ) );
+            ZipFile zip = new ZipFile( f );
         ){
             List<LogEntry> result = new ArrayList( maxResults );
             for (ZipEntry file : Collections.list( zip.entries() )) {

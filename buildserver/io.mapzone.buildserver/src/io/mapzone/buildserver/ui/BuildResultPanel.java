@@ -108,7 +108,7 @@ public class BuildResultPanel
     protected void createLogsSection( Composite parent ) {
         parent.setLayout( new FillLayout() );
         StringBuilder buf = new StringBuilder( 4*1024 );
-        for (LogEntry entry : buildResult.get().logEntries( 5, Severity.ERROR )) {
+        for (LogEntry entry : buildResult.get().logEntries( 10, Severity.ERROR )) {
             buf.append( "______ " ).append( entry.severity ).append( " ______________________________________________________\n" );
             buf.append( entry.head ).append( "\n" );
             entry.text.forEach( line -> buf.append( "    " ).append( line ).append( "\n" ) );

@@ -30,8 +30,8 @@ import org.polymap.rhei.field.VerticalFieldLayout;
 import org.polymap.rhei.form.DefaultFormPage;
 import org.polymap.rhei.form.IFormPageSite;
 
-import io.mapzone.buildserver.BuildConfiguration.ScmConfiguration;
-import io.mapzone.buildserver.BuildConfiguration.ScmConfiguration.Type;
+import io.mapzone.buildserver.BuildConfig.ScmConfig;
+import io.mapzone.buildserver.BuildConfig.ScmConfig.Type;
 
 /**
  * 
@@ -42,10 +42,10 @@ public class ScmForm
         extends DefaultFormPage 
         implements IFormFieldListener {
 
-    private ScmConfiguration        config;
+    private ScmConfig        config;
     
 
-    public ScmForm( ScmConfiguration config ) {
+    public ScmForm( ScmConfig config ) {
         this.config = config;
     }
 
@@ -61,10 +61,10 @@ public class ScmForm
         // type
         site.newFormField( new PropertyAdapter( config.type ) )
                 .label.put( "Type" )
-                .field.put( new PicklistFormField( Arrays.stream( ScmConfiguration.Type.values() ).map( v -> v.toString() ).collect( Collectors.toList()  ) ) )
-                .validator.put( new NotEmptyValidator<String,ScmConfiguration.Type>() {
+                .field.put( new PicklistFormField( Arrays.stream( ScmConfig.Type.values() ).map( v -> v.toString() ).collect( Collectors.toList()  ) ) )
+                .validator.put( new NotEmptyValidator<String,ScmConfig.Type>() {
                     @Override public Type transform2Model( String fieldValue ) throws Exception {
-                        return ScmConfiguration.Type.valueOf( fieldValue );
+                        return ScmConfig.Type.valueOf( fieldValue );
                     }
                     @Override public String transform2Field( Type modelValue ) throws Exception {
                         return modelValue.toString();

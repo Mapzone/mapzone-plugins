@@ -60,9 +60,9 @@ import org.polymap.rhei.form.batik.BatikFormContainer;
 import org.polymap.model2.runtime.UnitOfWork;
 
 import io.mapzone.buildserver.BsPlugin;
-import io.mapzone.buildserver.BuildConfiguration;
-import io.mapzone.buildserver.BuildConfiguration.ScmConfiguration;
-import io.mapzone.buildserver.BuildConfiguration.TargetPlatformConfiguration;
+import io.mapzone.buildserver.BuildConfig;
+import io.mapzone.buildserver.BuildConfig.ScmConfig;
+import io.mapzone.buildserver.BuildConfig.TargetPlatformConfig;
 import io.mapzone.buildserver.BuildManager;
 import io.mapzone.buildserver.BuildManager.BuildProcess;
 import io.mapzone.buildserver.BuildResult;
@@ -88,7 +88,7 @@ public class BuildConfigurationPanel
      */
     @Mandatory
     @Scope( BsPlugin.ID )
-    protected Context<BuildConfiguration>   config;
+    protected Context<BuildConfig>   config;
 
     /**
      * Outbound:
@@ -98,7 +98,7 @@ public class BuildConfigurationPanel
     
     private UnitOfWork                      nested;
     
-    private BuildConfiguration              nestedConfig;
+    private BuildConfig              nestedConfig;
     
     private BatikFormContainer              form, scmForm, tpForm;
 
@@ -176,11 +176,11 @@ public class BuildConfigurationPanel
         // list
         scmList = tk().createListViewer( parent, SWT.FULL_SELECTION, SWT.SINGLE );
         scmList.firstLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
-            ScmConfiguration elm = (ScmConfiguration)cell.getElement();
+            ScmConfig elm = (ScmConfig)cell.getElement();
             cell.setText( elm.type.get().toString() + " - " + StringUtils.abbreviateMiddle( elm.url.get(), "...", 40 ) );
         }));
         scmList.iconProvider.set( FunctionalLabelProvider.of( cell -> {
-            ScmConfiguration elm = (ScmConfiguration)cell.getElement();
+            ScmConfig elm = (ScmConfig)cell.getElement();
             switch (elm.type.get()) {
                 case GIT: cell.setImage( BsPlugin.images().svgImage( "git.svg", NORMAL24 ) ); break;
                 case DIRECTORY: ; break;
@@ -188,11 +188,11 @@ public class BuildConfigurationPanel
         }));
         scmList.setSorter( new ViewerSorter() {
             @Override public int compare( Viewer viewer, Object e1, Object e2 ) {
-                return ((ScmConfiguration)e2).url.get().compareTo( ((ScmConfiguration)e1).url.get() );
+                return ((ScmConfig)e2).url.get().compareTo( ((ScmConfig)e1).url.get() );
             }
         });
         scmList.addOpenListener( ev -> {
-            ScmConfiguration sel = UIUtils.selection( scmList.getSelection() ).first( ScmConfiguration.class ).get();
+            ScmConfig sel = UIUtils.selection( scmList.getSelection() ).first( ScmConfig.class ).get();
             openScmDialog( sel );
         });
         scmList.setContentProvider( new ListTreeContentProvider() );
@@ -202,7 +202,7 @@ public class BuildConfigurationPanel
         Button addBtn = tk().createButton( parent, null, SWT.PUSH );
         addBtn.setImage( BsPlugin.images().svgImage( "plus-circle-outline.svg", WHITE24 ) );
         addBtn.addSelectionListener( UIUtils.selectionListener( ev -> {
-            ScmConfiguration newElm = nestedConfig.scm.createElement( ScmConfiguration.defaults() );
+            ScmConfig newElm = nestedConfig.scm.createElement( ScmConfig.defaults() );
             int ok = openScmDialog( newElm );
             if (ok != Window.OK) {
                 nested.rollback();
@@ -223,7 +223,7 @@ public class BuildConfigurationPanel
     }
 
 
-    protected int openScmDialog( ScmConfiguration elm ) {
+    protected int openScmDialog( ScmConfig elm ) {
         try {
             return tk().createSimpleDialog( "Source repository" )
                     .setContents( p -> {
@@ -253,11 +253,11 @@ public class BuildConfigurationPanel
         // list
         MdListViewer tpList = tk().createListViewer( parent, SWT.FULL_SELECTION, SWT.SINGLE );
         tpList.firstLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
-            TargetPlatformConfiguration elm = (TargetPlatformConfiguration)cell.getElement();
+            TargetPlatformConfig elm = (TargetPlatformConfig)cell.getElement();
             cell.setText( elm.type.get().toString() + " - " + StringUtils.abbreviateMiddle( elm.url.get(), "...", 40 ) );
         }));
         tpList.iconProvider.set( FunctionalLabelProvider.of( cell -> {
-            TargetPlatformConfiguration elm = (TargetPlatformConfiguration)cell.getElement();
+            TargetPlatformConfig elm = (TargetPlatformConfig)cell.getElement();
             switch (elm.type.get()) {
                 case DIRECTORY: cell.setImage( BsPlugin.images().svgImage( "folder.svg", SvgImageRegistryHelper.NORMAL24 ) ); break;
                 case ZIP_DOWNLOAD: cell.setImage( BsPlugin.images().svgImage( "folder-download.svg", SvgImageRegistryHelper.NORMAL24 ) ); break;
@@ -272,11 +272,11 @@ public class BuildConfigurationPanel
 //        });
         tpList.setSorter( new ViewerSorter() {
             @Override public int compare( Viewer viewer, Object e1, Object e2 ) {
-                return ((TargetPlatformConfiguration)e2).url.get().compareTo( ((TargetPlatformConfiguration)e1).url.get() );
+                return ((TargetPlatformConfig)e2).url.get().compareTo( ((TargetPlatformConfig)e1).url.get() );
             }
         });
         tpList.addOpenListener( ev -> {
-            TargetPlatformConfiguration sel = UIUtils.selection( tpList.getSelection() ).first( TargetPlatformConfiguration.class ).get();
+            TargetPlatformConfig sel = UIUtils.selection( tpList.getSelection() ).first( TargetPlatformConfig.class ).get();
             tk().createSimpleDialog( "Target platform" )
                 .setContents( p -> {
                     TargetPlatformForm formPage = new TargetPlatformForm( sel );

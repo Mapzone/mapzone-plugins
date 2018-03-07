@@ -39,7 +39,7 @@ import org.polymap.rhei.batik.toolkit.md.ListTreeContentProvider;
 import org.polymap.rhei.batik.toolkit.md.MdListViewer;
 
 import io.mapzone.buildserver.BsPlugin;
-import io.mapzone.buildserver.BuildConfiguration;
+import io.mapzone.buildserver.BuildConfig;
 import io.mapzone.buildserver.BuildRepository;
 
 /**
@@ -58,7 +58,7 @@ public class StartPanel
      * Outbound: The config the work with.
      */
     @Scope( BsPlugin.ID )
-    protected Context<BuildConfiguration>   config;
+    protected Context<BuildConfig>   config;
     
     private MdListViewer                    list;
 
@@ -109,11 +109,11 @@ public class StartPanel
             cell.setImage( BsPlugin.images().svgImage( "package-variant.svg", SvgImageRegistryHelper.NORMAL24 ) );
         }));
         list.firstLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
-            BuildConfiguration elm = (BuildConfiguration)cell.getElement();
+            BuildConfig elm = (BuildConfig)cell.getElement();
             cell.setText( elm.name.get() );
         }));
         list.secondLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
-            BuildConfiguration elm = (BuildConfiguration)cell.getElement();
+            BuildConfig elm = (BuildConfig)cell.getElement();
             cell.setText( elm.productName.get() + " -- " + elm.type.get() );
         }));
         list.secondSecondaryActionProvider.set( new ActionProvider() {
@@ -128,20 +128,20 @@ public class StartPanel
                 cell.setImage( BsPlugin.images().svgImage( "chevron-right.svg", SvgImageRegistryHelper.NORMAL24 ) );
             }
             @Override public void perform( MdListViewer viewer, Object elm ) {
-                config.set( UIUtils.selection( list.getSelection() ).first( BuildConfiguration.class ).get() );
+                config.set( UIUtils.selection( list.getSelection() ).first( BuildConfig.class ).get() );
                 getContext().openPanel( site().path(), BuildConfigurationPanel.ID );
             }
         });
         list.setSorter( new ViewerSorter() {
             @Override public int compare( Viewer viewer, Object e1, Object e2 ) {
-                return ((BuildConfiguration)e1).name.get().compareTo( ((BuildConfiguration)e2).name.get() );
+                return ((BuildConfig)e1).name.get().compareTo( ((BuildConfig)e2).name.get() );
             }
         });
         list.setContentProvider( new ListTreeContentProvider() );
-        list.setInput( BuildRepository.session().query( BuildConfiguration.class ).execute() );
+        list.setInput( BuildRepository.session().query( BuildConfig.class ).execute() );
         
         list.addOpenListener( ev -> {
-            config.set( UIUtils.selection( list.getSelection() ).first( BuildConfiguration.class ).get() );
+            config.set( UIUtils.selection( list.getSelection() ).first( BuildConfig.class ).get() );
             getContext().openPanel( site().path(), BuildConfigurationPanel.ID );
         });
     }

@@ -61,10 +61,35 @@ public class BsPlugin
 
     /**
      * The directory where runners and SCM cache are stored.
+     * 
+     * @param userId 
+     * @param name 
      */
     public static File buildserverDir() {
         // FIXME
-        return new File( "/home/falko/servers/buildserver/" );
+        return new File( "/home/falko/servers/buildserver" );
+    }
+
+    public static File createTempDir() {
+        File tmp = new File( buildserverDir(), "tmp" );
+        File result = new File( tmp, String.valueOf( System.currentTimeMillis() ) );
+        result.mkdirs();
+        result.deleteOnExit();
+        return result;
+    }
+    
+    /**
+     * The cache directory for a given config and ...thing.
+     * 
+     * @param userId 
+     * @param name 
+     */
+    public static File cacheDir( BuildConfig config, String name ) {
+        File root = new File( buildserverDir(), "cache" );
+        File userDir = new File( root, config.userId.get() );
+        File result = new File( userDir, "@"+name.hashCode() );
+        result.mkdirs();
+        return result;
     }
 
 
