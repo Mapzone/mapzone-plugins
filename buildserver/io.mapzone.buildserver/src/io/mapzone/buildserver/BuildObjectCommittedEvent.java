@@ -21,11 +21,17 @@ import java.util.EventObject;
  *
  * @author Falko Bräutigam
  */
-public class BuildConfigCommittedEvent
+public class BuildObjectCommittedEvent
         extends EventObject {
 
-    public BuildConfigCommittedEvent( Object source ) {
+    public BuildObjectCommittedEvent( BuildObject source ) {
         super( source );
     }
 
+    @Override
+    public BuildObject getSource() {
+        return (BuildObject)super.getSource();
+    }
+
+    
 }

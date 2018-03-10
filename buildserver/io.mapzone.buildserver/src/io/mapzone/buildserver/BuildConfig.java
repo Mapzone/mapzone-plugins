@@ -23,11 +23,9 @@ import org.polymap.model2.Composite;
 import org.polymap.model2.Computed;
 import org.polymap.model2.ComputedBidiManyAssocation;
 import org.polymap.model2.Defaults;
-import org.polymap.model2.Entity;
 import org.polymap.model2.ManyAssociation;
 import org.polymap.model2.Nullable;
 import org.polymap.model2.Property;
-import org.polymap.model2.runtime.Lifecycle;
 import org.polymap.model2.runtime.UnitOfWork;
 import org.polymap.model2.runtime.ValueInitializer;
 
@@ -37,8 +35,7 @@ import org.polymap.model2.runtime.ValueInitializer;
  * @author Falko Bräutigam
  */
 public class BuildConfig
-        extends Entity 
-        implements Lifecycle {
+        extends BuildObject {
 
     public static BuildConfig    TYPE;
     
@@ -82,7 +79,7 @@ public class BuildConfig
     @Override
     public void onLifecycleChange( State state ) {
         if (state == State.AFTER_COMMIT) {
-            EventManager.instance().publish( new BuildConfigCommittedEvent( BuildConfig.this ) );
+            EventManager.instance().publish( new BuildObjectCommittedEvent( BuildConfig.this ) );
         }
     }
 

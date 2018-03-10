@@ -76,9 +76,19 @@ public class BuildManager {
     }
 
     
-    public synchronized BuildProcess startNewBuild() {
+    /**
+     * Starts a new build, or just returns the current running process.
+     * <p/>
+     * Every process maintains its own nested {@link UnitOfWork}. The nested
+     * UnitOfWork is committed when the {@link BuildResult} is created and updated.
+     * The parent UnitOfWork is committed when the build process ends.
+     *
+     * @param uow The parent {@link UnitOfWork}
+     * @return The currently running process.
+     */
+    public synchronized BuildProcess startNewBuild( UnitOfWork uow ) {
         if (running == null) {
-            running = new BuildProcess();
+            running = new BuildProcess( uow );
             running.addJobChangeListener( new JobChangeAdapter() {
                 @Override public void done( IJobChangeEvent ev ) {
                     running = null;
@@ -99,9 +109,13 @@ public class BuildManager {
         private Process             process;
         
         private File                logFile;
+
+        private UnitOfWork          uow;
         
-        public BuildProcess() {
+        
+        protected BuildProcess( UnitOfWork uow ) {
             super( "Build: " + configId );
+            this.uow = uow;
             setSystem( true );
         }
         
@@ -111,10 +125,11 @@ public class BuildManager {
             PrintProgressMonitor printMonitor = new PrintProgressMonitor( monitor );
 
             try (
-                UnitOfWork uow = BuildRepository.instance().newUnitOfWork();
+                UnitOfWork nested = uow != null ? uow.newUnitOfWork() : BuildRepository.instance().newUnitOfWork();
             ){
-                BuildConfig config = uow.entity( BuildConfig.class, configId );
+                BuildConfig config = nested.entity( BuildConfig.class, configId );
                 context.config.set( config );
+                
                 List<BuildStrategy> strategies = BuildStrategy.availableFor( config );
                 try {
                     // pre
@@ -140,6 +155,12 @@ public class BuildManager {
                     catch (Exception e) {
                         log.warn( "", e );
                     }
+                }
+            }
+            finally {
+                // commit BuildResult no matter if success or exception
+                if (uow != null) {
+                    uow.commit();
                 }
             }
             return Status.OK_STATUS;

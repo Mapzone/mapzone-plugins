@@ -14,6 +14,9 @@
  */
 package io.mapzone.buildserver.ui;
 
+import static org.polymap.core.runtime.event.TypeEventFilter.isType;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 import java.text.DateFormat;
@@ -30,10 +33,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-
 import org.polymap.core.runtime.Polymap;
+import org.polymap.core.runtime.event.Event;
+import org.polymap.core.runtime.event.EventHandler;
+import org.polymap.core.runtime.event.EventManager;
 import org.polymap.core.ui.FormDataFactory;
 import org.polymap.core.ui.FormLayoutFactory;
 import org.polymap.core.ui.UIUtils;
@@ -48,10 +51,13 @@ import org.polymap.rhei.batik.toolkit.md.FunctionalLabelProvider;
 import org.polymap.rhei.batik.toolkit.md.ListTreeContentProvider;
 import org.polymap.rhei.batik.toolkit.md.MdListViewer;
 
+import org.polymap.model2.runtime.UnitOfWork;
+
 import io.mapzone.buildserver.BsPlugin;
 import io.mapzone.buildserver.BuildConfig;
+import io.mapzone.buildserver.BuildObjectCommittedEvent;
 import io.mapzone.buildserver.BuildManager;
-import io.mapzone.buildserver.BuildManager.BuildProcess;
+import io.mapzone.buildserver.BuildRepository;
 import io.mapzone.buildserver.BuildResult;
 
 /**
@@ -81,7 +87,14 @@ public class BuildResultsDashlet
     private BuildManager        buildManager;
 
 
+    /**
+     * 
+     * @param config The {@link BuildConfig} that belongs to
+     *        {@link BuildRepository#session()}. {@link BuildManager} creates its own
+     *        nested {@link UnitOfWork}.
+     */
     public BuildResultsDashlet( BuildConfig config ) {
+        assert config.belongsTo() == BuildRepository.session();
         this.config = config;        
         this.buildManager = BuildManager.of( config );
     }
@@ -95,6 +108,13 @@ public class BuildResultsDashlet
 
 
     @Override
+    public void dispose() {
+        super.dispose();
+        EventManager.instance().unsubscribe( this );
+    }
+
+
+    @Override
     public void createContents( Composite parent ) {
         createResultsList( parent );
         createBuildButton( parent );
@@ -102,6 +122,9 @@ public class BuildResultsDashlet
         parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 0, 0, 3, 0 ).create() );
         FormDataFactory.on( resultsList.getControl() ).fill().noBottom().height( 100 );
         FormDataFactory.on( buildBtn ).bottom( 100 ).left( 30 ).right( 70 ).top( resultsList.getControl() );
+        
+        EventManager.instance().subscribe( this, isType( BuildObjectCommittedEvent.class, ev ->
+                ev.getSource() instanceof BuildResult) );
     }
     
     
@@ -136,7 +159,7 @@ public class BuildResultsDashlet
             BatikApplication.instance().getContext().openPanel( site().panelSite().getPath(), BuildResultPanel.ID );
         });
         resultsList.setContentProvider( new ListTreeContentProvider() );
-        refreshResultsList();
+        refreshResultsList( null );
     }
 
 
@@ -148,32 +171,20 @@ public class BuildResultsDashlet
         buildBtn.setEnabled( !buildManager.running().isPresent() );
         buildBtn.addSelectionListener( UIUtils.selectionListener( ev -> {
             buildBtn.setEnabled( false );
-    
-            BuildProcess job = buildManager.startNewBuild();
-            job.addJobChangeListener( new JobChangeAdapter() {
-                @Override public void running( IJobChangeEvent ev2 ) {
-                    if (!buildBtn.isDisposed()) {
-                        buildBtn.getDisplay().asyncExec( () -> {
-                            refreshResultsList();
-                        });
-                    }
-                }
-                @Override public void done( IJobChangeEvent ev2 ) {
-                    if (!buildBtn.isDisposed()) {
-                        buildBtn.getDisplay().asyncExec( () -> {
-                            buildBtn.setEnabled( true );
-                            refreshResultsList();
-                        });
-                    }
-                }
-            });
+            buildManager.startNewBuild( config.belongsTo() );
         }));
         FormDataFactory.on( buildBtn ).fill().left( 30 ).right( 70 );
     }
 
 
-    protected void refreshResultsList() {
-        resultsList.setInput( config.buildResults.stream().collect( Collectors.toList() ) );        
+    @EventHandler( display=true, delay=250, scope=Event.Scope.JVM )
+    protected void refreshResultsList( List<BuildObjectCommittedEvent> evs ) {
+        if (resultsList != null && !resultsList.getControl().isDisposed()) {
+            resultsList.setInput( config.buildResults.stream().collect( Collectors.toList() ) );
+        }
+        if (buildBtn != null && !buildBtn.isDisposed()) {
+            buildBtn.setEnabled( !buildManager.running().isPresent() );
+        }
     }
 
 }

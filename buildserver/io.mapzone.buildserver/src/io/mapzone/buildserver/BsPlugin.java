@@ -18,6 +18,7 @@ import java.io.File;
 
 import org.osgi.framework.BundleContext;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -69,21 +70,32 @@ public class BsPlugin
         return new File( System.getProperty( ID, System.getProperty( "user.home" ) + "/buildserver" ) );
     }
 
-    public static File createTempDir() {
+    public static File tmpDir() {
         File tmp = new File( buildserverDir(), "tmp" );
-        File result = new File( tmp, String.valueOf( System.currentTimeMillis() ) );
+        return tmp;
+    }
+    
+    public static File createTempDir() {
+        File result = new File( tmpDir(), String.valueOf( System.currentTimeMillis() ) );
         result.mkdirs();
         result.deleteOnExit();
         return result;
     }
     
     /**
-     * The cache directory for a given config and ...thing.
-     * 
-     * @param userId 
-     * @param name 
+     * The cache directory for a given config.
      */
     public static File cacheDir( BuildConfig config, String name ) {
+        File root = new File( buildserverDir(), "cache" );
+        File result = new File( root, "@"+name.hashCode() );
+        result.mkdirs();
+        return result;
+    }
+
+    /**
+     * The cache directory for a given config.
+     */
+    public static File userCacheDir( BuildConfig config, String name ) {
         File root = new File( buildserverDir(), "cache" );
         File userDir = new File( root, config.userId.get() );
         File result = new File( userDir, "@"+name.hashCode() );
@@ -101,6 +113,10 @@ public class BsPlugin
         instance = this;
         log.info( "Start" );
 
+        if (tmpDir().exists()) {
+            log.info( "Cleaning up tmp: " + tmpDir().getAbsolutePath() );
+            FileUtils.cleanDirectory( tmpDir() );
+        }
         // create repo
         BuildRepository.init();
     }

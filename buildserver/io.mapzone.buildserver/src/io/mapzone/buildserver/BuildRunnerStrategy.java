@@ -48,7 +48,8 @@ public class BuildRunnerStrategy
 
     @Override
     public void preBuild( BuildContext context, IProgressMonitor monitor ) throws Exception {
-        File buildrunner = new File( BsPlugin.buildserverDir(), "runners/eclipse-neon/buildrunner.sh" );
+        File buildrunner = new File( BsPlugin.buildserverDir(), "runners/test/buildrunner.sh" );
+        //File buildrunner = new File( BsPlugin.buildserverDir(), "runners/eclipse-neon/buildrunner.sh" );
         logFile = new File( context.export.get(), BuildManager.BUILDRUNNER_LOG );
         process = new ProcessBuilder( buildrunner.getAbsolutePath(), 
                 context.workspace.get().getAbsolutePath(), 

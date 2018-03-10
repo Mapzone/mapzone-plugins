@@ -151,7 +151,7 @@ public class BuildConfigPanel
                 .addConstraint( new PriorityConstraint( 90 ) ) );
         dashboard.addDashlet( new TargetPlatformDashlet( nestedConfig ).setExpanded( false )
                 .addConstraint( new PriorityConstraint( 80 ) ) );
-        dashboard.addDashlet( new BuildResultsDashlet( nestedConfig ).setExpanded( !created )
+        dashboard.addDashlet( new BuildResultsDashlet( config.get() ).setExpanded( !created )
                 .addConstraint( new PriorityConstraint( 0 ) ) );
         ContributionManager.instance().contributeTo( dashboard, this, DASHBOARD_ID );
         dashboard.createContents( parent );

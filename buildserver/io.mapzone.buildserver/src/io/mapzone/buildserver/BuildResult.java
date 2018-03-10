@@ -38,7 +38,6 @@ import org.apache.commons.logging.LogFactory;
 import com.google.common.base.Throwables;
 
 import org.polymap.model2.Association;
-import org.polymap.model2.Entity;
 import org.polymap.model2.Nullable;
 import org.polymap.model2.Property;
 
@@ -48,7 +47,7 @@ import org.polymap.model2.Property;
  * @author Falko Bräutigam
  */
 public class BuildResult
-        extends Entity {
+        extends BuildObject {
 
     private static final Log log = LogFactory.getLog( BuildResult.class );
     

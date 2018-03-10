@@ -47,7 +47,7 @@ public class GitStrategy
 
     @Override
     protected void updateRepo( ScmConfig scm, IProgressMonitor monitor ) throws Exception {
-        File cacheDir = BsPlugin.cacheDir( config, scm.url.get() );
+        File cacheDir = BsPlugin.userCacheDir( config, scm.url.get() );
 
         if (cacheDir.exists() && cacheDir.list().length > 0) {
             // pull
@@ -74,7 +74,7 @@ public class GitStrategy
 
     @Override
     protected boolean copyBundle( ScmConfig scm, String name, File dir ) throws Exception {
-        File cacheDir = BsPlugin.cacheDir( config, scm.url.get() );
+        File cacheDir = BsPlugin.userCacheDir( config, scm.url.get() );
         Optional<File> srcDir = findBundle( name, cacheDir );
         
         if (!srcDir.isPresent()) {
