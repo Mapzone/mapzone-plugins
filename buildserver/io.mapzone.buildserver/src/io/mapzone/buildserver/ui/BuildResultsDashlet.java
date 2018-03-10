@@ -132,7 +132,15 @@ public class BuildResultsDashlet
         resultsList = tk().createListViewer( parent, SWT.FULL_SELECTION, SWT.SINGLE );
         resultsList.firstLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
             BuildResult elm = (BuildResult)cell.getElement();
-            cell.setText( df.format( elm.started.get() ) + "   " + tf.format( elm.started.get() ) );
+            StringBuilder text = new StringBuilder( 256 )
+                    .append( df.format( elm.started.get() ) ).append( "   " )
+                    .append( tf.format( elm.started.get() ) );
+            if (elm.status.get() == BuildResult.Status.RUNNING) {
+                BuildManager.of( elm.config.get() ).running().ifPresent( process -> {
+                    text.append( "   (" ).append( process.monitor().get().percentDone() ).append( "%)" );
+                });
+            }
+            cell.setText( text.toString() );
         }));
         resultsList.firstSecondaryActionProvider.set( new ActionProvider() {
             @Override public void update( ViewerCell cell ) {

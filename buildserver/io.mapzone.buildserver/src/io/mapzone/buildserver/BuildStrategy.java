@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Configurable;
@@ -79,6 +80,12 @@ public abstract class BuildStrategy {
 
     //public void dispose() {}
 
+    protected IProgressMonitor submon( IProgressMonitor monitor, int ticks ) {
+        return new SubProgressMonitor( monitor, ticks ) {
+            
+        };
+    }
+    
     
     /**
      * 
@@ -88,6 +95,9 @@ public abstract class BuildStrategy {
         
         @Immutable
         public Config2<BuildContext,BuildConfig>    config; 
+
+        @Immutable
+        public Config2<BuildContext,BuildConfig>    logFile; 
 
         @Immutable
         public Config2<BuildContext,BuildResult>    result; 

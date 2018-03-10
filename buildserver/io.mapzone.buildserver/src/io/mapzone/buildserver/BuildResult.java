@@ -59,6 +59,8 @@ public class BuildResult
     
     private static final Pattern            SEVERITY = Pattern.compile( "^[0-9]+\\. ([A-Za-z]+) " );
     
+    public static final String              CONSOLE_LOG = "console.log";
+
     // instance *******************************************
     
     public Association<BuildConfig>         config;
@@ -89,7 +91,7 @@ public class BuildResult
 
     public Optional<String> console() {
         try {
-            File f = new File( dataDir(), BuildManager.BUILDRUNNER_LOG );
+            File f = new File( dataDir(), CONSOLE_LOG );
             return Optional.ofNullable( f.exists() ? FileUtils.readFileToString( f, "UTF-8" ) : null );
         }
         catch (IOException e) {

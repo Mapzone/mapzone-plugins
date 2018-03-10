@@ -33,6 +33,8 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
+import org.polymap.core.runtime.event.EventManager;
+
 import org.polymap.model2.runtime.UnitOfWork;
 
 import io.mapzone.buildserver.BuildStrategy.BuildContext;
@@ -46,8 +48,6 @@ public class BuildManager {
 
     private static final Log log = LogFactory.getLog( BuildManager.class );
     
-    public static final String BUILDRUNNER_LOG = "buildrunner.log";
-
     /** Maps {@link BuildConfig#id()} into {@link BuildManager} instances. */
     private static Map<String,BuildManager> instances = new ConcurrentHashMap();
     
@@ -108,9 +108,9 @@ public class BuildManager {
     
         private Process             process;
         
-        private File                logFile;
-
         private UnitOfWork          uow;
+
+        private PrintProgressMonitor printMonitor;
         
         
         protected BuildProcess( UnitOfWork uow ) {
@@ -119,27 +119,40 @@ public class BuildManager {
             setSystem( true );
         }
         
+        public Optional<PrintProgressMonitor> monitor() {
+            return Optional.ofNullable( printMonitor );
+        }
+
         @Override
         protected IStatus run( IProgressMonitor monitor ) {            
             BuildContext context = new BuildContext();
-            PrintProgressMonitor printMonitor = new PrintProgressMonitor( monitor );
-
+            
             try (
                 UnitOfWork nested = uow != null ? uow.newUnitOfWork() : BuildRepository.instance().newUnitOfWork();
             ){
                 BuildConfig config = nested.entity( BuildConfig.class, configId );
                 context.config.set( config );
+                printMonitor = new PrintProgressMonitor( monitor ) {
+                    @Override protected void fireProgressEvent() {
+                        EventManager.instance().publish( new ProgressEvent( context ) );
+                    }
+                };
                 
                 List<BuildStrategy> strategies = BuildStrategy.availableFor( config );
+                printMonitor.beginTask( "> ", strategies.size()*2*10 );
                 try {
                     // pre
                     for (BuildStrategy strategy : strategies) {
-                        strategy.preBuild( context, printMonitor );
+                        IProgressMonitor submon = strategy.submon( printMonitor, 10 );
+                        strategy.preBuild( context, submon );
+                        submon.done();
                         checkCancel( monitor );
                     }
                     // post
                     for (BuildStrategy strategy : Lists.reverse( strategies )) {
-                        strategy.postBuild( context, printMonitor );
+                        IProgressMonitor submon = strategy.submon( printMonitor, 10 );
+                        strategy.postBuild( context, submon );
+                        submon.done();
                         checkCancel( monitor );
                     }
                 }
@@ -158,6 +171,11 @@ public class BuildManager {
                 }
             }
             finally {
+                if (context.result.isPresent()) {
+                    BuildResult result = uow.entity( context.result.get() );
+                    File logFile = new File( result.dataDir(), BuildResult.CONSOLE_LOG );
+                    printMonitor.writeLinesTo( logFile );
+                }
                 // commit BuildResult no matter if success or exception
                 if (uow != null) {
                     uow.commit();

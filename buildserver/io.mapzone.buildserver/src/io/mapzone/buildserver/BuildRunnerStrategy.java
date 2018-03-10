@@ -17,6 +17,8 @@ package io.mapzone.buildserver;
 import java.util.concurrent.CancellationException;
 
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -37,8 +39,6 @@ public class BuildRunnerStrategy
     
     private Process         process;
 
-    private File            logFile;
-
 
     @Override
     public boolean init( BuildConfig config ) {
@@ -48,23 +48,35 @@ public class BuildRunnerStrategy
 
     @Override
     public void preBuild( BuildContext context, IProgressMonitor monitor ) throws Exception {
+        monitor.beginTask( "Runner", IProgressMonitor.UNKNOWN );
         File buildrunner = new File( BsPlugin.buildserverDir(), "runners/test/buildrunner.sh" );
         //File buildrunner = new File( BsPlugin.buildserverDir(), "runners/eclipse-neon/buildrunner.sh" );
-        logFile = new File( context.export.get(), BuildManager.BUILDRUNNER_LOG );
+
         process = new ProcessBuilder( buildrunner.getAbsolutePath(), 
                 context.workspace.get().getAbsolutePath(), 
                 context.config.get().productName.get(), 
                 context.export.get().getAbsolutePath() )
                 .directory( context.workspace.get() )
-                .redirectOutput( logFile )
-                .redirectError( logFile )
+//                .redirectOutput( logFile )
+//                .redirectError( logFile )
                 .start();
         
-        while (process.isAlive()) {
-            if (monitor.isCanceled()) {
-                throw new CancellationException( "Cancel requested" );
+        try (
+            LineNumberReader in = new LineNumberReader( new InputStreamReader( process.getInputStream(), "UTF-8" ) );
+            LineNumberReader err = new LineNumberReader( new InputStreamReader( process.getErrorStream(), "UTF-8" ) );
+        ){
+            while (process.isAlive() || in.ready() || err.ready()) {
+                while (in.ready()) {
+                    monitor.subTask( in.readLine() );
+                }
+                while (err.ready()) {
+                    monitor.subTask( "ERROR: " + err.readLine() );
+                }
+                if (monitor.isCanceled()) {
+                    throw new CancellationException( "Cancel requested" );
+                }
+                Thread.sleep( 1000 );
             }
-            Thread.sleep( 1000 );
         }
     }
 
@@ -85,6 +97,8 @@ public class BuildRunnerStrategy
         if (logsZip.exists()) {
             FileUtils.copyFileToDirectory( logsZip, dataDir, true );
         }
+        
+        File logFile = new File( context.export.get(), BuildResult.CONSOLE_LOG );
         if (logFile.exists()) {
             FileUtils.copyFileToDirectory( logFile, dataDir, true );
         }
