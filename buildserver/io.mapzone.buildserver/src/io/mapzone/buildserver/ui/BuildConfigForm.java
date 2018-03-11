@@ -14,15 +14,25 @@
  */
 package io.mapzone.buildserver.ui;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.rap.rwt.RWT;
+
 import org.polymap.core.ui.ColumnLayoutFactory;
 
+import org.polymap.rhei.field.IFormField;
+import org.polymap.rhei.field.IFormFieldSite;
 import org.polymap.rhei.field.NotEmptyValidator;
 import org.polymap.rhei.form.DefaultFormPage;
 import org.polymap.rhei.form.FieldBuilder;
 import org.polymap.rhei.form.IFormPageSite;
+import org.polymap.rhei.form.IFormToolkit;
 
 import io.mapzone.buildserver.BuildConfig;
+import io.mapzone.buildserver.DownloadServlet;
 
 /**
  * 
@@ -79,6 +89,68 @@ public class BuildConfigForm
                 .field.put( EnumPicklistFormField.create( BuildConfig.Type.values() ) )
                 .validator.put( new NotEmptyValidator() )
                 .create();
+
+        // download link
+        site.newFormField( new PropertyAdapter( config.downloadPath ) )
+                .label.put( "Download" )
+                .field.put( new LinkFormField() )
+                .validator.put( new NotEmptyValidator() )
+                .create();
+    }
+
+    
+    public class LinkFormField
+            implements IFormField {
+
+        private IFormFieldSite          site;
+
+        private CLabel                  link;
+
+        private Object                  loadedValue;
+
+        public void init( IFormFieldSite _site ) {
+            this.site = _site;
+        }
+
+        public void dispose() {
+            link.dispose();
+        }
+
+        @Override
+        public Control createControl( Composite parent, IFormToolkit toolkit ) {
+            link = new CLabel( parent, SWT.LEFT );
+            link.setData( RWT.MARKUP_ENABLED, Boolean.TRUE );
+            link.setData( RWT.TOOLTIP_MARKUP_ENABLED, Boolean.TRUE );
+            //link.setData( MarkupValidator.MARKUP_VALIDATION_DISABLED, Boolean.TRUE );
+            link.setBackground( parent.getBackground() );
+            return link;
+        }
+
+        @Override
+        public IFormField setEnabled( boolean enabled ) {
+            return this;
+        }
+
+        @Override
+        public void store() throws Exception {
+        }
+
+        @Override
+        public void load() throws Exception {
+            loadedValue = site.getFieldValue();
+
+            String url = DownloadServlet.ALIAS + "/" + loadedValue + "/" + DownloadServlet.downloadZip( config );
+            link.setText( "<a target=\"_blank\" href=\"" + url + "\" "
+                    + "style=\"font-size: 14px;\""
+                    + ">..." + url + "</a>" );
+        }
+
+        @Override
+        public IFormField setValue( Object value ) {
+            link.setText( value != null ? (String)value : "" );
+            return this;
+        }
+
     }
 
 }

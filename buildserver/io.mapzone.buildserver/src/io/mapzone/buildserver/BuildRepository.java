@@ -107,6 +107,7 @@ public class BuildRepository {
     protected void createTestConfigurations( UnitOfWork uow ) {
         // core.plugin
         uow.createEntity( BuildConfig.class, "core.plugin", (BuildConfig proto) -> {
+            BuildConfig.defaults().initialize( proto );
             proto.name.set( "org.polymap.core" );
             proto.productName.set( "org.polymap.core" );
             proto.userId.set( "Test" );
@@ -125,6 +126,7 @@ public class BuildRepository {
         });
         // atlas.plugin
         uow.createEntity( BuildConfig.class, "atlas.plugin", (BuildConfig proto) -> {
+            BuildConfig.defaults().initialize( proto );
             proto.name.set( "io.mapzone.atlas_master" );
             proto.productName.set( "io.mapzone.atlas" );
             proto.type.set( BuildConfig.Type.PLUGIN );
@@ -143,6 +145,7 @@ public class BuildRepository {
         });
         // arena.product
         uow.createEntity( BuildConfig.class, "arena.product", (BuildConfig proto) -> {
+            BuildConfig.defaults().initialize( proto );
             proto.name.set( "io.mapzone.arena.product CA" );
             proto.productName.set( "io.mapzone.arena.product" );
             proto.userId.set( "Test" );

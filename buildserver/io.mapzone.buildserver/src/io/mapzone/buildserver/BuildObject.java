@@ -18,6 +18,7 @@ import org.polymap.core.runtime.event.EventManager;
 
 import org.polymap.model2.Entity;
 import org.polymap.model2.runtime.Lifecycle;
+import org.polymap.model2.runtime.UnitOfWork;
 
 /**
  * 
@@ -27,6 +28,10 @@ import org.polymap.model2.runtime.Lifecycle;
 public abstract class BuildObject
         extends Entity 
         implements Lifecycle {
+
+    public UnitOfWork belongsTo() {
+        return context.getUnitOfWork();
+    }
 
     @Override
     public void onLifecycleChange( State state ) {

@@ -31,6 +31,7 @@ import java.io.LineNumberReader;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +41,7 @@ import com.google.common.base.Throwables;
 import org.polymap.model2.Association;
 import org.polymap.model2.Nullable;
 import org.polymap.model2.Property;
+import org.polymap.model2.runtime.ValueInitializer;
 
 /**
  * 
@@ -51,32 +53,57 @@ public class BuildResult
 
     private static final Log log = LogFactory.getLog( BuildResult.class );
     
-    public static BuildResult               TYPE;
+    public static BuildResult           TYPE;
+    
+    public static final ValueInitializer<BuildResult> defaults( BuildConfig config ) {
+        return (BuildResult proto) -> {
+            proto.config.set( config );
+            proto.started.set( new Date() );
+            proto.status.set( Status.RUNNING );
+            proto.downloadPath.set( RandomStringUtils.random( 6, true, true ) );
+            File dataDir = new File( BsPlugin.exportDataDir(), proto.id().toString() );
+            dataDir.mkdirs();
+            proto.dataDir.set( dataDir.getAbsolutePath() );
+            return proto;
+        };
+    }
     
     public enum Status {
         RUNNING, OK, FAILED
     }
     
-    private static final Pattern            SEVERITY = Pattern.compile( "^[0-9]+\\. ([A-Za-z]+) " );
+    private static final Pattern        SEVERITY = Pattern.compile( "^[0-9]+\\. ([A-Za-z]+) " );
     
-    public static final String              CONSOLE_LOG = "console.log";
+    public static final String          CONSOLE_LOG = "console.log";
 
     // instance *******************************************
     
-    public Association<BuildConfig>         config;
+    public Association<BuildConfig>     config;
     
-    public Property<Status>                 status;
+    public Property<Status>             status;
 
-    public Property<Date>                   started;
+    public Property<Date>               started;
 
     @Nullable
-    public Property<String>                 dataDir;
+    public Property<String>             dataDir;
     
+    /** The servlet path where this build can be accessed, if it was successfull. */
+    public Property<String>             downloadPath;
     
+    /**
+     * The directory where build results and logs are stored.
+     */
     public File dataDir() {
         return new File( dataDir.get() );
     }
 
+    /**
+     * The packed build result.
+     */
+    public File zipFile() {
+        return new File( dataDir(), "download.zip" );
+    }
+    
     
     public void destroy() {
         try {

@@ -120,7 +120,7 @@ public class BuildResultsDashlet
         createBuildButton( parent );
         
         parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 0, 0, 3, 0 ).create() );
-        FormDataFactory.on( resultsList.getControl() ).fill().noBottom().height( 100 );
+        FormDataFactory.on( resultsList.getControl() ).fill().noBottom().height( 95 );
         FormDataFactory.on( buildBtn ).bottom( 100 ).left( 30 ).right( 70 ).top( resultsList.getControl() );
         
         EventManager.instance().subscribe( this, isType( BuildObjectCommittedEvent.class, ev ->

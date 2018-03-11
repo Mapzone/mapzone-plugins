@@ -15,8 +15,9 @@
 package io.mapzone.buildserver;
 
 import java.util.Objects;
+import java.util.Optional;
 
-import org.polymap.core.runtime.event.EventManager;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import org.polymap.model2.CollectionProperty;
 import org.polymap.model2.Composite;
@@ -26,7 +27,6 @@ import org.polymap.model2.Defaults;
 import org.polymap.model2.ManyAssociation;
 import org.polymap.model2.Nullable;
 import org.polymap.model2.Property;
-import org.polymap.model2.runtime.UnitOfWork;
 import org.polymap.model2.runtime.ValueInitializer;
 
 /**
@@ -43,6 +43,7 @@ public class BuildConfig
         return (BuildConfig proto) -> {
             proto.type.set( Type.PRODUCT );
             proto.userId.set( "Test" );  // FIXME
+            proto.downloadPath.set( RandomStringUtils.random( 6, true, true ) );
             return proto;
         };
     }
@@ -62,6 +63,9 @@ public class BuildConfig
     
     public Property<String>             userId;
     
+    /** The servlet path where the latest successfull build can be accessed. */
+    public Property<String>             downloadPath;
+    
     @Defaults
     public CollectionProperty<TargetPlatformConfig> targetPlatform;
     
@@ -72,15 +76,11 @@ public class BuildConfig
     public ManyAssociation<BuildResult> buildResults;
     
     
-    public UnitOfWork belongsTo() {
-        return context.getUnitOfWork();
-    }
-    
-    @Override
-    public void onLifecycleChange( State state ) {
-        if (state == State.AFTER_COMMIT) {
-            EventManager.instance().publish( new BuildObjectCommittedEvent( BuildConfig.this ) );
-        }
+    public Optional<BuildResult> latestSuccessfullResult() {
+        return buildResults.stream()
+            .filter( r -> r.status.get() == BuildResult.Status.OK )
+            .sorted( (r1,r2) -> r2.started.get().compareTo( r1.started.get() ) )
+            .findAny();
     }
 
 

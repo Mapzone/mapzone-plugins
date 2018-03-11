@@ -14,13 +14,7 @@
  */
 package io.mapzone.buildserver;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
-
-import java.io.File;
-
+import java.util.Optional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,17 +44,7 @@ public class InitBuildResultStrategy
         BuildConfig config = context.config.get();
         UnitOfWork uow = config.belongsTo();
 
-        context.result.set( uow.createEntity( BuildResult.class, null, (BuildResult proto) -> {
-            proto.config.set( config );
-            proto.started.set( new Date() );
-            proto.status.set( BuildResult.Status.RUNNING );
-
-            File dataDir = new File( BsPlugin.exportDataDir(), proto.id().toString() );
-            dataDir.mkdir();
-            proto.dataDir.set( dataDir.getAbsolutePath() );
-
-            return proto;
-        }));
+        context.result.set( uow.createEntity( BuildResult.class, null, BuildResult.defaults( config ) ) );
         uow.commit();
     }
 
@@ -80,12 +64,22 @@ public class InitBuildResultStrategy
 
 
     protected void pruneResults( BuildConfig config ) {
-        Map<Date,BuildResult> sorted = new TreeMap();
-        config.buildResults.forEach( result -> sorted.put( result.started.get(), result ) );
-        for (Iterator<BuildResult> it=sorted.values().iterator(); it.hasNext() && sorted.size() > 3; ) {
-            BuildResult result = it.next(); it.remove();
-            result.destroy();
-        }
+        Optional<BuildResult> pinned = config.latestSuccessfullResult();
+        
+        config.buildResults.stream()
+                .sorted( (r1,r2) -> r1.started.get().compareTo( r2.started.get() ) )
+                .filter( r -> pinned.map( p -> r != p ).orElse( true ) )
+                .limit( Math.max( 0, config.buildResults.size() - 3 ) )
+                .forEach( r -> r.destroy() );
+        
+//        // FIXME keep latest successfull build
+//        Map<Date,BuildResult> sorted = new TreeMap();
+//        config.buildResults.forEach( result -> sorted.put( result.started.get(), result ) );
+//        
+//        for (Iterator<BuildResult> it=sorted.values().iterator(); it.hasNext() && sorted.size() > 3; ) {
+//            BuildResult result = it.next(); it.remove();
+//            result.destroy();
+//        }
         config.belongsTo().commit();
     }    
 
