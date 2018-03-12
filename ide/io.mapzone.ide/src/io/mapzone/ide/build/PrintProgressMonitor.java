@@ -28,23 +28,39 @@ public class PrintProgressMonitor
 
     private PrintStream         out = System.out;
     
+    private double              worked;
+
+    private int                 totalWork;
+    
     protected void print( String s ) {
-        System.out.println( s );        
+        System.out.println( "::" + s + "  @@" + (int)worked + "/" + totalWork );        
     }
     
     @Override
+    public void internalWorked( double work ) {
+        worked += work;
+    }
+
+    @Override
+    public void worked( int work ) {
+        internalWorked( work );
+    }
+
+    @Override
+    @SuppressWarnings( "hiding" )
     public void beginTask( String name, int totalWork ) {
-        print( "  " + name );
+        this.totalWork = totalWork;
+        print( name );
     }
 
     @Override
     public void subTask( String name ) {
-        print( "    " + name );
+        print( name );
     }
 
     @Override
     public void setTaskName( String name ) {
-        print( "    " + name );
+        print( name );
     }
 
     @Override

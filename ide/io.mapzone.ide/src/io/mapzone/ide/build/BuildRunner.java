@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -37,8 +38,12 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetLocation;
@@ -82,7 +87,7 @@ public class BuildRunner
         
         // refresh
         PrintProgressMonitor monitor = new PrintProgressMonitor();
-        monitor.beginTask( "Build", 27 );
+        monitor.beginTask( "Build", 30 );
         enableAutoBuild( false, submon( monitor, 1 ) );
         refreshWorkspace( submon( monitor, 2 ) );
         installTargetPlatform( submon( monitor, 2 ) );
@@ -94,9 +99,9 @@ public class BuildRunner
         }
 
         // build / export
-//        build( submon( monitor, 10 ) );
-//        reportProblems( monitor );
-        export( project, new File( exportDir ), submon( monitor, 10 ) );
+        build( submon( monitor, 10 ) );
+        reportProblems( monitor );
+        export( project, new File( exportDir ), submon( monitor, 15 ) );
 
         workspace.save( true, submon( monitor, 1 ) );
         System.out.println( "Time: " + (System.currentTimeMillis()-start)/1000 + "s"  );
@@ -189,11 +194,32 @@ public class BuildRunner
         File root = workspace.getRoot().getRawLocation().toFile();
         for (File f : root.listFiles()) {
             if (f.isDirectory() && !f.getName().startsWith( "." )) {
-                IProject project = workspace.getRoot().getProject( f.getName() );
+                //IProject project = workspace.getRoot().getProject( f.getName() );
+
+                IProjectDescription description = workspace.loadProjectDescription( 
+                        new Path( f.getAbsolutePath() ).append( IProjectDescription.DESCRIPTION_FILE_NAME ) );
+                IProject project = workspace.getRoot().getProject(description.getName());
+
                 if (!project.exists()) {
-                    project.create( submon( monitor, 1 ) );
+                    project.create( description, submon( monitor, 1 ) );
                 }
                 project.open( submon( monitor, 1 ) );
+                
+                IJavaProject javaProject = JavaCore.create( project );
+                if (javaProject.exists()) {
+                    javaProject.makeConsistent( submon( monitor, 1 ) );
+                    for (IClasspathEntry entry : javaProject.getRawClasspath()) {
+                        log.info( "  Classpath entry: " + entry );
+                    }
+                }
+                
+//                IOverwriteQuery overwriteQuery = new IOverwriteQuery() {
+//                    public String queryOverwrite(String file) { return ALL; }
+//                };
+//                ImportOperation importOperation = new ImportOperation( 
+//                        project.getFullPath(), new File( baseDir ), FileSystemStructureProvider.INSTANCE, overwriteQuery );
+//                importOperation.setCreateContainerStructure( false );
+//                importOperation.run( new NullProgressMonitor() );
             }
         }
         monitor.done();
@@ -202,19 +228,18 @@ public class BuildRunner
 
     protected void export( IProject project, File exportDir, IProgressMonitor monitor ) throws Exception, InterruptedException {
         FeatureExportInfo info = ExportHelper.standardExportInfo( project );
-        info.destinationDirectory = exportDir.getAbsolutePath();
-        info.useWorkspaceCompiledClasses = false;
+        File productDir = new File( exportDir, "product" );
+        productDir.mkdir();
+        info.destinationDirectory = exportDir.getAbsolutePath(); //productDir.getAbsolutePath();
+        info.useWorkspaceCompiledClasses = true;
         info.toDirectory = false;
-        info.zipFileName = new File( exportDir, project.getName() + ".zip" ).getAbsolutePath(); 
-        ProductExportOperation job = ExportHelper.createProductExportJob( project, info );
+        info.zipFileName = "product.zip"; 
+        ProductExportOperation job = ExportHelper.createProductExportJob( project, info, exportDir );
         
-        // we want it to use our monitor but run() is protected; sub-class does not work
+        // we want it to use our monitor but run() is protected and sub-classing does not work
         Method runMethod = ProductExportOperation.class.getDeclaredMethod( "run", new Class[] {IProgressMonitor.class} );
         runMethod.setAccessible( true );
         runMethod.invoke( job, new Object[] {monitor} );
-        
-//        job.schedule();
-//        job.join();
     }
 
 

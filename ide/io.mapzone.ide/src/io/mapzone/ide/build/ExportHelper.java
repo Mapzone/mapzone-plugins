@@ -67,7 +67,7 @@ public class ExportHelper {
     }
 
     
-    public static ProductExportOperation createProductExportJob( IProject project, FeatureExportInfo info ) throws Exception {
+    public static ProductExportOperation createProductExportJob( IProject project, FeatureExportInfo info, File rootDir ) throws Exception {
         // XXX find product file
         IFile productFile = (IFile)Arrays.stream( project.members() )
                 .filter( child -> child instanceof IFile && child.getName().contains( "product" ) )
@@ -94,7 +94,7 @@ public class ExportHelper {
         }
         info.items = items.toArray( new BundleDescription[items.size()] );
         
-        return new ProductExportOperation( info, "Export", productModel.getProduct(), info.destinationDirectory );
+        return new ProductExportOperation( info, "Export", productModel.getProduct(), "" ); //rootDir.getAbsolutePath() );
     }
     
     
