@@ -1,6 +1,6 @@
 /* 
- * polymap.org
- * Copyright (C) 2018, the @authors. All rights reserved.
+ * mapzone.io
+ * Copyright (C) 2016, the @authors. All rights reserved.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -14,49 +14,42 @@
  */
 package io.mapzone.buildserver.ui;
 
-import static org.polymap.core.runtime.event.TypeEventFilter.isType;
-import static org.polymap.core.ui.UIUtils.selection;
-
-import java.util.List;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
+import static org.polymap.core.ui.FormDataFactory.on;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.ViewerSorter;
-
-import org.polymap.core.runtime.event.Event;
+import org.eclipse.swt.widgets.Label;
+import org.polymap.core.runtime.UIThreadExecutor;
 import org.polymap.core.runtime.event.EventHandler;
-import org.polymap.core.runtime.event.EventManager;
 import org.polymap.core.ui.FormDataFactory;
 import org.polymap.core.ui.FormLayoutFactory;
 import org.polymap.core.ui.UIUtils;
 
-import org.polymap.rhei.batik.Context;
+import org.polymap.rhei.batik.BatikApplication;
 import org.polymap.rhei.batik.PanelIdentifier;
-import org.polymap.rhei.batik.Scope;
-import org.polymap.rhei.batik.app.SvgImageRegistryHelper;
-import org.polymap.rhei.batik.toolkit.md.ActionProvider;
-import org.polymap.rhei.batik.toolkit.md.FunctionalLabelProvider;
-import org.polymap.rhei.batik.toolkit.md.ListTreeContentProvider;
-import org.polymap.rhei.batik.toolkit.md.MdListViewer;
+import org.polymap.rhei.batik.PropertyAccessEvent;
+import org.polymap.rhei.batik.dashboard.DashboardPanel;
+import org.polymap.rhei.batik.toolkit.ConstraintData;
+import org.polymap.rhei.batik.toolkit.ConstraintLayout;
+import org.polymap.rhei.batik.toolkit.IPanelSection;
+import org.polymap.rhei.batik.toolkit.LayoutSupplier;
 
-import org.polymap.model2.runtime.UnitOfWork;
+import org.polymap.cms.ContentProvider;
+import org.polymap.cms.ContentProvider.ContentObject;
 
 import io.mapzone.buildserver.BsPlugin;
-import io.mapzone.buildserver.BuildConfig;
-import io.mapzone.buildserver.BuildConfigCommittedEvent;
-import io.mapzone.buildserver.BuildRepository;
 
 /**
- * 
+ * Landing page or open {@link DashboardPanel} if {@link LoginCookie} is set.
  *
- * @author Falko Bräutigam
+ * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  */
 public class StartPanel
         extends BsPanel {
@@ -65,151 +58,120 @@ public class StartPanel
 
     public static final PanelIdentifier     ID = PanelIdentifier.parse( "start" );
 
-    /**
-     * Outbound: The config the work with.
-     */
-    @Scope( BsPlugin.ID )
-    protected Context<BuildConfig>      selected;
-    
-    private MdListViewer                list;
-
-    private Button                      addBtn;
-
-    private Button                      removeBtn;
+    private Composite                       parent;
 
     
     @Override
-    public void init() {
-        super.init();
-        site().title.set( "Buildserver" );        
+    public boolean wantsToBeShown() {
+        return getSite().getPath().size() == 1;
     }
-
     
-    @EventHandler( display=true, delay=250, scope=Event.Scope.JVM )
-    protected void onCommit( List<BuildConfigCommittedEvent> evs ) {
-        if (list.getControl().isDisposed()) {
-            EventManager.instance().unsubscribe( StartPanel.this );
+    
+    @Override
+    public void createContents( @SuppressWarnings("hiding") Composite parent ) {
+        this.parent = parent;
+        site().setSize( SIDE_PANEL_WIDTH2, 550, Integer.MAX_VALUE );
+        site().title.set( "Mapzone Buildserver" );
+
+        if (BsPlugin.instance().oauth.authenticated().isPresent()) {
+            openDashboard();            
         }
         else {
-            refreshList();
+            createFrontpageContents();
         }
     }
 
-    
-    @Override
-    public void createContents( Composite parent ) {
-        parent.setLayout( FormLayoutFactory.defaults().spacing( 8 ).margins( 0, 8 ).create() );
+
+    protected void createFrontpageContents() {
+        int shellWith = UIUtils.shellToParentOn().getSize().x;
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 10 ).margins( 10, 0, 10, 0 ).create() );        
         
-        createList( parent );
-        createButtons( parent );
-        
-        FormDataFactory.on( list.getControl() ).fill().noBottom();
-        FormDataFactory.on( addBtn ).left( 35 ).right( 65 ).top( list.getControl() ).noBottom();
-//        FormDataFactory.on( removeBtn ).left( addBtn ).right( 75 ).top( list.getControl() ).noBottom();
-        
-        EventManager.instance().subscribe( this, isType( BuildConfigCommittedEvent.class, ev -> true ) );
+        // welcome
+        ContentProvider cp = ContentProvider.instance();
+        Label welcome = tk().createFlowText( parent, cp.findContent( "buildserver/1welcome.md" ).content() );
+
+        CLabel oauth = BsPlugin.instance().oauth.iterator().next()
+                .createControl( parent );
+        tk().adapt( oauth, false, false );
+
+        // layout
+        FormDataFactory.on( welcome ).fill().noBottom();
+        FormDataFactory.on( oauth ).fill().top( welcome ).left( 40 ).right( 60 );
     }
 
     
-    protected void createButtons( Composite parent ) {
-        addBtn = tk().createButton( parent, "New...", SWT.PUSH );
-        addBtn.setImage( BsPlugin.images().svgImage( "plus-circle-outline.svg", SvgImageRegistryHelper.WHITE24 ) );
-        addBtn.addSelectionListener( UIUtils.selectionListener( ev -> {
-            createBuildConfig();
-        }));
+    protected void createArticleSection( Composite grid, ContentObject co ) {
+        String content = co.content();
+        String title = co.title();
+        if (content.startsWith( "#" )) {
+            title = substringBefore( content, "\n" ).substring( 1 );
+            content = content.substring( title.length() + 2 );
+        }
 
-//        removeBtn = tk().createButton( parent, "Remove", SWT.PUSH );
-//        removeBtn.setImage( BsPlugin.images().svgImage( "delete-circle.svg", SvgImageRegistryHelper.WHITE24 ) );
-//        removeBtn.addSelectionListener( UIUtils.selectionListener( ev -> {
-//            
-//        }));
-//        removeBtn.setEnabled( false );
+        IPanelSection section = tk().createPanelSection( grid, title, SWT.BORDER );
+        
+        int priority = 100 - Integer.parseInt( co.name().substring( 0, 2 ) );
+        section.getControl().setLayoutData( new ConstraintData()
+                .prio( priority ).minHeight( 300 ).minWidth( 350 ) ); //.maxWidth( 450 ) );
+                //ColumnDataFactory.defaults().heightHint( 300 ).widthHint( 350 ).create() );
+        
+        section.getBody().setLayout( FormLayoutFactory.defaults().create() );
+
+        // this generates an iFrame with proper size; this allows to load
+        // scripts/CSS in content *and* is better than a Label which always has
+        // its own idea of its size depending on fonts in content
+        Browser b = new Browser( section.getBody(), SWT.NONE );
+        on( b ).fill().width( 380 );
+        
+        // XXX moved <head> elements in a <p> which generates a margin on top
+        String html = tk().markdownToHtml( content, b );
+        b.setText( html );
     }
     
     
-    protected void createList( Composite parent ) {
-        list = tk().createListViewer( parent, SWT.FULL_SELECTION, SWT.SINGLE );
-        list.iconProvider.set( FunctionalLabelProvider.of( cell -> {
-            cell.setImage( BsPlugin.images().svgImage( "package-variant.svg", SvgImageRegistryHelper.NORMAL24 ) );
-        }));
-        list.firstLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
-            BuildConfig elm = (BuildConfig)cell.getElement();
-            cell.setText( elm.name.get() );
-        }));
-        list.secondLineLabelProvider.set( FunctionalLabelProvider.of( cell -> {
-            BuildConfig elm = (BuildConfig)cell.getElement();
-            cell.setText( elm.productName.get() + " -- " + elm.type.get() );
-        }));
-        list.secondSecondaryActionProvider.set( new ActionProvider() {
-            @Override public void update( ViewerCell cell ) {
-                cell.setImage( BsPlugin.images().svgImage( "delete-circle.svg", SvgImageRegistryHelper.ACTION24 ) );
+    /**
+     * Page layout: 800px width    
+     */
+    protected void createPageLayout() {
+        ((ConstraintLayout)parent.getLayout()).setMargins( new LayoutSupplier() {
+            LayoutSupplier layoutPrefs = site().layoutPreferences();
+            LayoutSupplier appLayoutPrefs = BatikApplication.instance().getAppDesign().getAppLayoutSettings();
+            @Override
+            public int getSpacing() {
+                return 0; //layoutPrefs.getSpacing() * 2;
             }
-            @Override public void perform( MdListViewer viewer, Object elm ) {
-                removeBuildConfig( (BuildConfig)elm );
+            protected int margins() {
+                Rectangle bounds = parent.getParent().getBounds();
+                int availWidth = bounds.width-(appLayoutPrefs.getMarginLeft()+appLayoutPrefs.getMarginRight());
+                return Math.max( (availWidth-800)/2, layoutPrefs.getMarginLeft());
             }
+            @Override
+            public int getMarginTop() { return layoutPrefs.getMarginTop(); }
+            @Override
+            public int getMarginRight() { return margins(); }
+            @Override
+            public int getMarginLeft() { return margins(); }
+            @Override
+            public int getMarginBottom() { return layoutPrefs.getMarginBottom() /*+ 10*/; }
         });
-        list.firstSecondaryActionProvider.set( new ActionProvider() {
-            @Override public void update( ViewerCell cell ) {
-                cell.setImage( BsPlugin.images().svgImage( "chevron-right.svg", SvgImageRegistryHelper.NORMAL24 ) );
-            }
-            @Override public void perform( MdListViewer viewer, Object elm ) {
-                openDetailPanel( selection( list.getSelection() ).first( BuildConfig.class ).get() );
-            }
-        });
-        list.setSorter( new ViewerSorter() {
-            @Override public int compare( Viewer viewer, Object e1, Object e2 ) {
-                return ((BuildConfig)e1).name.get().compareTo( ((BuildConfig)e2).name.get() );
-            }
-        });
-        list.setContentProvider( new ListTreeContentProvider() );
-        refreshList();
-        
-        list.addOpenListener( ev -> {
-            openDetailPanel( selection( list.getSelection() ).first( BuildConfig.class ).get() );
-        });
     }
+    
+    
+    protected void openDashboard() {
+        // make StartPanel/frontpage to big to be shown beside the dashboard
+        site().preferredWidth.set( Integer.MAX_VALUE );
+        site().minWidth.set( Integer.MAX_VALUE );
 
-    
-    protected void refreshList() {
-        list.setInput( BuildRepository.session().query( BuildConfig.class ).execute() );
-    }
-    
-    
-    protected void createBuildConfig() {
-        selected.set( null );
-        getContext().openPanel( site().path(), BuildConfigPanel.ID );        
-    }
-    
-    
-    protected void removeBuildConfig( BuildConfig config ) {
-        tk().createSimpleDialog( "Delete configuration" )
-            .setContents( parent -> {
-                tk().createFlowText( parent, 
-                        "Do you realy want to delete\n" + 
-                        "this build configuration?\n\n" +
-                        "  * " + config.name.get());
-            })
-            .addCancelAction()
-            .addOkAction( "DELETE", () -> {
-                doRemoveBuildConfig( config ); 
-                return true;
-            })
-            .openAndBlock();
-    }
-
-    
-    protected void doRemoveBuildConfig( BuildConfig config ) {
-        UnitOfWork uow = config.belongsTo();
-        uow.removeEntity( config );
-        uow.commit();
-        
-        //refreshList();
+        UIThreadExecutor.async( () -> getContext().openPanel( getSite().getPath(), BuildConfigsPanel.ID ) );
     }
 
 
-    protected void openDetailPanel( BuildConfig config ) {
-        selected.set( config );
-        getContext().openPanel( site().path(), BuildConfigPanel.ID );
+    /** 
+     * Triggered by {@link StartPanel} and {@link RegisterPanel}.
+     */
+    @EventHandler( display=true )
+    protected void userLogedIn( PropertyAccessEvent ev ) {
+        openDashboard();    
     }
     
 }

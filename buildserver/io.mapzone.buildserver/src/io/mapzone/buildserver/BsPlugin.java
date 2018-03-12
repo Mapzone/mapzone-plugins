@@ -28,6 +28,8 @@ import org.polymap.core.CorePlugin;
 
 import org.polymap.rhei.batik.app.SvgImageRegistryHelper;
 
+import io.mapzone.buildserver.ui.OAuthSetup;
+
 /**
  * 
  *
@@ -107,12 +109,18 @@ public class BsPlugin
     // instance *******************************************
 
     public SvgImageRegistryHelper   images = new SvgImageRegistryHelper( this );
+
+    public OAuthSetup               oauth;
+    
     
     @Override
     public void start( BundleContext context ) throws Exception {
         instance = this;
         log.info( "Start" );
 
+        File f = new File( CorePlugin.getDataLocation( instance() ).getParentFile().getParentFile(), "oauth.conf" );
+        oauth = OAuthSetup.readJsonConfig( FileUtils.readFileToString( f ) );
+        
         if (tmpDir().exists()) {
             log.info( "Cleaning up tmp: " + tmpDir().getAbsolutePath() );
             FileUtils.cleanDirectory( tmpDir() );

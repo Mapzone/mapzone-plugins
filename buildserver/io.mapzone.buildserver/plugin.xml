@@ -26,7 +26,11 @@
       </panel>
       <panel
             class="io.mapzone.buildserver.ui.BuildConfigPanel"
-            id="io.mapzone.buildserver.BuildConfigurationPanel">
+            id="io.mapzone.buildserver.BuildConfigPanel">
+      </panel>
+      <panel
+            class="io.mapzone.buildserver.ui.BuildConfigsPanel"
+            id="io.mapzone.buildserver.BuildConfigsPanel">
       </panel>
       <panel
             class="io.mapzone.buildserver.ui.BuildResultPanel"
@@ -39,6 +43,14 @@
             class="io.mapzone.buildserver.ui.BsPanelFilter"
             servletNameMatcher="/builds">
       </panelFilter>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/builds/download"
+            class="io.mapzone.buildserver.DownloadServlet"
+            load-on-startup="true">
+      </servlet>
    </extension>
 
 </plugin>
