@@ -57,6 +57,7 @@ public class InitBuildResultStrategy
         context.result.get().status.set( context.exception.isPresent() 
                 ? BuildResult.Status.FAILED 
                 : BuildResult.Status.OK );
+        
         pruneResults( config );
         
         uow.commit();

@@ -17,15 +17,11 @@ package io.mapzone.buildserver;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -39,7 +35,7 @@ import io.mapzone.buildserver.BuildStrategy.BuildContext;
 public abstract class PrintProgressMonitor
         extends NullProgressMonitor {
 
-    private static final Log log = LogFactory.getLog( PrintProgressMonitor.class );
+//    private static final Log log = LogFactory.getLog( PrintProgressMonitor.class );
     
     private IProgressMonitor        delegate;
     
@@ -77,32 +73,36 @@ public abstract class PrintProgressMonitor
     @SuppressWarnings( "hiding" )
     public void beginTask( String name, int totalWork ) {
         this.totalWork = totalWork;
-        log.info( "  " + name );
+//        log.info( "  " + name );
         lines.add( name );
     }
 
     @Override
     public void subTask( String name ) {
         if (!StringUtils.isBlank( name )) {
-            log.info( "    " + name );
+//            log.info( "    " + name );
             lines.add( name );
         }
     }
 
     @Override
     public void setTaskName( String name ) {
-        log.info( "    " + name );
+//        log.info( "    " + name );
     }
 
     @Override
     public void done() {
     }
 
-    public void writeLinesTo( File f ) {
+    public void writeLinesTo( File f, Exception exception ) {
         try {
             try (PrintWriter out = new PrintWriter( f, "UTF-8" )){
                 for (String line : lines) {
                     out.println( line );
+                }
+                if (exception != null) {
+                    out.println( "______ Exception ____________________________________" );
+                    exception.printStackTrace( out );
                 }
             }
         }

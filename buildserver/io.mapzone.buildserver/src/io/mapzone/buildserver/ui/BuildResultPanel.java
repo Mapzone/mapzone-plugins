@@ -87,7 +87,7 @@ public class BuildResultPanel
         else {
             IPanelSection consoleSection = tk().createPanelSection( parent, "Console", SWT.NONE );
             createConsoleSection( consoleSection.getBody() );
-            IPanelSection logsSection = tk().createPanelSection( parent, "Errors / Warnings", SWT.NONE );
+            IPanelSection logsSection = tk().createPanelSection( parent, "Compiler Errors/Warnings", SWT.NONE );
             createLogsSection( logsSection.getBody() );
 
             FormDataFactory.on( logsSection.getControl() ).fill().bottom( 50 ).height( 100 );

@@ -101,7 +101,7 @@ public class BuildResult
      * The packed build result.
      */
     public File zipFile() {
-        return new File( dataDir(), "download.zip" );
+        return new File( dataDir(), "product.zip" );
     }
     
     

@@ -15,10 +15,13 @@
 package io.mapzone.buildserver;
 
 import java.util.concurrent.CancellationException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.PrintWriter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -36,8 +39,12 @@ public class BuildRunnerStrategy
         extends BuildStrategy {
 
     private static final Log log = LogFactory.getLog( BuildRunnerStrategy.class );
+
+    public static final Pattern LOG_LINE = Pattern.compile( "::[ ]*(.+)[ ]*@@(\\d+)/(\\d+)" );
+
+    private static final String BUILDRUNNER_LOG = "buildrunner.log";
     
-    private Process         process;
+    private Process             process;
 
 
     @Override
@@ -48,9 +55,8 @@ public class BuildRunnerStrategy
 
     @Override
     public void preBuild( BuildContext context, IProgressMonitor monitor ) throws Exception {
-        monitor.beginTask( "Runner", IProgressMonitor.UNKNOWN );
-        File buildrunner = new File( BsPlugin.buildserverDir(), "runners/test/buildrunner.sh" );
-        //File buildrunner = new File( BsPlugin.buildserverDir(), "runners/eclipse-neon/buildrunner.sh" );
+        //File buildrunner = new File( BsPlugin.buildserverDir(), "runners/test/buildrunner.sh" );
+        File buildrunner = new File( BsPlugin.buildserverDir(), "runners/eclipse-neon/buildrunner.sh" );
 
         process = new ProcessBuilder( buildrunner.getAbsolutePath(), 
                 context.workspace.get().getAbsolutePath(), 
@@ -60,17 +66,39 @@ public class BuildRunnerStrategy
 //                .redirectOutput( logFile )
 //                .redirectError( logFile )
                 .start();
-        
+
         try (
             LineNumberReader in = new LineNumberReader( new InputStreamReader( process.getInputStream(), "UTF-8" ) );
             LineNumberReader err = new LineNumberReader( new InputStreamReader( process.getErrorStream(), "UTF-8" ) );
+            PrintWriter logFile = new PrintWriter( new File( context.export.get(), BUILDRUNNER_LOG ) );
         ){
+            int worked = 0;
             while (process.isAlive() || in.ready() || err.ready()) {
                 while (in.ready()) {
-                    monitor.subTask( in.readLine() );
+                    String line = in.readLine();
+                    log.info( line );
+                    
+                    // parse monitor line
+                    Matcher matcher = LOG_LINE.matcher( line );
+                    if (matcher.find()) {
+                        String text = matcher.group( 1 );
+                        int newWorked = Integer.parseInt( matcher.group( 2 ) );
+                        int total = Integer.parseInt( matcher.group( 3 ) );
+                        if (worked == 0) {
+                            monitor.beginTask( "Runner", total );                                
+                        }
+                        else {
+                            monitor.subTask( text );
+                        }
+                        monitor.worked( newWorked-worked );
+                        worked = newWorked;
+                        logFile.println( text );
+                    }
                 }
                 while (err.ready()) {
-                    monitor.subTask( "ERROR: " + err.readLine() );
+                    String line = err.readLine();
+                    logFile.println( line );
+                    log.error( line );
                 }
                 if (monitor.isCanceled()) {
                     throw new CancellationException( "Cancel requested" );
@@ -89,18 +117,23 @@ public class BuildRunnerStrategy
         
         context.result.get().dataDir.set( dataDir.getAbsolutePath() );
         
-        File exportZip = new File( context.export.get(), "..." );
+        File exportZip = new File( context.export.get(), "product.zip" );
         if (exportZip.exists()) {
             FileUtils.copyFileToDirectory( exportZip, dataDir, true );
         }
         File logsZip = new File( context.export.get(), "logs.zip" );
         if (logsZip.exists()) {
             FileUtils.copyFileToDirectory( logsZip, dataDir, true );
+            context.exception.set( new Exception( "There are compiler errors." ) );
         }
         
         File logFile = new File( context.export.get(), BuildResult.CONSOLE_LOG );
         if (logFile.exists()) {
             FileUtils.copyFileToDirectory( logFile, dataDir, true );
+        }
+        File buildrunnerLogFile = new File( context.export.get(), BUILDRUNNER_LOG );
+        if (buildrunnerLogFile.exists()) {
+            FileUtils.copyFileToDirectory( buildrunnerLogFile, dataDir, true );
         }
     }
     

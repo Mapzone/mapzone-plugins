@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -72,11 +73,12 @@ public class DownloadServlet
     @Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         String path = request.getPathInfo();
+        String[] segments = StringUtils.split( path, "/" );
         log.info( "Path: " + path );
         try (
             UnitOfWork uow = BuildRepository.instance().newUnitOfWork();
             ResultSet<BuildConfig> rs = uow.query( BuildConfig.class )
-                    .where( Expressions.eq( BuildConfig.TYPE.downloadPath, path.substring( 1 ) ) )
+                    .where( Expressions.eq( BuildConfig.TYPE.downloadPath, segments[0] ) )
                     .execute();
         ){
             Iterator<BuildConfig> it = rs.iterator();

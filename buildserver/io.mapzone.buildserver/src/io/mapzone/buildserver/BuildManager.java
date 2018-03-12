@@ -157,7 +157,9 @@ public class BuildManager {
                     }
                 }
                 catch (Exception e) {
-                    context.exception.set( e );
+                    if (!context.exception.isPresent()) {
+                        context.exception.set( e );
+                    }
                     log.warn( "", e );
                 }                
                 // dispose
@@ -174,7 +176,7 @@ public class BuildManager {
                 if (context.result.isPresent()) {
                     BuildResult result = uow.entity( context.result.get() );
                     File logFile = new File( result.dataDir(), BuildResult.CONSOLE_LOG );
-                    printMonitor.writeLinesTo( logFile );
+                    printMonitor.writeLinesTo( logFile, context.exception.orElse( (Exception)null ) );
                 }
                 // commit BuildResult no matter if success or exception
                 if (uow != null) {

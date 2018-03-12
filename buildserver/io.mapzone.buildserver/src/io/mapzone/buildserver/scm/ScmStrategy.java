@@ -105,7 +105,13 @@ public abstract class ScmStrategy
 
     
     protected List<String> findProductDependencies( File project ) throws IOException {
-        File productFile = new File( project, project.getName() );
+        String filename = StringUtils.appendIfMissing( project.getName(), ".product" );
+        File productFile = new File( project, filename ); 
+
+        if (!productFile.exists()) {
+            throw new IOException( "No product file found: " + productFile.getName() );
+        }
+        
         AtomicBoolean plugins = new AtomicBoolean( false );
         return FileUtils.readLines( productFile ).stream()
                 .peek( line -> {

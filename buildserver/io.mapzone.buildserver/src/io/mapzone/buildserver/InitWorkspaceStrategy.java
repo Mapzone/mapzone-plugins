@@ -15,8 +15,6 @@
 package io.mapzone.buildserver;
 
 import java.io.File;
-import org.apache.commons.io.FileUtils;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -43,11 +41,12 @@ public class InitWorkspaceStrategy
         monitor.done();
     }
 
+    
     @Override
-    public void postBuild( BuildContext context, IProgressMonitor monitor ) throws Exception {
-        File dir = context.workspace.map( workspace -> workspace.getParentFile() ).orElse( null );
-        if (dir != null && dir.exists()) {
-            FileUtils.deleteDirectory( dir );
-        }
+    public void cleanup( BuildContext context, IProgressMonitor monitor ) throws Exception {
+//        File dir = context.workspace.map( workspace -> workspace.getParentFile() ).orElse( null );
+//        if (dir != null && dir.exists()) {
+//            FileUtils.deleteDirectory( dir );
+//        }
     }
 }
