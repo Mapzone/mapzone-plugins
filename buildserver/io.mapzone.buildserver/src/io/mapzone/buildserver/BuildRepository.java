@@ -107,10 +107,9 @@ public class BuildRepository {
     protected void createTestConfigurations( UnitOfWork uow ) {
         // core.plugin
         uow.createEntity( BuildConfig.class, "core.plugin", (BuildConfig proto) -> {
-            BuildConfig.defaults().initialize( proto );
+            BuildConfig.defaults( "Test" ).initialize( proto );
             proto.name.set( "org.polymap.core" );
             proto.productName.set( "org.polymap.core" );
-            proto.userId.set( "Test" );
             proto.type.set( BuildConfig.Type.PLUGIN );
             proto.targetPlatform.createElement( (TargetPlatformConfig proto2) -> {
                 proto2.type.set( TargetPlatformConfig.Type.ZIP_DOWNLOAD );
@@ -126,11 +125,10 @@ public class BuildRepository {
         });
         // atlas.plugin
         uow.createEntity( BuildConfig.class, "atlas.plugin", (BuildConfig proto) -> {
-            BuildConfig.defaults().initialize( proto );
+            BuildConfig.defaults( "Test" ).initialize( proto );
             proto.name.set( "io.mapzone.atlas_master" );
             proto.productName.set( "io.mapzone.atlas" );
             proto.type.set( BuildConfig.Type.PLUGIN );
-            proto.userId.set( "Test" );
             proto.targetPlatform.createElement( (TargetPlatformConfig proto2) -> {
                 proto2.type.set( TargetPlatformConfig.Type.ZIP_DOWNLOAD );
                 proto2.url.set( "file:///home/falko/servers/polymap4-targetplatform.zip" );
@@ -145,10 +143,9 @@ public class BuildRepository {
         });
         // arena.product
         uow.createEntity( BuildConfig.class, "arena.product", (BuildConfig proto) -> {
-            BuildConfig.defaults().initialize( proto );
+            BuildConfig.defaults( "Test" ).initialize( proto );
             proto.name.set( "io.mapzone.arena.product CA" );
             proto.productName.set( "io.mapzone.arena.product" );
-            proto.userId.set( "Test" );
             proto.type.set( BuildConfig.Type.PRODUCT );
             proto.targetPlatform.createElement( (TargetPlatformConfig proto2) -> {
                 proto2.type.set( TargetPlatformConfig.Type.ZIP_DOWNLOAD );

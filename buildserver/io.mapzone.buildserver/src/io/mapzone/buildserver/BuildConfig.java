@@ -39,10 +39,10 @@ public class BuildConfig
 
     public static BuildConfig    TYPE;
     
-    public static final ValueInitializer<BuildConfig> defaults() {
+    public static final ValueInitializer<BuildConfig> defaults( String user ) {
         return (BuildConfig proto) -> {
             proto.type.set( Type.PRODUCT );
-            proto.userId.set( "Test" );  // FIXME
+            proto.userId.set( user );
             proto.downloadPath.set( RandomStringUtils.random( 6, true, true ) );
             return proto;
         };

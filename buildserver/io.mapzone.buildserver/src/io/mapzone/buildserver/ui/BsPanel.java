@@ -14,8 +14,15 @@
  */
 package io.mapzone.buildserver.ui;
 
+import org.polymap.core.security.UserPrincipal;
+
+import org.polymap.rhei.batik.Context;
 import org.polymap.rhei.batik.DefaultPanel;
+import org.polymap.rhei.batik.Mandatory;
+import org.polymap.rhei.batik.Scope;
 import org.polymap.rhei.batik.toolkit.md.MdToolkit;
+
+import io.mapzone.buildserver.BsPlugin;
 
 /**
  * 
@@ -25,11 +32,15 @@ import org.polymap.rhei.batik.toolkit.md.MdToolkit;
 public abstract class BsPanel
         extends DefaultPanel {
 
-    public static final int                 SIDE_PANEL_WIDTH = 400;
+    public static final int             SIDE_PANEL_WIDTH = 400;
     
-    public static final int                 SIDE_PANEL_WIDTH2 = 450;
+    public static final int             SIDE_PANEL_WIDTH2 = 450;
     
+    @Mandatory
+    @Scope( BsPlugin.ID )
+    protected Context<UserPrincipal>    user;
 
+    
     @Override
     public void init() {
         site().setSize( SIDE_PANEL_WIDTH, SIDE_PANEL_WIDTH2, SIDE_PANEL_WIDTH2 );

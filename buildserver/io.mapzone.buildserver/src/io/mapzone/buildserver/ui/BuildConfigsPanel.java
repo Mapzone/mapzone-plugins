@@ -46,6 +46,7 @@ import org.polymap.rhei.batik.toolkit.md.FunctionalLabelProvider;
 import org.polymap.rhei.batik.toolkit.md.ListTreeContentProvider;
 import org.polymap.rhei.batik.toolkit.md.MdListViewer;
 
+import org.polymap.model2.query.Expressions;
 import org.polymap.model2.runtime.UnitOfWork;
 
 import io.mapzone.buildserver.BsPlugin;
@@ -113,6 +114,7 @@ public class BuildConfigsPanel
     
     protected void createButtons( Composite parent ) {
         addBtn = tk().createButton( parent, "New...", SWT.PUSH );
+        addBtn.setToolTipText( "Create a new build configuration" );
         addBtn.setImage( BsPlugin.images().svgImage( "plus-circle-outline.svg", SvgImageRegistryHelper.WHITE24 ) );
         addBtn.addSelectionListener( UIUtils.selectionListener( ev -> {
             createBuildConfig();
@@ -171,7 +173,10 @@ public class BuildConfigsPanel
 
     
     protected void refreshList() {
-        list.setInput( BuildRepository.session().query( BuildConfig.class ).execute() );
+        list.setInput( BuildRepository.session()
+                .query( BuildConfig.class )
+                .where( Expressions.eq( BuildConfig.TYPE.userId, user.get().getName() ) )
+                .execute() );
     }
     
     

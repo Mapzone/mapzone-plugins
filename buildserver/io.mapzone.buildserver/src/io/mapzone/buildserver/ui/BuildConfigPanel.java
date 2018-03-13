@@ -98,7 +98,7 @@ public class BuildConfigPanel
         this.nested = uow.newUnitOfWork();
         if (!config.isPresent()) {
             // create new
-            this.nestedConfig = nested.createEntity( BuildConfig.class, null, BuildConfig.defaults() );
+            this.nestedConfig = nested.createEntity( BuildConfig.class, null, BuildConfig.defaults( user.get().getName() ) );
             this.created = true;
         }
         else {

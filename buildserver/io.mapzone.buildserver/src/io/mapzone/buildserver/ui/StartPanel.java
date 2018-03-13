@@ -17,6 +17,8 @@ package io.mapzone.buildserver.ui;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.polymap.core.ui.FormDataFactory.on;
 
+import java.util.Optional;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,8 +30,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.polymap.core.runtime.UIThreadExecutor;
 import org.polymap.core.runtime.event.EventHandler;
+import org.polymap.core.security.UserPrincipal;
 import org.polymap.core.ui.FormDataFactory;
 import org.polymap.core.ui.FormLayoutFactory;
+import org.polymap.core.ui.StatusDispatcher;
 import org.polymap.core.ui.UIUtils;
 
 import org.polymap.rhei.batik.BatikApplication;
@@ -45,6 +49,7 @@ import org.polymap.cms.ContentProvider;
 import org.polymap.cms.ContentProvider.ContentObject;
 
 import io.mapzone.buildserver.BsPlugin;
+import io.mapzone.buildserver.ui.OAuth.API;
 
 /**
  * Landing page or open {@link DashboardPanel} if {@link LoginCookie} is set.
@@ -73,11 +78,18 @@ public class StartPanel
         site().setSize( SIDE_PANEL_WIDTH2, 550, Integer.MAX_VALUE );
         site().title.set( "Mapzone Buildserver" );
 
-        if (BsPlugin.instance().oauth.authenticated().isPresent()) {
-            openDashboard();            
+        try {
+            Optional<API> api = BsPlugin.instance().oauth.isAuthenticated();
+            if (api.isPresent()) {
+                user.set( new UserPrincipal( api.get().username() ) );
+                openDashboard();            
+            }
+            else {
+                createFrontpageContents();
+            }
         }
-        else {
-            createFrontpageContents();
+        catch (Exception e) {
+            StatusDispatcher.handleError( "Unable to login.", e );
         }
     }
 

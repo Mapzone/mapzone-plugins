@@ -15,12 +15,24 @@
 package io.mapzone.buildserver.ui;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONObject;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,6 +95,13 @@ public abstract class OAuth
     @Immutable
     public Config<String>       callbackUri;
 
+    @Immutable
+    @Mandatory
+    public Config<String>       loginUri;
+
+    
+    protected abstract API newAPI( String accessToken );
+
     
     public Optional<Image> icon( String configName ) {
         return icon.map( name -> BsPlugin.images().svgImage( name, configName ) );
@@ -121,8 +140,9 @@ public abstract class OAuth
      *
      * @param params The HTTP request params
      * @return True if successfully authenticated.
+     * @throws IOException 
      */
-    public boolean isAuthenticated() {
+    public Optional<API> isAuthenticated() throws IOException {
         HttpServletRequest request = RWT.getRequest();
         Optional<Cookie> stateCookie = Arrays.stream( request.getCookies() )
                 .filter( c -> c.getName().equals( COOKIE_NAME ) ).findFirst();
@@ -133,14 +153,51 @@ public abstract class OAuth
                 if (state.get().equals( stateCookie.get().getValue() )) {
                     stateCookie.get().setValue( "" );
                     stateCookie.get().setMaxAge( 0 );
-                    return true;
+                    RWT.getResponse().addCookie( stateCookie.get() );
+                    
+                    Optional<String> code = BatikApplication.instance().getInitRequestParameter( "code" );
+                    if (code.isPresent()) {
+                        return Optional.of( newAPI( requestAccessToken( state.get(), code.get() ) ) );
+                    }
                 }
             }
-            BatikApplication.instance().getInitRequestParameter( "code" );
         }
-        return false;
+        return Optional.empty();
     }
     
+    
+    protected String requestAccessToken( String state, String code ) throws IOException {
+        URL url = new URL( loginUri.get() );
+        HttpURLConnection http = (HttpURLConnection)url.openConnection();
+        http.setRequestMethod( "POST" );
+        http.setDoOutput( true );  
+        http.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded; charset=UTF-8" );
+        String params = Joiner.on( '&' ).withKeyValueSeparator( "=" ).join( new HashMap() {{
+            put( "client_id", URLEncoder.encode( clientId.get(), "UTF-8" ) );
+            put( "client_secret", URLEncoder.encode( clientSecret.get(), "UTF-8" ) );
+            put( "state", state );
+            put( "code", code );
+        }});
+        http.setRequestProperty( "Content-Length", String.valueOf( params.length() ) );
+        http.setRequestProperty( "Accept", "application/json" );
+        
+        try (OutputStream out = http.getOutputStream()) {
+            out.write( params.getBytes( "UTF-8" ) );
+        }
+        try (InputStream in = http.getInputStream()) {
+            String response = IOUtils.toString( in, "UTF-8" );
+            JSONObject json = new JSONObject( response );
+            String accessToken = json.optString( "access_token" );
+            if (accessToken != null) {
+                return accessToken;
+            }
+            else {
+                // XXX handle error in response
+                throw new IOException( "No access_token." );
+            }
+        }
+    }
+
     
     /**
      * An unguessable random string. It is used to protect against cross-site request
@@ -163,27 +220,56 @@ public abstract class OAuth
         return token;
     }
 
+    /**
+     * 
+     */
+    public static final class Github
+            extends OAuth {
+
+        public static final String BASE_URI = "https://api.github.com/user";
+
+        @Override
+        protected API newAPI( String accessToken ) {
+            return new API( accessToken ) {
+                @Override
+                public String username() throws IOException {
+                    String response = issueRequest( BASE_URI, "application/json", new HashMap() {{
+                        put( "access_token", accessToken );
+                    }});
+                    JSONObject json = new JSONObject( response );
+                    //log.info( ">> " + json.toString( 2 ) );
+                    return json.getString( "login" ) + "_github";
+                }
+            };
+        }
+
+    }
     
     /**
      * 
      */
-    public static class Github
-            extends OAuth {
+    public static abstract class API {
+        
+        protected String accessToken;
 
-//        @Override
-//        public Optional<Image> icon( String configName ) {
-//            return Optional.of( BsPlugin.images().svgImage( "github-circle.svg", configName ) );
-//        }
-//
-//        @Override
-//        public String label() {
-//            return "GitHub";
-//        }
-//
-//        @Override
-//        public String baseUrl() {
-//            return "https://github.com/login/oauth/authorize";
-//        }
-    }
+        public API( String accessToken ) {
+            this.accessToken = accessToken;
+        }
+
+        public abstract String username() throws IOException;
+
+        protected String issueRequest( String baseUri, String accept, Map<String,String> params ) throws IOException {
+            URL url = new URL( new StringBuilder( 256 )
+                    .append( baseUri ).append( "?" )
+                    .append( Joiner.on( '&' ).withKeyValueSeparator( "=" ).join( params ) )
+                    .toString() );
+            HttpURLConnection http = (HttpURLConnection)url.openConnection();
+            http.setRequestProperty( "Accept", accept );
+
+            try (InputStream in = http.getInputStream()) {
+                return IOUtils.toString( in, "UTF-8" );
+            }
+        }
+    }    
     
 }
