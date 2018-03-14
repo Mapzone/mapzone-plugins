@@ -139,7 +139,7 @@ public class BuildManager {
                 };
                 
                 List<BuildStrategy> strategies = BuildStrategy.availableFor( config );
-                printMonitor.beginTask( "> ", strategies.size()*2*10 );
+                printMonitor.beginTask( "> ", strategies.size()*10+strategies.size()*2 );
                 try {
                     // pre
                     for (BuildStrategy strategy : strategies) {
@@ -150,7 +150,7 @@ public class BuildManager {
                     }
                     // post
                     for (BuildStrategy strategy : Lists.reverse( strategies )) {
-                        IProgressMonitor submon = strategy.submon( printMonitor, 10 );
+                        IProgressMonitor submon = strategy.submon( printMonitor, 2 );
                         strategy.postBuild( context, submon );
                         submon.done();
                         checkCancel( monitor );

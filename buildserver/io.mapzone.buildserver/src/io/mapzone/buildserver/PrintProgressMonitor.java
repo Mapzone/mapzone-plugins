@@ -57,11 +57,12 @@ public abstract class PrintProgressMonitor
     @Override
     public void internalWorked( double work ) {
         this.worked += work;
+        fireProgressEvent();
     }
 
     @Override
     public void worked( int work ) {
-        this.worked += work;
+        internalWorked( work );
     }
 
     @Override
@@ -75,6 +76,7 @@ public abstract class PrintProgressMonitor
         this.totalWork = totalWork;
 //        log.info( "  " + name );
         lines.add( name );
+        fireProgressEvent();
     }
 
     @Override
@@ -83,6 +85,7 @@ public abstract class PrintProgressMonitor
 //            log.info( "    " + name );
             lines.add( name );
         }
+        fireProgressEvent();
     }
 
     @Override

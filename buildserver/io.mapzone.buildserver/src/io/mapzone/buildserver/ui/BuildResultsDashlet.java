@@ -55,10 +55,11 @@ import org.polymap.model2.runtime.UnitOfWork;
 
 import io.mapzone.buildserver.BsPlugin;
 import io.mapzone.buildserver.BuildConfig;
-import io.mapzone.buildserver.BuildObjectCommittedEvent;
 import io.mapzone.buildserver.BuildManager;
+import io.mapzone.buildserver.BuildObjectCommittedEvent;
 import io.mapzone.buildserver.BuildRepository;
 import io.mapzone.buildserver.BuildResult;
+import io.mapzone.buildserver.PrintProgressMonitor.ProgressEvent;
 
 /**
  * 
@@ -125,6 +126,7 @@ public class BuildResultsDashlet
         
         EventManager.instance().subscribe( this, isType( BuildObjectCommittedEvent.class, ev ->
                 ev.getSource() instanceof BuildResult) );
+        EventManager.instance().subscribe( this, ev -> ev instanceof ProgressEvent );
     }
     
     
@@ -192,6 +194,23 @@ public class BuildResultsDashlet
         }
         if (buildBtn != null && !buildBtn.isDisposed()) {
             buildBtn.setEnabled( !buildManager.running().isPresent() );
+        }
+    }
+
+    
+    @EventHandler( display=true, delay=1000, scope=Event.Scope.JVM )
+    protected void onProgress( List<ProgressEvent> evs ) {
+        if (resultsList.getControl().isDisposed()) {
+            EventManager.instance().unsubscribe( BuildResultsDashlet.this );
+        }
+        else {
+            List<Object> ids = evs.stream()
+                    .map( ev -> ev.getSource().result.get().id() )
+                    .collect( Collectors.toList() );
+            config.buildResults.stream()
+                    .filter( r -> ids.contains( r.id() ) )
+                    .findAny().ifPresent( found -> 
+                            resultsList.refresh( found ) );
         }
     }
 
