@@ -63,10 +63,9 @@ public class BuildRunnerStrategy
                 context.config.get().productName.get(), 
                 context.export.get().getAbsolutePath() )
                 .directory( context.workspace.get() )
-//                .redirectOutput( logFile )
-//                .redirectError( logFile )
                 .start();
 
+        String exceptionLine = null;
         try (
             LineNumberReader in = new LineNumberReader( new InputStreamReader( process.getInputStream(), "UTF-8" ) );
             LineNumberReader err = new LineNumberReader( new InputStreamReader( process.getErrorStream(), "UTF-8" ) );
@@ -76,6 +75,9 @@ public class BuildRunnerStrategy
             while (process.isAlive() || in.ready() || err.ready()) {
                 while (in.ready()) {
                     String line = in.readLine();
+                    if (line.contains( "Exception" )) {
+                        exceptionLine = line;
+                    }
                     log.info( line );
                     
                     // parse monitor line
@@ -98,13 +100,20 @@ public class BuildRunnerStrategy
                 while (err.ready()) {
                     String line = err.readLine();
                     logFile.println( line );
+                    if (line.contains( "Exception" )) {
+                        exceptionLine = line;
+                    }
                     log.error( line );
                 }
                 if (monitor.isCanceled()) {
                     throw new CancellationException( "Cancel requested" );
                 }
-                Thread.sleep( 1000 );
+                Thread.sleep( 250 );
             }
+        }
+
+        if (process.exitValue() != 0) {
+            throw new Exception( "The compiler/packager has encountered an error:\n    -> " + exceptionLine );
         }
     }
 

@@ -66,12 +66,12 @@ public class ScmForm
                 .create()
                 .forceFocus();
 
-        // branch
-        site.newFormField( new PropertyAdapter( config.branch ) )
-                .label.put( "Branch" )
-                .tooltip.put( "The branch to work with" )
-                .validator.put( new NotEmptyValidator() )
-                .create();
+//        // branch
+//        site.newFormField( new PropertyAdapter( config.branch ) )
+//                .label.put( "Branch" )
+//                .tooltip.put( "The branch to work with" )
+//                .validator.put( new NotEmptyValidator() )
+//                .create();
     }
     
 }

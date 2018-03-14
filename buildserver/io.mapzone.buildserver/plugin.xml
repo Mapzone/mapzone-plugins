@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.rap.ui.entrypoint">
       <entrypoint
-            brandingId="org.polymap.rhei.batik.branding"
+            brandingId="io.mapzone.buildserver.branding"
             class="org.polymap.rhei.batik.BatikApplication"
             id="io.mapzone.buildserver.entrypoint"
             path="/builds">
@@ -17,6 +17,24 @@
             id="io.mapzone.buildserver.design"
             servletNameMatcher="/builds">
       </design>
+   </extension>
+   <extension
+         point="org.eclipse.rap.ui.branding">
+      <branding
+            id="io.mapzone.buildserver.branding"
+            themeId="org.polymap.rhei.batik.materialDesign"
+            title="Buildserver">
+         <additionalHeaders>
+            <link
+                  href="batikres/css/md/flowtext.css"
+                  rel="stylesheet">
+            </link>
+            <link
+                  href="batikres/css/roboto.css"
+                  rel="stylesheet">
+            </link>
+         </additionalHeaders>
+      </branding>
    </extension>
    <extension
          point="org.polymap.rhei.batik.panels">

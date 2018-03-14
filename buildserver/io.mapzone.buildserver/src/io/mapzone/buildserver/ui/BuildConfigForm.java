@@ -79,7 +79,7 @@ public class BuildConfigForm
         // productName
         site.newFormField( new PropertyAdapter( config.productName ) )
                 .label.put( "Product" )
-                .tooltip.put( "The symbolic name of the product to build" )
+                .tooltip.put( "The symbolic name of the product bundle to build" )
                 .validator.put( new NotEmptyValidator() )
                 .create();
 
@@ -88,6 +88,7 @@ public class BuildConfigForm
                 .label.put( "Type" )
                 .field.put( EnumPicklistFormField.create( BuildConfig.Type.values() ) )
                 .validator.put( new NotEmptyValidator() )
+                .fieldEnabled.put( false )
                 .create();
 
         // download link

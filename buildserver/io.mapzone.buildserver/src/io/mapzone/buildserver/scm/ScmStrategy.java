@@ -87,7 +87,8 @@ public abstract class ScmStrategy
         }
         
         workspace = context.workspace.get();
-        File product = installBundleSource( config.productName.get(), UIUtils.submon( monitor, 1 ) ).get();
+        File product = installBundleSource( config.productName.get(), UIUtils.submon( monitor, 1 ) )
+                .orElseThrow( () -> new Exception( "No such bundle found: " + config.productName.get() ) );
         List<String> dependencies = config.type.get() == BuildConfig.Type.PRODUCT
                 ? findProductDependencies( product )
                 : findPluginDependencies( product );
@@ -149,16 +150,25 @@ public abstract class ScmStrategy
             InputStream in = process.getInputStream();
             InputStream err = process.getErrorStream();
         ){
+            StringBuilder output = new StringBuilder( 1024 );
             do {
                 while (in.available() > 0) {
-                    System.out.print( (char)in.read() );
+                    char c = (char)in.read();
+                    System.out.print( c );
+                    output.append( c );
                 }
                 while (err.available() > 0) {
-                    System.out.print( (char)err.read() );
+                    char c = (char)err.read();
+                    System.err.print( c );
+                    output.append( c );
                 }
                 Thread.sleep( 100 );
                 monitor.worked( 1 );
             } while (process.isAlive());
+            
+            if (process.exitValue() != 0) {
+                throw new Exception( output.toString() );
+            }
         }
         return process;
     }

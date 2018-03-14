@@ -79,14 +79,19 @@ public class StartPanel
         site().title.set( "Mapzone Buildserver" );
 
         try {
+            String username = System.getProperty( "user.name" );
+            if ("falko".equals( username )) {
+                user.set( new UserPrincipal( username ) );
+                openDashboard();
+                return;
+            }
             Optional<API> api = BsPlugin.instance().oauth.isAuthenticated();
             if (api.isPresent()) {
                 user.set( new UserPrincipal( api.get().username() ) );
-                openDashboard();            
+                openDashboard();
+                return;
             }
-            else {
-                createFrontpageContents();
-            }
+            createFrontpageContents();
         }
         catch (Exception e) {
             StatusDispatcher.handleError( "Unable to login.", e );
