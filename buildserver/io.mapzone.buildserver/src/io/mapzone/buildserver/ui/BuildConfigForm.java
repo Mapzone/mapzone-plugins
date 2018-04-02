@@ -140,7 +140,7 @@ public class BuildConfigForm
         public void load() throws Exception {
             loadedValue = site.getFieldValue();
 
-            String url = DownloadServlet.ALIAS + "/" + loadedValue + "/" + DownloadServlet.downloadZip( config );
+            String url = DownloadServlet.productZipUrl( config );
             link.setText( "<a target=\"_blank\" href=\"" + url + "\" "
                     + "style=\"font-size: 14px;\""
                     + ">..." + url + "</a>" );

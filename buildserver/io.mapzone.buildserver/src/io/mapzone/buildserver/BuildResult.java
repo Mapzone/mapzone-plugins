@@ -104,6 +104,13 @@ public class BuildResult
         return new File( dataDir(), "product.zip" );
     }
     
+    /**
+     * The logs.zip file.
+     */
+    public File logsFile() {
+        return new File( dataDir(), "logs.zip" );
+    }
+    
     
     public void destroy() {
         try {
@@ -129,7 +136,7 @@ public class BuildResult
     
     
     public List<LogEntry> logEntries( int maxResults, LogEntry.Severity... severities  ) {
-        File f = new File( dataDir(), "logs.zip" );
+        File f = logsFile();
         if (!f.exists()) {
             return Collections.EMPTY_LIST;
         }

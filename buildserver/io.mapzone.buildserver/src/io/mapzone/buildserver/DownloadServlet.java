@@ -14,6 +14,7 @@
  */
 package io.mapzone.buildserver;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -51,15 +52,26 @@ public class DownloadServlet
 
     public static final String      ALIAS = "/builds/download";
     
-    public static String downloadZip( BuildConfig config ) {
+    public static final String      LOGS_ZIP = "logs.zip";
+    
+
+    public static String productZipUrl( BuildConfig config ) {
+        return ALIAS + "/" + config.downloadPath.get() + "/" + config.name.opt().orElse( "name_to_be_specified" ) + ".zip";
+    }
+    
+    public static String errorLogZipUrl( BuildResult result ) {
+        return ALIAS + "/" + result.downloadPath.get() + "/" + LOGS_ZIP;
+    }
+    
+    public static String encoded( String s ) {
         try {
-            return URLEncoder.encode( config.name.opt().orElse( "name_to_be_specified" ), "UTF-8" ) + ".zip";
+            return URLEncoder.encode( s, "UTF-8" );
         }
         catch (UnsupportedEncodingException e) {
             throw new RuntimeException( "Should never happen." );
         }
     }
-    
+
     
     // instance *******************************************
     
@@ -72,13 +84,55 @@ public class DownloadServlet
 
     @Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-        String path = request.getPathInfo();
-        String[] segments = StringUtils.split( path, "/" );
-        log.info( "Path: " + path );
+        String pathInfo = request.getPathInfo();
+        String[] path = StringUtils.split( pathInfo, "/" );
+        log.info( "Path: " + Arrays.toString( path ) );
+        
+        if (path.length != 2) {
+            response.sendError( 404 );
+        }
+        else if (path[1].equals( LOGS_ZIP )) {
+            doGetLogsZip( request, response, path[0] );
+        }
+        else {
+            doGetProductZip( request, response, path[0] );
+        }
+    }
+    
+
+    protected void doGetLogsZip( HttpServletRequest request, HttpServletResponse response, String configPath )
+            throws ServletException, IOException {
+        try (
+            UnitOfWork uow = BuildRepository.instance().newUnitOfWork();
+            ResultSet<BuildResult> rs = uow.query( BuildResult.class )
+                    .where( Expressions.eq( BuildResult.TYPE.downloadPath, configPath ) )
+                    .execute();
+        ){
+            Iterator<BuildResult> it = rs.iterator();
+            // exists
+            if (it.hasNext()) {
+                BuildResult result = it.next();
+                assert !it.hasNext() : "Multiple BuildResults with same downloadPath!";
+                try (
+                    OutputStream out = response.getOutputStream();
+                    InputStream in = new FileInputStream( result.logsFile() );   
+                ){
+                    IOUtils.copy( in, out );
+                }
+            }
+            // nothing
+            else {
+                response.sendError( 404, "No such build configuration." );
+            }
+        }
+    }
+    
+    protected void doGetProductZip( HttpServletRequest request, HttpServletResponse response, String configPath )
+            throws ServletException, IOException {
         try (
             UnitOfWork uow = BuildRepository.instance().newUnitOfWork();
             ResultSet<BuildConfig> rs = uow.query( BuildConfig.class )
-                    .where( Expressions.eq( BuildConfig.TYPE.downloadPath, segments[0] ) )
+                    .where( Expressions.eq( BuildConfig.TYPE.downloadPath, configPath ) )
                     .execute();
         ){
             Iterator<BuildConfig> it = rs.iterator();

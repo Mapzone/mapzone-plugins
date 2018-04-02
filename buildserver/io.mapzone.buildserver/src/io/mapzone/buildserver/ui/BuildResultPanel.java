@@ -21,10 +21,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.rap.rwt.RWT;
 
 import org.polymap.core.runtime.Polymap;
 import org.polymap.core.ui.FormDataFactory;
@@ -42,6 +44,7 @@ import io.mapzone.buildserver.BuildResult;
 import io.mapzone.buildserver.BuildResult.LogEntry;
 import io.mapzone.buildserver.BuildResult.LogEntry.Severity;
 import io.mapzone.buildserver.BuildResult.Status;
+import io.mapzone.buildserver.DownloadServlet;
 
 /**
  * 
@@ -97,16 +100,19 @@ public class BuildResultPanel
 
 
     protected void createConsoleSection( Composite parent ) {
-        parent.setLayout( new FillLayout() );
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 5 ).create() );
+        
         Text text = tk().createText( parent, "", SWT.MULTI, SWT.BORDER );
         text.setText( buildResult.get().console().orElse( "<empty>" ) );
         text.setEnabled( false );
         //text.getDisplay().timerExec( 1000, () -> text.getVerticalBar().setSelection( 100 ) );
+        FormDataFactory.on( text ).fill();
     }
 
 
     protected void createLogsSection( Composite parent ) {
-        parent.setLayout( new FillLayout() );
+        parent.setLayout( FormLayoutFactory.defaults().spacing( 0 ).create() );
+        
         StringBuilder buf = new StringBuilder( 4*1024 );
         for (LogEntry entry : buildResult.get().logEntries( 10, Severity.ERROR )) {
             buf.append( "______ " ).append( entry.severity ).append( " ______________________________________________________\n" );
@@ -116,6 +122,18 @@ public class BuildResultPanel
         
         Text text = tk().createText( parent, buf.length()>0?buf.toString():"<empty>", SWT.MULTI, SWT.BORDER );
         text.setEnabled( false );
+
+        CLabel downloadLink = new CLabel( parent, SWT.LEFT );
+        downloadLink.setData( RWT.MARKUP_ENABLED, Boolean.TRUE );
+        downloadLink.setData( RWT.TOOLTIP_MARKUP_ENABLED, Boolean.TRUE );
+        downloadLink.setBackground( parent.getBackground() );
+        String url = DownloadServlet.errorLogZipUrl( buildResult.get() );
+        downloadLink.setText( "<a target=\"_blank\" href=\"" + url + "\" "
+                + "style=\"font-size: 14px;\""
+                + ">Download logs.zip</a>" );
+
+        FormDataFactory.on( downloadLink ).fill().left( 0, -3 ).noTop();
+        FormDataFactory.on( text ).fill().bottom( downloadLink );
     }
     
 }
