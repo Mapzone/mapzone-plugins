@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.polymap.core.data.pipeline.processors">
+      <processor
+            class="org.polymap.tutorial.raster2feature.Raster2PointProcessor"
+            id="org.polymap.tutorial.raster2feature.Raster2PointProcessor"
+            name="Raster2PointProcessor">
+      </processor>
+   </extension>
+   <extension
+         point="org.polymap.core.data.pipeline.builderConcerns">
+      <listener
+            class="org.polymap.tutorial.raster2feature.Raster2PointBuilderConcern"
+            id="org.polymap.tutorial.raster2feature.Raster2PointBuilderConcern"
+            name="Raster2PointBuilderConcern">
+      </listener>
+   </extension>
+
+</plugin>
