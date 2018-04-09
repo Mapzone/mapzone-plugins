@@ -70,9 +70,15 @@ import org.polymap.core.data.feature.RemoveFeaturesRequest;
 import org.polymap.core.data.feature.TransactionRequest;
 import org.polymap.core.data.pipeline.DataSourceDescriptor;
 import org.polymap.core.data.pipeline.PipelineExecutor.ProcessorContext;
+
+import org.polymap.p4.project.ProjectRepository;
+
 import org.polymap.core.data.pipeline.PipelineProcessorSite;
 import org.polymap.core.data.pipeline.ProcessorResponse;
 import org.polymap.core.data.pipeline.TerminalPipelineProcessor;
+import org.polymap.core.project.IMap;
+
+import org.polymap.model2.runtime.UnitOfWork;
 
 /**
  * 
@@ -86,7 +92,9 @@ public class Raster2PointProcessor
 
     public static final double          RADTODEG = 360.0 / (2.0 * PI);
 
-    public static final int             BREAKPOINTS = 10;
+    public static final int             TILE_SIZE = 256;
+    /** Breakpoint per rendered tile. */
+    public static final int             BREAKPOINTS = 13;
     /** The name of the feature attribute. */
     public static final String          ASPECT = "aspect";
     /** The name of the feature attribute. */
@@ -129,7 +137,7 @@ public class Raster2PointProcessor
 
     protected GeneralParameterValue generalParameter( BoundingBox bounds ) {
         Parameter<GridGeometry2D> param = new Parameter<GridGeometry2D>( AbstractGridFormat.READ_GRIDGEOMETRY2D );
-        GridEnvelope2D gridRange = new GridEnvelope2D( 0, 0, 256, 256 );
+        GridEnvelope2D gridRange = new GridEnvelope2D( 0, 0, TILE_SIZE, TILE_SIZE );
         Envelope userRange = new ReferencedEnvelope( bounds ); //, schema.getCoordinateReferenceSystem() );
         param.setValue( new GridGeometry2D( gridRange, userRange ) );
         return param;
@@ -138,32 +146,37 @@ public class Raster2PointProcessor
     
     @Override
     public void getFeatureRequest( GetFeaturesRequest request, ProcessorContext context ) throws Exception {
-        BoundingBox bounds = ReferencedEnvelope.EVERYTHING;
+        int breakpoints = BREAKPOINTS;
+        BoundingBox bounds = null;
         if (request.getQuery().getFilter() instanceof BBOX) {
             bounds = ((BBOX)request.getQuery().getFilter()).getBounds();
         }
-//        else {
-//            throw new RuntimeException( "No BBOX query, not implemented.");
-//        }
+        else {
+            // XXX a bit hacky
+            try (UnitOfWork uow = ProjectRepository.newUnitOfWork()) {
+                IMap map = uow.entity( IMap.class, ProjectRepository.ROOT_MAP_ID );
+                bounds = map.maxExtent();
+                breakpoints = 30;
+            }
+        }
         
         GeneralParameterValue param = generalParameter( bounds );
         GridCoverage2D raster = reader.read( coverageName, new GeneralParameterValue[] {param} );
         AffineTransform gridToCRS = (AffineTransform) raster.getGridGeometry().getGridToCRS();
-        double xRes = XAffineTransform.getScaleX0(gridToCRS);
-        double yRes = XAffineTransform.getScaleY0(gridToCRS);
+        double xRes = XAffineTransform.getScaleX0( gridToCRS );
+        double yRes = XAffineTransform.getScaleY0( gridToCRS );
         GeometryFactory gf = new GeometryFactory();
         
-        int width = 256, height = 256;
-        int breakpoints = BREAKPOINTS;
         List<Feature> features = new ArrayList( breakpoints*breakpoints );
-        SimpleFeature[][] grid = new SimpleFeature[breakpoints+2][breakpoints+2];
+        int gridSize = (breakpoints * 2) + 1;
+        SimpleFeature[][] grid = new SimpleFeature[ gridSize ][ gridSize ];
         
-        // read raster and generate Features
+        // read samples and generate Features
         double[] sample = new double[1];
-        for (int x=-1; x<=breakpoints; x++) {
-            for (int y=-1; y<=breakpoints; y++) {
-                double lon = bounds.getWidth() / breakpoints * x + bounds.getMinX();
-                double lat = bounds.getHeight() / breakpoints * y + + bounds.getMinY();
+        for (int x=0; x < gridSize; x++) {
+            for (int y=0; y < gridSize; y++) {
+                double lon = bounds.getWidth() / gridSize * x + bounds.getMinX();
+                double lat = bounds.getHeight() / gridSize * y + bounds.getMinY();
                 try {
                     raster.evaluate( (DirectPosition)new DirectPosition2D( bounds.getCoordinateReferenceSystem(), lon, lat ), sample );
                 }
@@ -173,19 +186,18 @@ public class Raster2PointProcessor
 
                 SimpleFeatureBuilder fb = new SimpleFeatureBuilder( schema );
                 fb.set( SAMPLE, Math.max( 0, sample[0] ) );  // novalue
-                fb.set( ASPECT, 0 );
                 fb.set( "geom", gf.createPoint( new Coordinate( lon, lat ) ) );
                 SimpleFeature feature = fb.buildFeature( null );
-                features.add( feature );
-                grid[x+1][y+1] = feature;
+                grid[x][y] = feature;
             }
         }
         // calculate aspect
-        for (int x=1; x<breakpoints; x++) {
-            for (int y=1; y<breakpoints; y++) {
+        for (int x=1; x<gridSize; x+=2) {
+            for (int y=1; y<gridSize; y+=2) {
                 int aspect = calculateAspect( grid, x, y, xRes, yRes );
                 SimpleFeature feature = grid[x][y];
                 feature.setAttribute( "aspect", aspect );
+                features.add( feature );
             }
         }
         
