@@ -14,13 +14,19 @@
  */
 package org.polymap.tutorial.raster2feature;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.acos;
+import static java.lang.Math.atan;
+import static java.lang.Math.cos;
+import static java.lang.Math.pow;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import java.awt.image.RenderedImage;
-
-import javax.media.jai.iterator.RandomIter;
-import javax.media.jai.iterator.RandomIterFactory;
+import java.awt.geom.AffineTransform;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridEnvelope2D;
@@ -29,12 +35,17 @@ import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.parameter.Parameter;
+import org.geotools.referencing.operation.matrix.XAffineTransform;
+import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.GeneralParameterValue;
 
@@ -53,6 +64,7 @@ import org.polymap.core.data.feature.GetFeatureTypeResponse;
 import org.polymap.core.data.feature.GetFeaturesRequest;
 import org.polymap.core.data.feature.GetFeaturesResponse;
 import org.polymap.core.data.feature.GetFeaturesSizeRequest;
+import org.polymap.core.data.feature.GetFeaturesSizeResponse;
 import org.polymap.core.data.feature.ModifyFeaturesRequest;
 import org.polymap.core.data.feature.RemoveFeaturesRequest;
 import org.polymap.core.data.feature.TransactionRequest;
@@ -72,6 +84,14 @@ public class Raster2PointProcessor
 
     private static final Log log = LogFactory.getLog( Raster2PointProcessor.class );
 
+    public static final double          RADTODEG = 360.0 / (2.0 * PI);
+
+    public static final int             BREAKPOINTS = 10;
+    /** The name of the feature attribute. */
+    public static final String          ASPECT = "aspect";
+    /** The name of the feature attribute. */
+    public static final String          SAMPLE = "sample";
+    
     private GridCoverage2DReader        reader;
 
     private String                      coverageName;
@@ -94,8 +114,8 @@ public class Raster2PointProcessor
         ftb.setCRS( reader.getCoordinateReferenceSystem() );
         ftb.setName( "Raster2Point" );
         ftb.add( "geom", Point.class, reader.getCoordinateReferenceSystem() );
-        ftb.add( "aspect", Integer.class );
-        ftb.add( "sample", Double.class );
+        ftb.add( ASPECT, Integer.class );
+        ftb.add( SAMPLE, Double.class );
         schema = ftb.buildFeatureType();
     }
 
@@ -109,17 +129,9 @@ public class Raster2PointProcessor
 
     protected GeneralParameterValue generalParameter( BoundingBox bounds ) {
         Parameter<GridGeometry2D> param = new Parameter<GridGeometry2D>( AbstractGridFormat.READ_GRIDGEOMETRY2D );
-        GridEnvelope2D gridEnvelope = new GridEnvelope2D( 0, 0, 256, 256 );
-        Envelope env;
-//        if (crs != null) {
-            env = new ReferencedEnvelope( bounds ); //, schema.getCoordinateReferenceSystem() );
-//        }
-//        else {
-//            DirectPosition2D minDp = new DirectPosition2D( west, south );
-//            DirectPosition2D maxDp = new DirectPosition2D( east, north );
-//            env = new Envelope2D( minDp, maxDp );
-//        }
-        param.setValue( new GridGeometry2D( gridEnvelope, env ) );
+        GridEnvelope2D gridRange = new GridEnvelope2D( 0, 0, 256, 256 );
+        Envelope userRange = new ReferencedEnvelope( bounds ); //, schema.getCoordinateReferenceSystem() );
+        param.setValue( new GridGeometry2D( gridRange, userRange ) );
         return param;
     }
 
@@ -136,34 +148,162 @@ public class Raster2PointProcessor
         
         GeneralParameterValue param = generalParameter( bounds );
         GridCoverage2D raster = reader.read( coverageName, new GeneralParameterValue[] {param} );
-        RenderedImage renderedImage = raster.getRenderedImage();
-        RandomIter it = RandomIterFactory.create( renderedImage, null );
+        AffineTransform gridToCRS = (AffineTransform) raster.getGridGeometry().getGridToCRS();
+        double xRes = XAffineTransform.getScaleX0(gridToCRS);
+        double yRes = XAffineTransform.getScaleY0(gridToCRS);
         GeometryFactory gf = new GeometryFactory();
         
         int width = 256, height = 256;
-        int breakpoints = 10;
+        int breakpoints = BREAKPOINTS;
         List<Feature> features = new ArrayList( breakpoints*breakpoints );
-        log.info( "Sample: " + bounds.getMinX() + " - " + bounds.getMinY() );
-        for (int x=0; x<breakpoints; x++) {
-            for (int y=0; y<breakpoints; y++) {
+        SimpleFeature[][] grid = new SimpleFeature[breakpoints+2][breakpoints+2];
+        
+        // read raster and generate Features
+        double[] sample = new double[1];
+        for (int x=-1; x<=breakpoints; x++) {
+            for (int y=-1; y<=breakpoints; y++) {
+                double lon = bounds.getWidth() / breakpoints * x + bounds.getMinX();
+                double lat = bounds.getHeight() / breakpoints * y + + bounds.getMinY();
+                try {
+                    raster.evaluate( (DirectPosition)new DirectPosition2D( bounds.getCoordinateReferenceSystem(), lon, lat ), sample );
+                }
+                catch (PointOutsideCoverageException e) {
+                    sample[0] = -1;
+                }
+
                 SimpleFeatureBuilder fb = new SimpleFeatureBuilder( schema );
-                double sample = it.getSampleDouble( width/breakpoints*x, height/breakpoints*y, 0 );
-                fb.set( "sample", Math.max( 0, sample ) );  // novalue
-                fb.set( "aspect", 0d );
-                double lon = (bounds.getWidth() / breakpoints) * x + bounds.getMinX();
-                double lat = (bounds.getHeight() / breakpoints) * y + bounds.getMinY();
+                fb.set( SAMPLE, Math.max( 0, sample[0] ) );  // novalue
+                fb.set( ASPECT, 0 );
                 fb.set( "geom", gf.createPoint( new Coordinate( lon, lat ) ) );
-                features.add( fb.buildFeature( null ) );
+                SimpleFeature feature = fb.buildFeature( null );
+                features.add( feature );
+                grid[x+1][y+1] = feature;
             }
         }
+        // calculate aspect
+        for (int x=1; x<breakpoints; x++) {
+            for (int y=1; y<breakpoints; y++) {
+                int aspect = calculateAspect( grid, x, y, xRes, yRes );
+                SimpleFeature feature = grid[x][y];
+                feature.setAttribute( "aspect", aspect );
+            }
+        }
+        
         context.sendResponse( new GetFeaturesResponse( features ) );
         context.sendResponse( ProcessorResponse.EOP );
     }
 
+    
+    /**
+     * Calculates the aspect in a given {@link GridNode}.
+     * <p/>
+     * This code is from OsmAspect, part of JGrasstools (http://www.jgrasstools.org)
+     * (C) HydroloGIS - www.hydrologis.com
+     * 
+     * @param node the current grid node.
+     * @param radtodeg radiants to degrees conversion factor. Use
+     *        {@link NumericsUtilities#RADTODEG} if you want degrees, use 1 if you
+     *        want radiants.
+     * @param doRound if <code>true</code>, values are round to integer.
+     * @return the value of aspect.
+     */
+    protected int calculateAspect( SimpleFeature[][] grid, int x, int y, double xRes, double yRes ) {
+        double radtodeg = RADTODEG;
+        double doubleNovalue = Double.NaN;
+        
+        double aspect = doubleNovalue;
+        // the value of the x and y derivative
+        double aData = 0.0;
+        double bData = 0.0;
+        double centralValue = (Double)grid[x][y].getAttribute( SAMPLE );
+        double nValue = (Double)grid[x][y+1].getAttribute( SAMPLE );
+        double sValue = (Double)grid[x][y-1].getAttribute( SAMPLE );
+        double wValue = (Double)grid[x-1][y].getAttribute( SAMPLE );
+        double eValue = (Double)grid[x+1][y].getAttribute( SAMPLE );
 
+        if (!isNovalue( centralValue )) {
+            boolean sIsNovalue = isNovalue( sValue );
+            boolean nIsNovalue = isNovalue( nValue );
+            boolean wIsNovalue = isNovalue( wValue );
+            boolean eIsNovalue = isNovalue( eValue );
+
+            if (!sIsNovalue && !nIsNovalue) {
+                aData = atan( (nValue - sValue) / (2 * yRes) );
+            }
+            else if (nIsNovalue && !sIsNovalue) {
+                aData = atan( (centralValue - sValue) / (yRes) );
+            }
+            else if (!nIsNovalue && sIsNovalue) {
+                aData = atan( (nValue - centralValue) / (yRes) );
+            }
+            else if (nIsNovalue && sIsNovalue) {
+                aData = doubleNovalue;
+            }
+            else {
+                // can't happen
+                throw new RuntimeException();
+            }
+            if (!wIsNovalue && !eIsNovalue) {
+                bData = atan( (wValue - eValue) / (2 * xRes) );
+            }
+            else if (wIsNovalue && !eIsNovalue) {
+                bData = atan( (centralValue - eValue) / (xRes) );
+            }
+            else if (!wIsNovalue && eIsNovalue) {
+                bData = atan( (wValue - centralValue) / (xRes) );
+            }
+            else if (wIsNovalue && eIsNovalue) {
+                bData = doubleNovalue;
+            }
+            else {
+                // can't happen
+                throw new RuntimeException();
+            }
+
+            double delta = 0.0;
+            // calculate the aspect value
+            if (aData < 0 && bData > 0) {
+                delta = acos(sin(abs(aData)) * cos(abs(bData)) / (sqrt(1 - pow(cos(aData), 2) * pow(cos(bData), 2))));
+                aspect = delta * radtodeg;
+            } else if (aData > 0 && bData > 0) {
+                delta = acos(sin(abs(aData)) * cos(abs(bData)) / (sqrt(1 - pow(cos(aData), 2) * pow(cos(bData), 2))));
+                aspect = (PI - delta) * radtodeg;
+            } else if (aData > 0 && bData < 0) {
+                delta = acos(sin(abs(aData)) * cos(abs(bData)) / (sqrt(1 - pow(cos(aData), 2) * pow(cos(bData), 2))));
+                aspect = (PI + delta) * radtodeg;
+            } else if (aData < 0 && bData < 0) {
+                delta = acos(sin(abs(aData)) * cos(abs(bData)) / (sqrt(1 - pow(cos(aData), 2) * pow(cos(bData), 2))));
+                aspect = (2 * PI - delta) * radtodeg;
+            } else if (aData == 0 && bData > 0) {
+                aspect = (PI / 2.) * radtodeg;
+            } else if (aData == 0 && bData < 0) {
+                aspect = (PI * 3. / 2.) * radtodeg;
+            } else if (aData > 0 && bData == 0) {
+                aspect = PI * radtodeg;
+            } else if (aData < 0 && bData == 0) {
+                aspect = 2.0 * PI * radtodeg;
+            } else if (aData == 0 && bData == 0) {
+                aspect = 0.0;
+            } else if (isNovalue(aData) || isNovalue(bData)) {
+                aspect = doubleNovalue;
+            } else {
+                // can't happen
+                throw new RuntimeException();
+            }
+        }
+        return (int)Math.round( aspect );
+    }
+
+    
+    protected boolean isNovalue( double sample ) {
+        return sample < 0;
+    }
+    
+    
     @Override
     public void getFeatureSizeRequest( GetFeaturesSizeRequest request, ProcessorContext context ) throws Exception {
-        throw new RuntimeException( "not yet implemented." );
+        context.sendResponse( new GetFeaturesSizeResponse( (BREAKPOINTS+1)^2 ) );
+        context.sendResponse( ProcessorResponse.EOP );
     }
 
 

@@ -22,6 +22,8 @@ import org.geotools.styling.Style;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.common.collect.Lists;
+
 import org.polymap.core.data.feature.DefaultStyles;
 import org.polymap.core.data.feature.FeatureRenderProcessor2;
 import org.polymap.core.data.pipeline.DataSourceDescriptor;
@@ -45,6 +47,8 @@ public class Raster2PointBuilderConcern
         extends PipelineBuilderConcernAdapter {
 
     private static final Log log = LogFactory.getLog( Raster2PointBuilderConcern.class );
+    
+    public static final List<String>            LAYER_LABEL_TRIGGER = Lists.newArrayList( "point", "feature", "generated" );
     
     private DataSourceDescriptor                dsd;
 
@@ -73,21 +77,23 @@ public class Raster2PointBuilderConcern
 
     @Override
     public void terminals( PipelineBuilder builder, List<ProcessorDescriptor<TerminalPipelineProcessor>> terms ) {
-        terms.clear();
-        
-        // feature style
-        Supplier<Style> styleSupplier = () -> {
-            ILayer layer = ProjectRepository.unitOfWork().entity( ILayer.class, layerId );
-            String styleId = layer.styleIdentifier.get();
-            return styleId != null
-                ? P4Plugin.styleRepo().serializedFeatureStyle( styleId, Style.class )
-                        .orElse( DefaultStyles.createAllStyle() )
-                : DefaultStyles.createAllStyle();
-        };
-        FeatureRenderProcessor2.STYLE_SUPPLIER.rawput( (ParamsHolder)builder, styleSupplier );
-        terms.add( 0, new ProcessorDescriptor( FeatureRenderProcessor2.class, null ) );
-        
-        terms.add( 0, new ProcessorDescriptor( Raster2PointProcessor.class, null ) );
+        ILayer layer = ProjectRepository.unitOfWork().entity( ILayer.class, layerId );
+        if (LAYER_LABEL_TRIGGER.stream().anyMatch( s -> layer.label.get().toLowerCase().contains( s ) )) {
+            terms.clear();
+
+            // feature style
+            Supplier<Style> styleSupplier = () -> {
+                String styleId = layer.styleIdentifier.get();
+                return styleId != null
+                        ? P4Plugin.styleRepo().serializedFeatureStyle( styleId, Style.class )
+                                .orElse( DefaultStyles.createAllStyle() )
+                                : DefaultStyles.createAllStyle();
+            };
+            FeatureRenderProcessor2.STYLE_SUPPLIER.rawput( (ParamsHolder)builder, styleSupplier );
+            terms.add( 0, new ProcessorDescriptor( FeatureRenderProcessor2.class, null ) );
+
+            terms.add( 0, new ProcessorDescriptor( Raster2PointProcessor.class, null ) );
+        }
     }
 
 }
