@@ -25,6 +25,7 @@ import static java.lang.Math.sqrt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import java.awt.geom.AffineTransform;
 
@@ -35,6 +36,7 @@ import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.filter.visitor.DefaultFilterVisitor;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.parameter.Parameter;
@@ -94,7 +96,7 @@ public class Raster2PointProcessor
 
     public static final int             TILE_SIZE = 256;
     /** Breakpoint per rendered tile. */
-    public static final int             BREAKPOINTS = 13;
+    public static final int             BREAKPOINTS = 10;
     /** The name of the feature attribute. */
     public static final String          ASPECT = "aspect";
     /** The name of the feature attribute. */
@@ -148,8 +150,16 @@ public class Raster2PointProcessor
     public void getFeatureRequest( GetFeaturesRequest request, ProcessorContext context ) throws Exception {
         int breakpoints = BREAKPOINTS;
         BoundingBox bounds = null;
-        if (request.getQuery().getFilter() instanceof BBOX) {
-            bounds = ((BBOX)request.getQuery().getFilter()).getBounds();
+        
+        DefaultFilterVisitor bboxFinder = new DefaultFilterVisitor() {
+            @Override public Object visit( BBOX bbox, Object data ) {
+                ((AtomicReference)data).set( bbox );
+                return data;
+            }
+        };
+        AtomicReference<BBOX> queriedBBox = (AtomicReference)request.getQuery().getFilter().accept( bboxFinder, new AtomicReference() );
+        if (queriedBBox.get() != null) {
+            bounds = queriedBBox.get().getBounds();
         }
         else {
             // XXX a bit hacky
